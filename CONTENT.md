@@ -33,7 +33,7 @@
 - Led a **team of 14** that designed, developed, and launched the Karat Wealth App, Web Journey, and official website.
 - Designed and built complete **analytics suite** visualizing end-to-end user journey + daily ops management.
 - Designed and ran automated **Push / SMS / WhatsApp** campaigns by user-journey stage → **+74% user-to-investor conversion**.
-- **Also Founding PM of KaratClub** — India's first portfolio-powered privilege program for MF investors (₹5L+ portfolios unlock lifestyle rewards: phones 20-30% off, luxury travel, dining). Operated under CASHe / Aeries Financial Technologies. **Need Vedanth to confirm specific contributions/metrics here.**
+- **Also Founding PM of KaratClub** — India's first portfolio-powered privilege program for MF investors (₹5L+ portfolios unlock lifestyle rewards: phones 20-30% off, luxury travel, dining). Operated under CASHe / Aeries Financial Technologies. Brought it to life from the first wireframes all the way to a production app.
 
 ### CASHe — Product Analyst — *July 2024 – Mar 2025*
 - Implemented **repayment tracking** on the 13Karat app → **-70% customer queries**.
@@ -112,7 +112,7 @@
 ## 9. Open Questions / TODO
 
 - [x] Confirm CASHe APM end date vs. Ignosis start date — CASHe Apr 2025–Mar 2026, Ignosis from 11 Mar 2026.
-- [ ] KaratClub — specific role, contributions, and metrics.
+- [x] KaratClub — Founding PM, took it from wireframes to production app.
 - [x] Which email is the public one? — vedanthkogileruofficial@gmail.com.
 - [ ] Make phone number public on site? (Voice agent number will be separate.)
 - [ ] Voice agent: create Vapi + ElevenLabs accounts; provide public key + voice ID + ~2 min audio.

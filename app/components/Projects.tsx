@@ -16,10 +16,10 @@ const projects = [
     title: 'KaratClub',
     company: 'CASHe · Founding PM',
     description:
-      'India’s first portfolio-powered privilege program for mutual-fund investors. Larger MF portfolios unlock real-world lifestyle rewards — smartphones, travel, and dining at members-only rates — turning long-term investing into an ongoing relationship.',
+      'India’s first portfolio-powered privilege program for mutual-fund investors. I brought it to life as Founding PM — from the first wireframes all the way to a production app — where larger MF portfolios unlock real-world lifestyle rewards across smartphones, travel, and dining.',
     metrics: [
       { value: '1st', label: 'of its kind in India' },
-      { value: '₹5L+', label: 'portfolios rewarded' },
+      { value: '0→1', label: 'wireframes to production' },
     ],
     tags: ['Mutual Funds', 'Rewards', 'Membership', 'Product Strategy'],
   },
