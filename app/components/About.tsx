@@ -7,21 +7,21 @@ const chapters = [
     number: '01',
     label: 'The Beginning',
     headline: 'Started a YouTube channel to teach kids how to invest.',
-    body: 'Before building products, I was teaching. Teenvesting was a financial literacy channel I built in college — partnered with Groww, racked up 100K+ impressions, and proved that young Indians were hungry for this. The mission was set.',
+    body: 'Before building products, I was teaching. Teenvesting was a financial literacy channel I built in college. Partnered with Groww, racked up 100K+ impressions, and proved that young Indians were hungry for this. The mission was set.',
     stat: { value: '100K+', label: 'impressions' },
   },
   {
     number: '02',
     label: 'The Builder',
     headline: 'Then I built the products they would actually invest through.',
-    body: 'At CASHe I went from intern to Founding PM — twice over. I built a P2P lending platform, then took Karat Wealth (FD) and KaratClub (MF rewards) from first wireframes to production apps. Along the way I built the analytics infrastructure the whole team ran on.',
+    body: 'At CASHe I went from intern to Founding PM. Twice over. I built a P2P lending platform, then took Karat Wealth (FD) and KaratClub (MF rewards) from first wireframes to production apps. Along the way I built the analytics infrastructure the whole team ran on.',
     stat: { value: '2', label: 'products as Founding PM' },
   },
   {
     number: '03',
     label: 'The AI',
     headline: 'Now I\'m building the AI behind financial conversations.',
-    body: "At Ignosis I work on voice AI — orchestrating LLM, STT and TTS providers into natural conversations. The mission hasn't changed. The medium is now your voice.",
+    body: "At Ignosis I work on voice AI. Orchestrating LLM, STT and TTS providers into natural conversations. The mission hasn't changed. The medium is now your voice.",
     stat: { value: '0→1', label: 'again, in AI' },
   },
 ]
@@ -40,7 +40,7 @@ export default function About() {
           transition={{ duration: 0.7 }}
         >
           I&apos;ve spent my entire career making investing{' '}
-          <span className="text-indigo-600">accessible</span> — first by educating,
+          <span className="text-indigo-600">accessible</span>. First by educating,
           then by building, now by giving it a voice.
         </motion.p>
 

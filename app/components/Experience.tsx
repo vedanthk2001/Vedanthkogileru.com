@@ -7,16 +7,16 @@ const timeline = [
     initials: 'IG',
     color: 'bg-violet-600',
     company: 'Ignosis',
-    role: 'Product Manager — Voice AI',
-    period: 'Mar 2026 – Present',
-    impact: 'Building a proprietary voice AI platform — orchestrating LLM, STT and TTS providers into natural, real-time financial conversations.',
+    role: 'Product Manager, Voice AI',
+    period: 'Mar 2026 to Present',
+    impact: 'Building a proprietary voice AI platform. Orchestrating LLM, STT and TTS providers into natural, real-time financial conversations.',
   },
   {
     initials: 'CS',
     color: 'bg-indigo-600',
     company: 'CASHe',
     role: 'Associate Product Manager',
-    period: 'Apr 2025 – Mar 2026',
+    period: 'Apr 2025 to Mar 2026',
     impact: 'Founding PM on Karat Wealth (FD) and KaratClub (MF rewards). Led a 14-person team from wireframes to launch. +74% user-to-investor conversion.',
   },
   {
@@ -24,15 +24,15 @@ const timeline = [
     color: 'bg-sky-500',
     company: 'CASHe',
     role: 'Product Analyst',
-    period: 'Jul 2024 – Mar 2025',
-    impact: 'Shipped repayment tracking, fuzzy-logic bank verification, and A/B-tested segments — cutting queries by 70% and lifting lead conversion by 57%.',
+    period: 'Jul 2024 to Mar 2025',
+    impact: 'Shipped repayment tracking, fuzzy-logic bank verification and A/B-tested segments. Cut queries by 70% and lifted lead conversion by 57%.',
   },
   {
     initials: 'CS',
     color: 'bg-teal-500',
     company: 'CASHe',
     role: 'Product Management Intern',
-    period: 'Jul 2023 – Jun 2024',
+    period: 'Jul 2023 to Jun 2024',
     impact: 'Built the complete analytics suite (Python, SQL, Power BI) for the 13Karat P2P platform. Automated ops workflows, cutting customer TAT by 50%.',
   },
 ]
@@ -41,7 +41,7 @@ const education = {
   degree: 'BE Electrical & Electronics + MSc Physics',
   minor: 'Minor in Finance',
   school: 'BITS Pilani, Hyderabad',
-  period: '2019 – 2024',
+  period: '2019 to 2024',
   cgpa: '8.26',
 }
 

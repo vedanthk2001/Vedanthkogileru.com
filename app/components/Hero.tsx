@@ -55,7 +55,7 @@ export default function Hero() {
             variants={item}
             className="text-xl md:text-2xl text-slate-600 leading-relaxed mb-10 max-w-2xl"
           >
-            I build the products Indians invest through — and the AI behind the
+            I build the products Indians invest through. And the AI behind the
             next generation of financial conversations. Founding PM by instinct,
             data-native by training.
           </motion.p>

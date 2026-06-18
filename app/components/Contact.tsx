@@ -46,7 +46,7 @@ export default function Contact() {
           </h2>
           <p className="text-slate-600 text-lg leading-relaxed mb-10">
             Always up for a conversation about fintech, voice AI, or interesting
-            product problems — whether it&apos;s a new role, a collaboration, or just
+            product problems. Whether it&apos;s a new role, a collaboration, or just
             comparing notes. I reply to every message.
           </p>
 

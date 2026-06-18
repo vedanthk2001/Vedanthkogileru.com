@@ -8,7 +8,7 @@ const projects = [
     title: 'Karat Wealth',
     company: 'CASHe · Founding PM',
     category: 'Fixed Deposits · 0→1',
-    headline: 'Took a blank canvas to a production FD platform — with a team of 14.',
+    headline: 'Took a blank canvas to a production FD platform with a team of 14.',
     body: 'Integrated with Upswing for partner-bank sourcing. Designed and launched the app, web journey, and website. Built the analytics suite that ran daily ops. Ran automated Push, SMS and WhatsApp campaigns by user-journey stage.',
     metric: { value: '+74%', label: 'user-to-investor conversion' },
     tags: ['0-to-1', 'Lifecycle Marketing', 'Analytics'],
@@ -20,7 +20,7 @@ const projects = [
     company: 'CASHe · Founding PM',
     category: 'Mutual Funds · Rewards',
     headline: "India's first portfolio-powered privilege program.",
-    body: 'Wireframes to production app. MF investors with ₹5L+ portfolios unlock lifestyle rewards — phones, travel, dining at members-only rates.',
+    body: 'Wireframes to production app. MF investors with ₹5L+ portfolios unlock lifestyle rewards across phones, travel and dining at members-only rates.',
     metric: { value: '1st', label: 'of its kind in India' },
     tags: ['Mutual Funds', 'Rewards', 'Product Strategy'],
     featured: false,
@@ -41,7 +41,7 @@ const projects = [
     title: 'Teenvesting',
     company: 'Independent · Founder',
     category: 'Content · Financial Literacy',
-    headline: 'Where the whole mission started — teaching young Indians to invest.',
+    headline: 'Where the whole mission started. Teaching young Indians to invest.',
     body: 'A YouTube channel and Instagram page built in college. Partnered with Groww for influencer marketing. 100K+ impressions, 5%+ CTR.',
     metric: { value: '100K+', label: 'impressions' },
     tags: ['Content', '0-to-1', 'Growth'],
@@ -109,7 +109,7 @@ export default function Projects() {
           </div>
         </motion.div>
 
-        {/* Remaining projects — 3 column grid */}
+        {/* Remaining projects grid */}
         <div className="grid md:grid-cols-3 gap-6">
           {rest.map((p, i) => (
             <motion.div

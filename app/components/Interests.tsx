@@ -21,7 +21,7 @@ const interests = [
   {
     icon: '📈',
     title: 'Equity Research',
-    description: 'The fintech obsession, off the clock — digging into businesses and markets.',
+    description: 'The fintech obsession, off the clock. Digging into businesses and markets.',
   },
 ]
 
@@ -35,7 +35,7 @@ export default function Interests() {
           </p>
           <h2 className="text-4xl font-bold text-slate-900">Beyond Product</h2>
           <p className="text-slate-500 mt-3 text-lg max-w-xl">
-            The games and pursuits that keep me sharp — most of them reward the same
+            The games and pursuits that keep me sharp. Most of them reward the same
             patience and strategy that good product work does.
           </p>
         </div>

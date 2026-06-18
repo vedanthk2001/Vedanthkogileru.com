@@ -10,11 +10,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Vedanth Kogileru | Product Manager',
   description:
-    'Product Manager building the future of fintech in India — from investing platforms to voice AI. Founding PM of Karat Wealth & KaratClub, now AI PM at Ignosis.',
+    'Product Manager building fintech products and voice AI in India. Founding PM of Karat Wealth and KaratClub, now AI PM at Ignosis.',
   openGraph: {
     title: 'Vedanth Kogileru | Product Manager',
     description:
-      'Product Manager building the future of fintech in India — from investing platforms to voice AI.',
+      'Product Manager building fintech products and voice AI in India.',
     url: 'https://vedanthkogileru.com',
     siteName: 'Vedanth Kogileru',
     type: 'website',
