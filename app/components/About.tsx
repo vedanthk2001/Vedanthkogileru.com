@@ -1,3 +1,5 @@
+import Reveal from './Reveal'
+
 const strengths = [
   {
     icon: '🧮',
@@ -30,7 +32,7 @@ export default function About() {
     <section id="about" className="bg-slate-50 py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-16 items-start">
-          <div>
+          <Reveal>
             <p className="text-indigo-600 font-medium text-sm tracking-widest uppercase mb-3">
               About Me
             </p>
@@ -60,18 +62,17 @@ export default function About() {
                 the same; the medium is now your voice.
               </p>
             </div>
-          </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {strengths.map((s) => (
-              <div
-                key={s.title}
-                className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-all"
-              >
-                <span className="text-2xl mb-3 block">{s.icon}</span>
-                <h3 className="font-semibold text-slate-900 mb-2">{s.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{s.description}</p>
-              </div>
+            {strengths.map((s, i) => (
+              <Reveal key={s.title} delay={i * 0.1} className="h-full">
+                <div className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-all h-full">
+                  <span className="text-2xl mb-3 block">{s.icon}</span>
+                  <h3 className="font-semibold text-slate-900 mb-2">{s.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{s.description}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>

@@ -1,3 +1,7 @@
+'use client'
+
+import { motion } from 'framer-motion'
+
 const interests = [
   {
     icon: '🧗',
@@ -37,15 +41,20 @@ export default function Interests() {
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {interests.map((interest) => (
-            <div
+          {interests.map((interest, i) => (
+            <motion.div
               key={interest.title}
-              className="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-all"
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              whileHover={{ y: -6 }}
+              className="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-colors"
             >
               <span className="text-3xl mb-4 block">{interest.icon}</span>
               <h3 className="font-semibold text-slate-900 mb-2">{interest.title}</h3>
               <p className="text-slate-500 text-sm leading-relaxed">{interest.description}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

@@ -1,3 +1,7 @@
+'use client'
+
+import { motion } from 'framer-motion'
+
 const projects = [
   {
     tag: '0→1 · Fixed Deposits',
@@ -53,7 +57,13 @@ export default function Projects() {
   return (
     <section id="projects" className="bg-white py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-14">
+        <motion.div
+          className="mb-14"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6 }}
+        >
           <p className="text-indigo-600 font-medium text-sm tracking-widest uppercase mb-3">
             Case Studies
           </p>
@@ -62,13 +72,18 @@ export default function Projects() {
             Products I&apos;ve built across the Indian investing stack. Deeper
             walkthroughs available on request.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {projects.map((project) => (
-            <div
+          {projects.map((project, i) => (
+            <motion.div
               key={project.title}
-              className="group border border-slate-200 rounded-2xl p-7 hover:border-indigo-300 hover:shadow-md transition-all flex flex-col"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.55, delay: (i % 2) * 0.12 }}
+              whileHover={{ y: -6 }}
+              className="group border border-slate-200 rounded-2xl p-7 hover:border-indigo-300 hover:shadow-md transition-colors flex flex-col"
             >
               <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-3">
                 {project.tag}
@@ -98,7 +113,7 @@ export default function Projects() {
                   </span>
                 ))}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

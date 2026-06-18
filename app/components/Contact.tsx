@@ -1,3 +1,5 @@
+import Reveal from './Reveal'
+
 const links = [
   {
     label: 'Email',
@@ -35,7 +37,7 @@ export default function Contact() {
   return (
     <section id="contact" className="bg-white py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
-        <div className="max-w-2xl">
+        <Reveal className="max-w-2xl">
           <p className="text-indigo-600 font-medium text-sm tracking-widest uppercase mb-3">
             Contact
           </p>
@@ -77,7 +79,7 @@ export default function Contact() {
               </a>
             ))}
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   )

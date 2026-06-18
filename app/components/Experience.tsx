@@ -1,3 +1,5 @@
+import Reveal from './Reveal'
+
 const workExperience = [
   {
     role: 'Product Manager (AI / Voice AI)',
@@ -72,7 +74,7 @@ export default function Experience() {
           {/* Work timeline */}
           <div className="lg:col-span-2 space-y-8">
             {workExperience.map((job, i) => (
-              <div key={i} className="relative pl-8 border-l-2 border-slate-200">
+              <Reveal key={i} delay={i * 0.08} className="relative pl-8 border-l-2 border-slate-200">
                 <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-indigo-600 border-2 border-white" />
                 <div className="bg-white rounded-2xl p-6 border border-slate-200">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-3">
@@ -96,12 +98,12 @@ export default function Experience() {
                     ))}
                   </ul>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
 
           {/* Education sidebar */}
-          <div>
+          <Reveal delay={0.15}>
             <h3 className="font-bold text-slate-900 text-lg mb-4">Education</h3>
             <div className="space-y-4">
               {education.map((edu, i) => (
@@ -142,7 +144,7 @@ export default function Experience() {
                 </div>
               ))}
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
