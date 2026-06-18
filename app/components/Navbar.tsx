@@ -47,12 +47,10 @@ export default function Navbar() {
           ))}
           <li>
             <a
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#contact"
               className="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
             >
-              Resume
+              Get in Touch
             </a>
           </li>
         </ul>
@@ -87,12 +85,11 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="/resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contact"
             className="bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg text-center hover:bg-indigo-700 transition-colors"
+            onClick={() => setMenuOpen(false)}
           >
-            Resume
+            Get in Touch
           </a>
         </div>
       )}

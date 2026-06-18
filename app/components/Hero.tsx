@@ -4,16 +4,15 @@ export default function Hero() {
       <div className="max-w-6xl mx-auto px-6 md:px-12 py-20 w-full">
         <div className="max-w-3xl">
           <p className="text-indigo-600 font-medium text-sm tracking-widest uppercase mb-4">
-            Product Manager
+            Product Manager · Fintech &amp; AI
           </p>
           <h1 className="text-5xl md:text-7xl font-bold text-slate-900 leading-tight tracking-tight mb-6">
-            Hi, I&apos;m{' '}
-            <span className="text-indigo-600">Vedanth</span>{' '}
-            Kogileru.
+            Hi, I&apos;m <span className="text-indigo-600">Vedanth</span> Kogileru.
           </h1>
           <p className="text-xl md:text-2xl text-slate-600 leading-relaxed mb-10 max-w-2xl">
-            I build products that users love and businesses need. Focused on
-            turning complex problems into clear, impactful solutions.
+            I build the products Indians invest through — and the AI behind the
+            next generation of financial conversations. Founding PM by instinct,
+            data-native by training.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
@@ -33,9 +32,9 @@ export default function Hero() {
 
           <div className="mt-20 flex flex-wrap gap-10">
             {[
-              { value: '5+', label: 'Products Shipped' },
-              { value: '1M+', label: 'Users Impacted' },
-              { value: '3', label: 'Companies' },
+              { value: '2', label: 'Products as Founding PM' },
+              { value: '+74%', label: 'User-to-Investor Conversion' },
+              { value: '14', label: 'Person Team Led' },
             ].map((stat) => (
               <div key={stat.label}>
                 <p className="text-4xl font-bold text-slate-900">{stat.value}</p>

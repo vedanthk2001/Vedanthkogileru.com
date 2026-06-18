@@ -1,23 +1,27 @@
 const strengths = [
   {
-    icon: '🔍',
-    title: 'Discovery',
-    description: 'Deep user research and data analysis to uncover the right problems worth solving.',
+    icon: '🧮',
+    title: 'Engineer + Physicist',
+    description:
+      'EE and MSc Physics from BITS Pilani. I think in systems and reason from first principles.',
   },
   {
-    icon: '🎯',
-    title: 'Strategy',
-    description: 'Translating business goals into clear product vision, roadmaps, and prioritized bets.',
+    icon: '💰',
+    title: 'Fintech to the core',
+    description:
+      'A finance minor and a genuine obsession with how money moves — P2P lending, FDs, mutual funds, and beyond.',
   },
   {
-    icon: '🤝',
-    title: 'Execution',
-    description: 'Working across engineering, design, and stakeholders to ship fast and iterate faster.',
+    icon: '🚀',
+    title: '0→1 builder',
+    description:
+      'Founding PM twice over. Comfortable in ambiguity, turning a blank canvas into a shipped product.',
   },
   {
     icon: '📊',
-    title: 'Metrics',
-    description: 'Defining success clearly and using data to make confident product decisions.',
+    title: 'Data-native PM',
+    description:
+      'I don’t just use analytics — I build the analytics suites my own teams run on. Python, SQL, Power BI.',
   },
 ]
 
@@ -31,22 +35,29 @@ export default function About() {
               About Me
             </p>
             <h2 className="text-4xl font-bold text-slate-900 mb-6 leading-tight">
-              Building products is both a craft and a discipline.
+              Making investing accessible &mdash; one product at a time.
             </h2>
             <div className="space-y-4 text-slate-600 text-lg leading-relaxed">
               <p>
-                I&apos;m a Product Manager with experience across [industry/domain]. I
-                specialize in taking products from 0→1 and scaling them — combining
-                structured thinking with a strong bias for action.
+                I&apos;m a Product Manager who&apos;s heads-over-heels into fintech.
+                My mission has stayed constant while the surface area keeps growing:
+                make investing accessible and rewarding for Indians.
               </p>
               <p>
-                My background in [your background — e.g., engineering/business/design]
-                gives me a unique lens: I can dive deep into technical constraints, speak
-                the language of design, and anchor every decision to business outcomes.
+                It started in college with{' '}
+                <span className="font-medium text-slate-800">Teenvesting</span>, a
+                financial-literacy channel for young people. Then I went deeper &mdash;
+                building the platforms people actually invest through at{' '}
+                <span className="font-medium text-slate-800">CASHe</span>: a P2P
+                lending product, a digital Fixed Deposit platform, and a mutual-fund
+                rewards club, all as Founding PM.
               </p>
               <p>
-                Outside of work, I&apos;m passionate about [your interests — e.g., consumer
-                tech, AI, fitness, etc.].
+                Today I&apos;m an{' '}
+                <span className="font-medium text-slate-800">AI Product Manager at Ignosis</span>,
+                working on voice AI &mdash; orchestrating LLM, speech-to-text, and
+                text-to-speech providers into natural conversations. The mission is
+                the same; the medium is now your voice.
               </p>
             </div>
           </div>

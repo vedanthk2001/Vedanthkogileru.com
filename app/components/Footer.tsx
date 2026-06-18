@@ -4,11 +4,11 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-sm">© {new Date().getFullYear()} Vedanth Kogileru. All rights reserved.</p>
         <div className="flex gap-6 text-sm">
-          <a href="mailto:vedanthk2001@gmail.com" className="hover:text-white transition-colors">
+          <a href="mailto:vedanthkogileruofficial@gmail.com" className="hover:text-white transition-colors">
             Email
           </a>
           <a
-            href="https://linkedin.com/in/your-handle"
+            href="https://linkedin.com/in/vedanth-kogileru"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white transition-colors"

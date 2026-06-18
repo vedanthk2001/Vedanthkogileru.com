@@ -1,47 +1,59 @@
 const workExperience = [
   {
-    role: 'Product Manager',
-    company: 'Company Name',
-    period: '2023 – Present',
+    role: 'Product Manager (AI / Voice AI)',
+    company: 'Ignosis',
+    period: 'Present',
     description:
-      'Led product strategy for [core product area]. Managed roadmap for [X] features, drove cross-functional alignment across [teams], and delivered [key outcome].',
+      'AI Product Manager working on voice AI. Ignosis built its own voice platform — orchestrating LLM, speech-to-text, and text-to-speech providers into natural, real-time conversations.',
     achievements: [
-      'Shipped [Feature] → drove X% improvement in [metric]',
-      'Defined and executed [initiative] strategy with [stakeholders]',
-      'Reduced [pain point] by X% through [approach]',
+      'Own product for a voice AI stack spanning STT, LLM, and TTS orchestration',
+      'Translate cutting-edge AI capability into reliable, real-world conversation products',
     ],
   },
   {
     role: 'Associate Product Manager',
-    company: 'Company Name',
-    period: '2021 – 2023',
+    company: 'CASHe',
+    period: '2025',
     description:
-      'Owned [product area] from ideation through launch. Collaborated closely with engineering and design to define requirements and ship high-quality features on a regular cadence.',
+      'Founding PM of Karat Wealth (digital Fixed Deposits) and KaratClub (MF rewards). Led a 14-person team across app, web, and website, and built the analytics that ran daily operations.',
     achievements: [
-      'Launched [Feature] — [X]k users in first month',
-      'Ran [X] A/B experiments; improved [metric] by [Y]%',
-      'Built [tool/process] to streamline [workflow]',
+      'Launched Karat Wealth app, web journey & website with a team of 14',
+      'Designed automated Push / SMS / WhatsApp lifecycle campaigns → +74% user-to-investor conversion',
+      'Built the end-to-end analytics suite for journey visualization and ops',
     ],
   },
   {
-    role: 'Product / Business Intern',
-    company: 'Company Name',
-    period: '2020',
+    role: 'Product Analyst',
+    company: 'CASHe',
+    period: '2024 – 2025',
     description:
-      'Supported product and strategy initiatives. Conducted competitive analysis, synthesized user feedback, and contributed to roadmap planning.',
+      'Drove conversion and reliability on the 13Karat P2P platform through data, experimentation, and targeted engineering.',
     achievements: [
-      'Delivered [project] used by [team/stakeholders]',
-      'Analyzed [X]k data points to inform [decision]',
+      'Shipped repayment tracking → -70% customer queries',
+      'Built fuzzy-logic matching → -40% name-match failures, better bank verification',
+      'Ran targeted A/B tests on high-intent segments → +57% lead-to-investor conversion',
+    ],
+  },
+  {
+    role: 'Product Management Intern',
+    company: 'CASHe',
+    period: '2023 – 2024',
+    description:
+      'Built the data foundation for the 13Karat P2P investment platform and automated core operational workflows.',
+    achievements: [
+      'Built the complete analytics suite (Python, SQL, Power BI) for onboarding, investing & withdrawals',
+      'Automated growth, ops & support workflows → -50% customer TAT',
+      'Designed a callbacks dump table as an insurance layer against data loss & rework',
     ],
   },
 ]
 
 const education = [
   {
-    degree: 'B.S. / B.A. in [Your Major]',
-    school: 'University Name',
-    period: '2017 – 2021',
-    detail: 'Relevant coursework: [Course 1], [Course 2], [Course 3]',
+    degree: 'BE Electrical & Electronics Eng. + MSc Physics',
+    school: 'BITS Pilani, Hyderabad',
+    period: '2019 – 2024',
+    detail: 'Integrated Master’s · CGPA 8.26 · Minor in Finance',
   },
 ]
 
@@ -109,9 +121,9 @@ export default function Experience() {
             <h3 className="font-bold text-slate-900 text-lg mt-8 mb-4">Toolkit</h3>
             <div className="bg-white rounded-2xl p-6 border border-slate-200">
               {[
-                { category: 'Product', items: ['Roadmapping', 'User Research', 'A/B Testing', 'PRDs'] },
-                { category: 'Tools', items: ['Figma', 'Jira', 'Amplitude', 'SQL', 'Notion'] },
-                { category: 'Methods', items: ['Agile/Scrum', 'Jobs-to-be-Done', 'Design Sprints'] },
+                { category: 'Data', items: ['Python', 'SQL', 'Power BI', 'Excel'] },
+                { category: 'Product', items: ['UX Research', 'Wireframing', 'A/B Testing', 'Analytics'] },
+                { category: 'Domain', items: ['P2P Lending', 'Fixed Deposits', 'Mutual Funds', 'Voice AI'] },
               ].map((group) => (
                 <div key={group.category} className="mb-4 last:mb-0">
                   <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">

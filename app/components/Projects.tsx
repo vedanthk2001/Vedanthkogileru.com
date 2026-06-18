@@ -1,42 +1,51 @@
 const projects = [
   {
-    tag: 'Growth · Mobile',
-    title: 'Project Name One',
-    company: 'Company Name',
+    tag: '0→1 · Fixed Deposits',
+    title: 'Karat Wealth',
+    company: 'CASHe · Founding PM',
     description:
-      'Led end-to-end product development for [feature/product]. Identified a core user pain point through qualitative research, defined the solution, and partnered with engineering to ship in 6 weeks.',
+      'A digital Fixed Deposit investment platform integrated with Upswing for partner-bank sourcing. Led a 14-person team to design, build, and launch the app, web journey, and website — plus the analytics suite that powered daily operations.',
     metrics: [
-      { value: '40%', label: 'increase in activation' },
-      { value: '2x', label: 'daily active users' },
+      { value: '+74%', label: 'user-to-investor conversion' },
+      { value: '14', label: 'person team led' },
     ],
-    tags: ['User Research', 'Roadmapping', 'A/B Testing'],
-    link: '#',
+    tags: ['0-to-1', 'Lifecycle Marketing', 'Analytics', 'Roadmapping'],
   },
   {
-    tag: 'Platform · API',
-    title: 'Project Name Two',
-    company: 'Company Name',
+    tag: 'Rewards · Mutual Funds',
+    title: 'KaratClub',
+    company: 'CASHe · Founding PM',
     description:
-      'Owned the roadmap for a developer-facing platform used by [X]+ enterprise clients. Prioritized a self-serve onboarding flow that reduced support tickets and shortened time-to-value for new customers.',
+      'India’s first portfolio-powered privilege program for mutual-fund investors. Larger MF portfolios unlock real-world lifestyle rewards — smartphones, travel, and dining at members-only rates — turning long-term investing into an ongoing relationship.',
     metrics: [
-      { value: '60%', label: 'drop in onboarding time' },
-      { value: '$2M', label: 'in unlocked pipeline' },
+      { value: '1st', label: 'of its kind in India' },
+      { value: '₹5L+', label: 'portfolios rewarded' },
     ],
-    tags: ['B2B', 'Developer Tools', 'Stakeholder Management'],
-    link: '#',
+    tags: ['Mutual Funds', 'Rewards', 'Membership', 'Product Strategy'],
   },
   {
-    tag: '0→1 · AI',
-    title: 'Project Name Three',
-    company: 'Company Name',
+    tag: 'P2P · Analytics',
+    title: '13Karat',
+    company: 'CASHe · Analyst → APM',
     description:
-      'Launched a new AI-powered [feature/product] from concept to GA in [timeframe]. Ran continuous discovery with [X] customer interviews, built an MVP with a 3-person team, and iterated to PMF.',
+      'A P2P investment platform where I built the complete analytics suite (Python, SQL, Power BI) across onboarding, investing, and withdrawals. Shipped repayment tracking and fuzzy-logic bank verification that cut customer friction sharply.',
     metrics: [
-      { value: '92%', label: 'user satisfaction (CSAT)' },
-      { value: '3 mo', label: 'to product-market fit' },
+      { value: '+57%', label: 'lead-to-investor conversion' },
+      { value: '-70%', label: 'customer queries' },
     ],
-    tags: ['AI/ML', '0-to-1', 'Product Discovery'],
-    link: '#',
+    tags: ['P2P Lending', 'Data', 'A/B Testing', 'Automation'],
+  },
+  {
+    tag: 'Founder · Content',
+    title: 'Teenvesting',
+    company: 'Independent · Founder',
+    description:
+      'A YouTube channel and Instagram page to improve financial literacy among young Indians — where the whole mission began. Partnered with Groww for influencer marketing and grew real reach from a standing start.',
+    metrics: [
+      { value: '100K+', label: 'impressions' },
+      { value: '5%+', label: 'click-through rate' },
+    ],
+    tags: ['Content', 'Financial Literacy', 'Growth', '0-to-1'],
   },
 ]
 
@@ -50,11 +59,12 @@ export default function Projects() {
           </p>
           <h2 className="text-4xl font-bold text-slate-900">Selected Work</h2>
           <p className="text-slate-500 mt-3 text-lg max-w-xl">
-            A few projects I&apos;m proud of. Details available on request.
+            Products I&apos;ve built across the Indian investing stack. Deeper
+            walkthroughs available on request.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
           {projects.map((project) => (
             <div
               key={project.title}
