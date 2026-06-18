@@ -76,7 +76,7 @@ function sampleText(lines: string[], w: number, h: number, count: number) {
     ;[pts[i], pts[j]] = [pts[j], pts[i]]
   }
 
-  return pts.slice(0, Math.min(count, pts.length))
+  return { pts: pts.slice(0, Math.min(count, pts.length)), size }
 }
 
 export default function Hero() {
@@ -87,6 +87,9 @@ export default function Hero() {
   const startRef = useRef<number>(0)
   const settledRef = useRef(false)
   const [settled, setSettled] = useState(false)
+  // px size of the particle text, mirrored onto the solid headline so the
+  // crossfade lands with no jump in size
+  const [headlineSize, setHeadlineSize] = useState<number | null>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -109,7 +112,8 @@ export default function Hero() {
       canvas.height = h * dpr
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      const targets = sampleText(lines, w, h, MAX_PARTICLES)
+      const { pts: targets, size: hSize } = sampleText(lines, w, h, MAX_PARTICLES)
+      setHeadlineSize(hSize)
       particlesRef.current = targets.map((t, i) => ({
         x: rand(0, w),
         y: rand(0, h),
@@ -204,28 +208,32 @@ export default function Hero() {
           Fades out once the cloud has assembled so the solid headline shows. */}
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 w-full h-full transition-opacity duration-700 ${
+        className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-out ${
           settled ? 'opacity-0' : 'opacity-100'
         }`}
         aria-hidden="true"
       />
 
-      {/* Solid headline: sits exactly where the particles gather, fades in
-          as they dissolve so the letters are crisp and fully readable */}
+      {/* Solid headline: same px size and position as the particle text, so the
+          dots appear to fill into crisp letters with no jump */}
       <motion.h1
-        className="absolute left-0 right-0 px-6 text-center text-5xl md:text-7xl lg:text-8xl font-extrabold text-slate-900 leading-none"
-        style={{ top: '40%', transform: 'translateY(-50%)' }}
+        className="absolute left-0 right-0 px-6 text-center text-6xl font-extrabold text-slate-900 leading-none"
+        style={{
+          top: '40%',
+          transform: 'translateY(-50%)',
+          fontSize: headlineSize ? `${headlineSize}px` : undefined,
+        }}
         initial={{ opacity: 0 }}
         animate={settled ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 1, delay: 0.15, ease: 'easeOut' }}
       >
         Hi, I&rsquo;m Vedanth
       </motion.h1>
 
-      {/* DOM content sits below the headline (~56vh down) */}
+      {/* DOM content sits below the headline */}
       <div
         className="relative z-10 max-w-2xl mx-auto px-6 md:px-12 text-center"
-        style={{ paddingTop: '56vh' }}
+        style={{ paddingTop: '50vh' }}
       >
         <motion.h2
           className="text-2xl md:text-4xl font-bold text-slate-900 leading-snug mb-4"
@@ -242,8 +250,8 @@ export default function Hero() {
           animate={settled ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.9, delay: 0.25 }}
         >
-          AI Product Manager at Ignosis. Disorder is the default state of every
-          product and team. My work is the energy that keeps it in order.
+          AI Product Manager. Disorder is the default state of every product
+          and team, and my work is the energy that keeps it in order.
         </motion.p>
 
         <motion.div
