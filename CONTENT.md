@@ -22,13 +22,13 @@
 
 ## 2. Experience (chronological)
 
-### Ignosis — Product Manager (AI / Voice AI) — *Current*
+### Ignosis — Product Manager (AI / Voice AI) — *Mar 2026 – Present*
 - AI Product Manager working on voice AI.
 - Ignosis built its **own** voice AI platform: orchestration of various LLM, STT, and TTS providers (their own Vapi/Retell equivalent).
 - Vedanth understands the full voice stack: how STT → LLM → TTS providers get stitched together.
 
-### CASHe — Associate Product Manager — *April 2025 – Present (overlap TBD)*
-> NOTE: Resume shows CASHe APM as "April 2025 – Present." Vedanth now at Ignosis. **Need to confirm exact dates / whether CASHe ended.**
+### CASHe — Associate Product Manager — *Apr 2025 – Mar 2026*
+> Vedanth moved to Ignosis on 11 March 2026.
 - **Founding PM of Karat Wealth** — digital Fixed Deposit investment platform, integrated with Upswing for partner-bank sourcing.
 - Led a **team of 14** that designed, developed, and launched the Karat Wealth App, Web Journey, and official website.
 - Designed and built complete **analytics suite** visualizing end-to-end user journey + daily ops management.
@@ -93,7 +93,7 @@
 
 ## 7. Contact
 
-- **Email:** vedanthkogileruofficial@gmail.com (resume) / vedanthk2001@gmail.com (account) — **confirm preferred**
+- **Email:** vedanthkogileruofficial@gmail.com *(public — confirmed)*
 - **LinkedIn:** linkedin.com/in/vedanth-kogileru
 - **Phone:** 9246197942 (resume) — **decide if public**
 - **Location:** Hyderabad, India
@@ -111,9 +111,9 @@
 
 ## 9. Open Questions / TODO
 
-- [ ] Confirm CASHe APM end date vs. Ignosis start date (timeline overlap).
+- [x] Confirm CASHe APM end date vs. Ignosis start date — CASHe Apr 2025–Mar 2026, Ignosis from 11 Mar 2026.
 - [ ] KaratClub — specific role, contributions, and metrics.
-- [ ] Which email is the public one?
+- [x] Which email is the public one? — vedanthkogileruofficial@gmail.com.
 - [ ] Make phone number public on site? (Voice agent number will be separate.)
 - [ ] Voice agent: create Vapi + ElevenLabs accounts; provide public key + voice ID + ~2 min audio.
 - [ ] Images/videos: profile photo, hobby shots (climbing/chess/snooker), product screenshots.

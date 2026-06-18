@@ -2,7 +2,7 @@ const workExperience = [
   {
     role: 'Product Manager (AI / Voice AI)',
     company: 'Ignosis',
-    period: 'Present',
+    period: 'Mar 2026 – Present',
     description:
       'AI Product Manager working on voice AI. Ignosis built its own voice platform — orchestrating LLM, speech-to-text, and text-to-speech providers into natural, real-time conversations.',
     achievements: [
@@ -13,7 +13,7 @@ const workExperience = [
   {
     role: 'Associate Product Manager',
     company: 'CASHe',
-    period: '2025',
+    period: 'Apr 2025 – Mar 2026',
     description:
       'Founding PM of Karat Wealth (digital Fixed Deposits) and KaratClub (MF rewards). Led a 14-person team across app, web, and website, and built the analytics that ran daily operations.',
     achievements: [
@@ -25,7 +25,7 @@ const workExperience = [
   {
     role: 'Product Analyst',
     company: 'CASHe',
-    period: '2024 – 2025',
+    period: 'Jul 2024 – Mar 2025',
     description:
       'Drove conversion and reliability on the 13Karat P2P platform through data, experimentation, and targeted engineering.',
     achievements: [
@@ -37,7 +37,7 @@ const workExperience = [
   {
     role: 'Product Management Intern',
     company: 'CASHe',
-    period: '2023 – 2024',
+    period: 'Jul 2023 – Jun 2024',
     description:
       'Built the data foundation for the 13Karat P2P investment platform and automated core operational workflows.',
     achievements: [
