@@ -1,150 +1,145 @@
-import Reveal from './Reveal'
+'use client'
 
-const workExperience = [
+import { motion } from 'framer-motion'
+
+const timeline = [
   {
-    role: 'Product Manager (AI / Voice AI)',
+    initials: 'IG',
+    color: 'bg-violet-600',
     company: 'Ignosis',
+    role: 'Product Manager — Voice AI',
     period: 'Mar 2026 – Present',
-    description:
-      'AI Product Manager working on voice AI. Ignosis built its own voice platform — orchestrating LLM, speech-to-text, and text-to-speech providers into natural, real-time conversations.',
-    achievements: [
-      'Own product for a voice AI stack spanning STT, LLM, and TTS orchestration',
-      'Translate cutting-edge AI capability into reliable, real-world conversation products',
-    ],
+    impact: 'Building a proprietary voice AI platform — orchestrating LLM, STT and TTS providers into natural, real-time financial conversations.',
   },
   {
+    initials: 'CS',
+    color: 'bg-indigo-600',
+    company: 'CASHe',
     role: 'Associate Product Manager',
-    company: 'CASHe',
     period: 'Apr 2025 – Mar 2026',
-    description:
-      'Founding PM of Karat Wealth (digital Fixed Deposits) and KaratClub (MF rewards). Led a 14-person team across app, web, and website, and built the analytics that ran daily operations.',
-    achievements: [
-      'Launched Karat Wealth app, web journey & website with a team of 14',
-      'Designed automated Push / SMS / WhatsApp lifecycle campaigns → +74% user-to-investor conversion',
-      'Built the end-to-end analytics suite for journey visualization and ops',
-    ],
+    impact: 'Founding PM on Karat Wealth (FD) and KaratClub (MF rewards). Led a 14-person team from wireframes to launch. +74% user-to-investor conversion.',
   },
   {
+    initials: 'CS',
+    color: 'bg-sky-500',
+    company: 'CASHe',
     role: 'Product Analyst',
-    company: 'CASHe',
     period: 'Jul 2024 – Mar 2025',
-    description:
-      'Drove conversion and reliability on the 13Karat P2P platform through data, experimentation, and targeted engineering.',
-    achievements: [
-      'Shipped repayment tracking → -70% customer queries',
-      'Built fuzzy-logic matching → -40% name-match failures, better bank verification',
-      'Ran targeted A/B tests on high-intent segments → +57% lead-to-investor conversion',
-    ],
+    impact: 'Shipped repayment tracking, fuzzy-logic bank verification, and A/B-tested segments — cutting queries by 70% and lifting lead conversion by 57%.',
   },
   {
-    role: 'Product Management Intern',
+    initials: 'CS',
+    color: 'bg-teal-500',
     company: 'CASHe',
+    role: 'Product Management Intern',
     period: 'Jul 2023 – Jun 2024',
-    description:
-      'Built the data foundation for the 13Karat P2P investment platform and automated core operational workflows.',
-    achievements: [
-      'Built the complete analytics suite (Python, SQL, Power BI) for onboarding, investing & withdrawals',
-      'Automated growth, ops & support workflows → -50% customer TAT',
-      'Designed a callbacks dump table as an insurance layer against data loss & rework',
-    ],
+    impact: 'Built the complete analytics suite (Python, SQL, Power BI) for the 13Karat P2P platform. Automated ops workflows, cutting customer TAT by 50%.',
   },
 ]
 
-const education = [
-  {
-    degree: 'BE Electrical & Electronics Eng. + MSc Physics',
-    school: 'BITS Pilani, Hyderabad',
-    period: '2019 – 2024',
-    detail: 'Integrated Master’s · CGPA 8.26 · Minor in Finance',
-  },
-]
+const education = {
+  degree: 'BE Electrical & Electronics + MSc Physics',
+  minor: 'Minor in Finance',
+  school: 'BITS Pilani, Hyderabad',
+  period: '2019 – 2024',
+  cgpa: '8.26',
+}
 
 export default function Experience() {
   return (
-    <section id="experience" className="bg-slate-50 py-24 px-6 md:px-12">
+    <section id="experience" className="bg-white py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-14">
-          <p className="text-indigo-600 font-medium text-sm tracking-widest uppercase mb-3">
-            Background
+
+        <motion.div
+          className="mb-16"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <p className="text-indigo-600 font-medium text-sm tracking-widest uppercase mb-2">
+            The Journey
           </p>
           <h2 className="text-4xl font-bold text-slate-900">Experience</h2>
-        </div>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-12">
-          {/* Work timeline */}
-          <div className="lg:col-span-2 space-y-8">
-            {workExperience.map((job, i) => (
-              <Reveal key={i} delay={i * 0.08} className="relative pl-8 border-l-2 border-slate-200">
-                <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-indigo-600 border-2 border-white" />
-                <div className="bg-white rounded-2xl p-6 border border-slate-200">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-3">
-                    <div>
-                      <h3 className="font-bold text-slate-900 text-lg">{job.role}</h3>
-                      <p className="text-indigo-600 font-medium text-sm">{job.company}</p>
-                    </div>
-                    <span className="text-slate-400 text-sm font-medium whitespace-nowrap">
-                      {job.period}
-                    </span>
+        <div className="grid lg:grid-cols-3 gap-16">
+
+          {/* Timeline */}
+          <div className="lg:col-span-2 relative">
+            {/* Vertical connector line */}
+            <div className="absolute left-5 top-6 bottom-6 w-px bg-slate-100" />
+
+            <div className="space-y-10">
+              {timeline.map((job, i) => (
+                <motion.div
+                  key={i}
+                  className="relative flex gap-6"
+                  initial={{ opacity: 0, x: -24 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.55, delay: i * 0.1 }}
+                >
+                  {/* Company avatar */}
+                  <div className={`relative z-10 w-10 h-10 rounded-xl ${job.color} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                    <span className="text-white text-xs font-bold tracking-wide">{job.initials}</span>
                   </div>
-                  <p className="text-slate-600 text-sm leading-relaxed mb-4">
-                    {job.description}
-                  </p>
-                  <ul className="space-y-1.5">
-                    {job.achievements.map((a, j) => (
-                      <li key={j} className="flex items-start gap-2 text-sm text-slate-600">
-                        <span className="text-indigo-400 mt-0.5 flex-shrink-0">▸</span>
-                        {a}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Reveal>
-            ))}
+
+                  {/* Content */}
+                  <div className="flex-1 pb-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-3">
+                      <div>
+                        <p className="font-bold text-slate-900 text-lg leading-tight">{job.company}</p>
+                        <p className="text-indigo-600 text-sm font-medium">{job.role}</p>
+                      </div>
+                      <span className="text-slate-400 text-sm whitespace-nowrap">{job.period}</span>
+                    </div>
+                    <p className="text-slate-500 leading-relaxed">{job.impact}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
 
-          {/* Education sidebar */}
-          <Reveal delay={0.15}>
-            <h3 className="font-bold text-slate-900 text-lg mb-4">Education</h3>
-            <div className="space-y-4">
-              {education.map((edu, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-2xl p-6 border border-slate-200"
-                >
-                  <p className="font-semibold text-slate-900">{edu.degree}</p>
-                  <p className="text-indigo-600 text-sm font-medium mt-1">{edu.school}</p>
-                  <p className="text-slate-400 text-sm mt-1">{edu.period}</p>
-                  <p className="text-slate-500 text-sm mt-3">{edu.detail}</p>
+          {/* Education + toolkit */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-5">Education</p>
+              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 mb-8">
+                <p className="font-bold text-slate-900 leading-snug">{education.degree}</p>
+                <p className="text-indigo-600 text-sm font-medium mt-1">{education.minor}</p>
+                <p className="text-slate-400 text-sm mt-3">{education.school} · {education.period}</p>
+                <div className="mt-4 inline-flex items-center gap-2 bg-indigo-50 rounded-lg px-3 py-1.5">
+                  <span className="text-indigo-600 font-bold text-sm">CGPA {education.cgpa}</span>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            {/* Skills */}
-            <h3 className="font-bold text-slate-900 text-lg mt-8 mb-4">Toolkit</h3>
-            <div className="bg-white rounded-2xl p-6 border border-slate-200">
-              {[
-                { category: 'Data', items: ['Python', 'SQL', 'Power BI', 'Excel'] },
-                { category: 'Product', items: ['UX Research', 'Wireframing', 'A/B Testing', 'Analytics'] },
-                { category: 'Domain', items: ['P2P Lending', 'Fixed Deposits', 'Mutual Funds', 'Voice AI'] },
-              ].map((group) => (
-                <div key={group.category} className="mb-4 last:mb-0">
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    {group.category}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {group.items.map((item) => (
-                      <span
-                        key={item}
-                        className="text-xs bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full"
-                      >
-                        {item}
-                      </span>
-                    ))}
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-5">Toolkit</p>
+              <div className="space-y-4">
+                {[
+                  { label: 'Data', items: ['Python', 'SQL', 'Power BI', 'Excel'] },
+                  { label: 'Product', items: ['UX Research', 'Wireframing', 'A/B Testing', 'Analytics'] },
+                  { label: 'Domain', items: ['Fintech', 'P2P', 'Fixed Deposits', 'Mutual Funds', 'Voice AI'] },
+                ].map(group => (
+                  <div key={group.label}>
+                    <p className="text-xs text-slate-400 mb-2">{group.label}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {group.items.map(item => (
+                        <span key={item} className="text-xs bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </Reveal>
+                ))}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

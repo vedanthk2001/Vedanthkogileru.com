@@ -1,80 +1,87 @@
-import Reveal from './Reveal'
+'use client'
 
-const strengths = [
+import { motion } from 'framer-motion'
+
+const chapters = [
   {
-    icon: '🧮',
-    title: 'Engineer + Physicist',
-    description:
-      'EE and MSc Physics from BITS Pilani. I think in systems and reason from first principles.',
+    number: '01',
+    label: 'The Beginning',
+    headline: 'Started a YouTube channel to teach kids how to invest.',
+    body: 'Before building products, I was teaching. Teenvesting was a financial literacy channel I built in college — partnered with Groww, racked up 100K+ impressions, and proved that young Indians were hungry for this. The mission was set.',
+    stat: { value: '100K+', label: 'impressions' },
   },
   {
-    icon: '💰',
-    title: 'Fintech to the core',
-    description:
-      'A finance minor and a genuine obsession with how money moves — P2P lending, FDs, mutual funds, and beyond.',
+    number: '02',
+    label: 'The Builder',
+    headline: 'Then I built the products they would actually invest through.',
+    body: 'At CASHe I went from intern to Founding PM — twice over. I built a P2P lending platform, then took Karat Wealth (FD) and KaratClub (MF rewards) from first wireframes to production apps. Along the way I built the analytics infrastructure the whole team ran on.',
+    stat: { value: '2', label: 'products as Founding PM' },
   },
   {
-    icon: '🚀',
-    title: '0→1 builder',
-    description:
-      'Founding PM twice over. Comfortable in ambiguity, turning a blank canvas into a shipped product.',
-  },
-  {
-    icon: '📊',
-    title: 'Data-native PM',
-    description:
-      'I don’t just use analytics — I build the analytics suites my own teams run on. Python, SQL, Power BI.',
+    number: '03',
+    label: 'The AI',
+    headline: 'Now I\'m building the AI behind financial conversations.',
+    body: "At Ignosis I work on voice AI — orchestrating LLM, STT and TTS providers into natural conversations. The mission hasn't changed. The medium is now your voice.",
+    stat: { value: '0→1', label: 'again, in AI' },
   },
 ]
 
 export default function About() {
   return (
-    <section id="about" className="bg-slate-50 py-24 px-6 md:px-12">
+    <section id="about" className="bg-white py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-16 items-start">
-          <Reveal>
-            <p className="text-indigo-600 font-medium text-sm tracking-widest uppercase mb-3">
-              About Me
-            </p>
-            <h2 className="text-4xl font-bold text-slate-900 mb-6 leading-tight">
-              Making investing accessible &mdash; one product at a time.
-            </h2>
-            <div className="space-y-4 text-slate-600 text-lg leading-relaxed">
-              <p>
-                I&apos;m a Product Manager who&apos;s heads-over-heels into fintech.
-                My mission has stayed constant while the surface area keeps growing:
-                make investing accessible and rewarding for Indians.
-              </p>
-              <p>
-                It started in college with{' '}
-                <span className="font-medium text-slate-800">Teenvesting</span>, a
-                financial-literacy channel for young people. Then I went deeper &mdash;
-                building the platforms people actually invest through at{' '}
-                <span className="font-medium text-slate-800">CASHe</span>: a P2P
-                lending product, a digital Fixed Deposit platform, and a mutual-fund
-                rewards club, all as Founding PM.
-              </p>
-              <p>
-                Today I&apos;m an{' '}
-                <span className="font-medium text-slate-800">AI Product Manager at Ignosis</span>,
-                working on voice AI &mdash; orchestrating LLM, speech-to-text, and
-                text-to-speech providers into natural conversations. The mission is
-                the same; the medium is now your voice.
-              </p>
-            </div>
-          </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {strengths.map((s, i) => (
-              <Reveal key={s.title} delay={i * 0.1} className="h-full">
-                <div className="bg-white rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-all h-full">
-                  <span className="text-2xl mb-3 block">{s.icon}</span>
-                  <h3 className="font-semibold text-slate-900 mb-2">{s.title}</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">{s.description}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+        {/* Opening statement */}
+        <motion.p
+          className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight max-w-4xl mb-24"
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.7 }}
+        >
+          I&apos;ve spent my entire career making investing{' '}
+          <span className="text-indigo-600">accessible</span> — first by educating,
+          then by building, now by giving it a voice.
+        </motion.p>
+
+        {/* Three chapters */}
+        <div className="space-y-20">
+          {chapters.map((ch, i) => (
+            <motion.div
+              key={ch.number}
+              className="grid md:grid-cols-12 gap-8 items-start"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.65, delay: 0.05 }}
+            >
+              {/* Chapter number + label */}
+              <div className="md:col-span-2">
+                <p className="text-7xl font-bold text-slate-100 leading-none select-none">
+                  {ch.number}
+                </p>
+                <p className="text-xs font-semibold text-indigo-500 uppercase tracking-widest mt-2">
+                  {ch.label}
+                </p>
+              </div>
+
+              {/* Content */}
+              <div className="md:col-span-7">
+                <h3 className="text-2xl md:text-3xl font-bold text-slate-900 leading-snug mb-4">
+                  {ch.headline}
+                </h3>
+                <p className="text-slate-500 text-lg leading-relaxed">
+                  {ch.body}
+                </p>
+              </div>
+
+              {/* Stat */}
+              <div className="md:col-span-3 md:text-right">
+                <p className="text-5xl font-bold text-indigo-600">{ch.stat.value}</p>
+                <p className="text-sm text-slate-400 mt-1">{ch.stat.label}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
