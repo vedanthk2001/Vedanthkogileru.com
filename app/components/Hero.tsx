@@ -3,15 +3,22 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
-const CHAOS_MS = 2600
-const MAX_PARTICLES = 420
+const CHAOS_MS = 2200
+const COLLAPSE_MS = 1500
+const MAX_PARTICLES = 520
 
 type Particle = {
   x: number; y: number
   vx: number; vy: number
+  sx: number; sy: number // position captured when collapse begins
   tx: number; ty: number
   r: number
   color: string
+}
+
+// ease-in-out so the cloud gathers slowly then snaps into the letters
+function easeInOutCubic(t: number) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 }
 
 function rand(a: number, b: number) { return Math.random() * (b - a) + a }
@@ -32,7 +39,7 @@ function sampleText(lines: string[], w: number, h: number, count: number) {
   c.fillRect(0, 0, w, h)
 
   // Pick font size that fits the widest line within 88% of width
-  let size = Math.min(w / 9, 96)
+  let size = Math.min(w / 7, 120)
   c.font = `800 ${size}px Inter, system-ui, sans-serif`
   c.textAlign = 'center'
   c.textBaseline = 'middle'
@@ -90,8 +97,9 @@ export default function Hero() {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let w = 0
     let h = 0
+    let orderStart = 0 // timestamp when the collapse begins
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
-    const lines = ['My job is to absorb', 'the entropy.']
+    const lines = ['Hi, I’m Vedanth']
 
     const init = () => {
       const rect = canvas.getBoundingClientRect()
@@ -105,8 +113,10 @@ export default function Hero() {
       particlesRef.current = targets.map((t, i) => ({
         x: rand(0, w),
         y: rand(0, h),
-        vx: rand(-2.8, 2.8),
-        vy: rand(-2.8, 2.8),
+        vx: rand(-3, 3),
+        vy: rand(-3, 3),
+        sx: 0,
+        sy: 0,
         tx: t.x,
         ty: t.y,
         r: rand(1.3, 2.2),
@@ -115,6 +125,7 @@ export default function Hero() {
 
       phaseRef.current = 'chaos'
       startRef.current = performance.now()
+      orderStart = 0
       settledRef.current = false
       setSettled(false)
 
@@ -134,9 +145,10 @@ export default function Hero() {
       const elapsed = now - startRef.current
       if (phaseRef.current === 'chaos' && elapsed > CHAOS_MS) {
         phaseRef.current = 'order'
+        orderStart = now
+        // freeze each particle's current spot as the collapse origin
+        for (const p of ps) { p.sx = p.x; p.sy = p.y }
       }
-
-      let totalDist = 0
 
       for (const p of ps) {
         if (phaseRef.current === 'chaos') {
@@ -145,11 +157,10 @@ export default function Hero() {
           if (p.x <= 0 || p.x >= w) { p.vx *= -1; p.x = Math.max(0, Math.min(w, p.x)) }
           if (p.y <= 0 || p.y >= h) { p.vy *= -1; p.y = Math.max(0, Math.min(h, p.y)) }
         } else {
-          const dx = p.tx - p.x
-          const dy = p.ty - p.y
-          p.x += dx * 0.075
-          p.y += dy * 0.075
-          totalDist += Math.abs(dx) + Math.abs(dy)
+          const t = Math.min(1, (now - orderStart) / COLLAPSE_MS)
+          const e = easeInOutCubic(t)
+          p.x = p.sx + (p.tx - p.sx) * e
+          p.y = p.sy + (p.ty - p.sy) * e
         }
 
         ctx.beginPath()
@@ -158,7 +169,7 @@ export default function Hero() {
         ctx.fill()
       }
 
-      if (phaseRef.current === 'order' && !settledRef.current && totalDist / ps.length < 0.6) {
+      if (phaseRef.current === 'order' && !settledRef.current && now - orderStart >= COLLAPSE_MS) {
         settledRef.current = true
         setSettled(true)
       }
@@ -189,27 +200,50 @@ export default function Hero() {
         <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] rounded-full bg-sky-50 blur-3xl" />
       </div>
 
-      {/* Particle canvas: fills the whole screen, text forms at ~40% height */}
+      {/* Particle canvas: fills the whole screen, text gathers at ~40% height.
+          Fades out once the cloud has assembled so the solid headline shows. */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
+        className={`absolute inset-0 w-full h-full transition-opacity duration-700 ${
+          settled ? 'opacity-0' : 'opacity-100'
+        }`}
         aria-hidden="true"
       />
 
-      {/* DOM content sits below the particle text (~56vh down) */}
+      {/* Solid headline: sits exactly where the particles gather, fades in
+          as they dissolve so the letters are crisp and fully readable */}
+      <motion.h1
+        className="absolute left-0 right-0 px-6 text-center text-5xl md:text-7xl lg:text-8xl font-extrabold text-slate-900 leading-none"
+        style={{ top: '40%', transform: 'translateY(-50%)' }}
+        initial={{ opacity: 0 }}
+        animate={settled ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.7 }}
+      >
+        Hi, I&rsquo;m Vedanth
+      </motion.h1>
+
+      {/* DOM content sits below the headline (~56vh down) */}
       <div
         className="relative z-10 max-w-2xl mx-auto px-6 md:px-12 text-center"
         style={{ paddingTop: '56vh' }}
       >
+        <motion.h2
+          className="text-2xl md:text-4xl font-bold text-slate-900 leading-snug mb-4"
+          initial={{ opacity: 0, y: 18 }}
+          animate={settled ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.9, delay: 0.1 }}
+        >
+          and my job is to absorb the entropy.
+        </motion.h2>
+
         <motion.p
-          className="text-slate-500 text-lg md:text-xl leading-relaxed mb-8"
+          className="text-slate-500 text-base md:text-lg leading-relaxed mb-8"
           initial={{ opacity: 0, y: 16 }}
           animate={settled ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, delay: 0.15 }}
+          transition={{ duration: 0.9, delay: 0.25 }}
         >
-          I&apos;m Vedanth Kogileru, an AI Product Manager at Ignosis.
-          Disorder is the default state of every product and team.
-          My work is the energy that keeps it in order.
+          AI Product Manager at Ignosis. Disorder is the default state of every
+          product and team. My work is the energy that keeps it in order.
         </motion.p>
 
         <motion.div
