@@ -24,10 +24,10 @@ function easeInOutCubic(t: number) {
 function rand(a: number, b: number) { return Math.random() * (b - a) + a }
 
 const COLORS = [
-  'rgba(79, 70, 229, 0.92)',
-  'rgba(99, 102, 241, 0.85)',
-  'rgba(129, 140, 248, 0.75)',
-  'rgba(14, 165, 233, 0.80)',
+  'rgba(15, 15, 15, 0.85)',
+  'rgba(15, 15, 15, 0.70)',
+  'rgba(15, 15, 15, 0.55)',
+  'rgba(15, 15, 15, 0.90)',
 ]
 
 function sampleText(lines: string[], w: number, h: number, count: number) {
