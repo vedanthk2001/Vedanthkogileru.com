@@ -131,8 +131,7 @@ export default function Hero() {
       orderStart = 0
       settledRef.current = false
       setSettled(false)
-      // text starts as a faint ghost; canvas fully visible
-      setOpacities(1, 0.06)
+      setOpacities(1, 0)
 
       if (reduced) {
         particlesRef.current.forEach(p => { p.x = p.tx; p.y = p.ty })
@@ -169,8 +168,7 @@ export default function Hero() {
           ctx.fill()
         }
 
-        // Canvas fades out, text darkens — driven by the same progress value
-        setOpacities(1 - t, 0.06 + 0.94 * t)
+        setOpacities(1 - t, t)
 
         if (!settledRef.current && t >= 1) {
           settledRef.current = true
@@ -223,7 +221,7 @@ export default function Hero() {
         style={{
           top: '40%',
           transform: 'translateY(-50%)',
-          opacity: 0.06,
+          opacity: 0,
           fontSize: headlineSize ? `${headlineSize}px` : undefined,
         }}
       >
