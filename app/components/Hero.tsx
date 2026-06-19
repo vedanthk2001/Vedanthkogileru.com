@@ -236,52 +236,54 @@ export default function Hero() {
         Hi, I&rsquo;m<br />Vedanth
       </h1>
 
-      {/* Tagline pinned immediately below the name */}
-      <motion.h2
-        className="absolute left-0 right-0 px-6 text-center text-xl md:text-3xl font-semibold text-slate-700 leading-snug"
+      {/* Tagline + description grouped directly below the name */}
+      <div
+        className="absolute left-0 right-0 px-6"
         style={{
           top: '40%',
-          transform: `translateY(${(headlineSize ?? 0) + 20}px)`,
+          transform: `translateY(${(headlineSize ?? 0) + 24}px)`,
         }}
-        initial={{ opacity: 0 }}
-        animate={settled ? { opacity: 1 } : {}}
-        transition={{ duration: 0.7, delay: 0.1 }}
       >
-        and my job is to absorb the entropy.
-      </motion.h2>
+        <motion.h2
+          className="text-center text-xl md:text-3xl font-semibold text-slate-700 leading-snug"
+          initial={{ opacity: 0 }}
+          animate={settled ? { opacity: 1 } : {}}
+          transition={{ duration: 0.7, delay: 0.1 }}
+        >
+          and my job is to absorb entropy.
+        </motion.h2>
 
-      {/* Description + CTAs anchored to bottom of viewport */}
-      <div className="absolute bottom-0 left-0 right-0 pb-20 flex flex-col items-center gap-5 px-6">
         <motion.p
-          className="text-slate-500 text-sm md:text-base leading-relaxed text-center max-w-md"
-          initial={{ opacity: 0, y: 10 }}
+          className="mt-4 text-slate-500 text-sm md:text-base leading-relaxed text-center max-w-md mx-auto"
+          initial={{ opacity: 0, y: 8 }}
           animate={settled ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.25 }}
         >
           AI Product Manager. Disorder is the default state of every product
           and team, and my work is the energy that keeps it in order.
         </motion.p>
-
-        <motion.div
-          className="flex items-center justify-center gap-4"
-          initial={{ opacity: 0 }}
-          animate={settled ? { opacity: 1 } : {}}
-          transition={{ duration: 0.7, delay: 0.4 }}
-        >
-          <a
-            href="#projects"
-            className="px-6 py-3 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors"
-          >
-            See the work
-          </a>
-          <a
-            href="#contact"
-            className="px-6 py-3 rounded-full border border-slate-200 text-slate-600 text-sm font-medium hover:border-indigo-300 hover:text-indigo-600 transition-colors"
-          >
-            Get in touch
-          </a>
-        </motion.div>
       </div>
+
+      {/* CTAs anchored to bottom */}
+      <motion.div
+        className="absolute bottom-16 left-0 right-0 flex items-center justify-center gap-4 px-6"
+        initial={{ opacity: 0 }}
+        animate={settled ? { opacity: 1 } : {}}
+        transition={{ duration: 0.7, delay: 0.4 }}
+      >
+        <a
+          href="#projects"
+          className="px-6 py-3 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors"
+        >
+          See the work
+        </a>
+        <a
+          href="#contact"
+          className="px-6 py-3 rounded-full border border-slate-200 text-slate-600 text-sm font-medium hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+        >
+          Get in touch
+        </a>
+      </motion.div>
 
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
