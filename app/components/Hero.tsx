@@ -86,7 +86,9 @@ export default function Hero() {
   const phaseRef = useRef<'chaos' | 'order'>('chaos')
   const startRef = useRef<number>(0)
   const settledRef = useRef(false)
+  const textStartedRef = useRef(false)
   const [settled, setSettled] = useState(false)
+  const [textVisible, setTextVisible] = useState(false)
   // px size of the particle text, mirrored onto the solid headline so the
   // crossfade lands with no jump in size
   const [headlineSize, setHeadlineSize] = useState<number | null>(null)
@@ -131,13 +133,17 @@ export default function Hero() {
       startRef.current = performance.now()
       orderStart = 0
       settledRef.current = false
+      textStartedRef.current = false
       setSettled(false)
+      setTextVisible(false)
 
       if (reduced) {
         particlesRef.current.forEach(p => { p.x = p.tx; p.y = p.ty; p.vx = 0; p.vy = 0 })
         phaseRef.current = 'order'
         settledRef.current = true
+        textStartedRef.current = true
         setSettled(true)
+        setTextVisible(true)
       }
     }
 
@@ -173,9 +179,18 @@ export default function Hero() {
         ctx.fill()
       }
 
-      if (phaseRef.current === 'order' && !settledRef.current && now - orderStart >= COLLAPSE_MS) {
-        settledRef.current = true
-        setSettled(true)
+      if (phaseRef.current === 'order') {
+        const elapsed = now - orderStart
+        // At 65% of collapse, text starts fading in through the particles
+        if (!textStartedRef.current && elapsed > COLLAPSE_MS * 0.65) {
+          textStartedRef.current = true
+          setTextVisible(true)
+        }
+        // At 100%, canvas begins fading out
+        if (!settledRef.current && elapsed >= COLLAPSE_MS) {
+          settledRef.current = true
+          setSettled(true)
+        }
       }
 
       rafRef.current = requestAnimationFrame(draw)
@@ -206,26 +221,27 @@ export default function Hero() {
 
       {/* Particle canvas: fills the whole screen, text gathers at ~40% height.
           Fades out once the cloud has assembled so the solid headline shows. */}
+      {/* Canvas fades out slowly after collapse completes */}
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-out ${
+        className={`absolute inset-0 w-full h-full transition-opacity duration-[1800ms] ease-in-out ${
           settled ? 'opacity-0' : 'opacity-100'
         }`}
         aria-hidden="true"
       />
 
-      {/* Solid headline: same px size and position as the particle text, so the
-          dots appear to fill into crisp letters with no jump */}
+      {/* Solid headline starts fading in at 65% of collapse, so particles
+          dissolve into it rather than disappearing to reveal it */}
       <motion.h1
-        className="absolute left-0 right-0 px-6 text-center text-6xl font-extrabold text-slate-900 leading-none"
+        className="absolute left-0 right-0 px-6 text-center font-extrabold text-slate-900 leading-none"
         style={{
           top: '40%',
           transform: 'translateY(-50%)',
           fontSize: headlineSize ? `${headlineSize}px` : undefined,
         }}
         initial={{ opacity: 0 }}
-        animate={settled ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 1, delay: 0.15, ease: 'easeOut' }}
+        animate={textVisible ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 1.4, ease: 'easeOut' }}
       >
         Hi, I&rsquo;m Vedanth
       </motion.h1>
