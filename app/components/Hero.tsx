@@ -214,7 +214,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative min-h-screen bg-white pt-16 overflow-hidden">
+    <section className="relative h-screen bg-white overflow-hidden">
       <div className="absolute inset-0 -z-10 pointer-events-none">
         <div className="absolute -top-32 -left-24 w-[34rem] h-[34rem] rounded-full bg-indigo-50 blur-3xl" />
         <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] rounded-full bg-sky-50 blur-3xl" />
@@ -222,7 +222,7 @@ export default function Hero() {
 
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" aria-hidden="true" />
 
-      {/* Ghost text: starts at opacity 0.06, darkens to 1 as particles arrive */}
+      {/* Name — ghost at 0, crossfades in once particles settle */}
       <h1
         ref={textRef}
         className="absolute left-0 right-0 px-6 text-center font-extrabold text-slate-900 leading-none pointer-events-none select-none"
@@ -236,25 +236,27 @@ export default function Hero() {
         Hi, I&rsquo;m<br />Vedanth
       </h1>
 
-      {/* Below-fold content reveals after particles settle */}
-      <div
-        className="relative z-10 max-w-2xl mx-auto px-6 md:px-12 text-center"
-        style={{ paddingTop: '50vh' }}
+      {/* Tagline pinned immediately below the name */}
+      <motion.h2
+        className="absolute left-0 right-0 px-6 text-center text-xl md:text-3xl font-semibold text-slate-700 leading-snug"
+        style={{
+          top: '40%',
+          transform: `translateY(${(headlineSize ?? 0) + 20}px)`,
+        }}
+        initial={{ opacity: 0 }}
+        animate={settled ? { opacity: 1 } : {}}
+        transition={{ duration: 0.7, delay: 0.1 }}
       >
-        <motion.h2
-          className="text-2xl md:text-4xl font-bold text-slate-900 leading-snug mb-4"
-          initial={{ opacity: 0, y: 18 }}
-          animate={settled ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, delay: 0.1 }}
-        >
-          and my job is to absorb the entropy.
-        </motion.h2>
+        and my job is to absorb the entropy.
+      </motion.h2>
 
+      {/* Description + CTAs anchored to bottom of viewport */}
+      <div className="absolute bottom-0 left-0 right-0 pb-20 flex flex-col items-center gap-5 px-6">
         <motion.p
-          className="text-slate-500 text-base md:text-lg leading-relaxed mb-8"
-          initial={{ opacity: 0, y: 16 }}
+          className="text-slate-500 text-sm md:text-base leading-relaxed text-center max-w-md"
+          initial={{ opacity: 0, y: 10 }}
           animate={settled ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, delay: 0.25 }}
+          transition={{ duration: 0.8, delay: 0.25 }}
         >
           AI Product Manager. Disorder is the default state of every product
           and team, and my work is the energy that keeps it in order.
@@ -264,7 +266,7 @@ export default function Hero() {
           className="flex items-center justify-center gap-4"
           initial={{ opacity: 0 }}
           animate={settled ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
         >
           <a
             href="#projects"
