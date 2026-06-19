@@ -131,6 +131,8 @@ export default function Hero() {
       orderStart = 0
       settledRef.current = false
       setSettled(false)
+      canvas.style.transition = ''
+      if (textRef.current) textRef.current.style.transition = ''
       setOpacities(1, 0)
 
       if (reduced) {
@@ -155,24 +157,30 @@ export default function Hero() {
       }
 
       if (phaseRef.current === 'order') {
-        // t drives both particle positions AND the opacity crossover in one go
         const t = Math.min(1, (now - orderStart) / COLLAPSE_MS)
-        const e = easeInOutCubic(t)
 
-        for (const p of ps) {
-          p.x = p.sx + (p.tx - p.sx) * e
-          p.y = p.sy + (p.ty - p.sy) * e
-          ctx.beginPath()
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-          ctx.fillStyle = p.color
-          ctx.fill()
-        }
+        if (!settledRef.current) {
+          const e = easeInOutCubic(t)
+          for (const p of ps) {
+            p.x = p.sx + (p.tx - p.sx) * e
+            p.y = p.sy + (p.ty - p.sy) * e
+            ctx.beginPath()
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+            ctx.fillStyle = p.color
+            ctx.fill()
+          }
 
-        setOpacities(1 - t, t)
-
-        if (!settledRef.current && t >= 1) {
-          settledRef.current = true
-          setSettled(true)
+          if (t >= 1) {
+            settledRef.current = true
+            setSettled(true)
+            // particles fully settled — crossfade canvas out, text in
+            canvas.style.transition = 'opacity 0.5s ease'
+            canvas.style.opacity = '0'
+            if (textRef.current) {
+              textRef.current.style.transition = 'opacity 0.5s ease'
+              textRef.current.style.opacity = '1'
+            }
+          }
         }
       } else {
         // chaos: just draw particles, opacities stay at their defaults
