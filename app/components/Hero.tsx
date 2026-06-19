@@ -48,7 +48,7 @@ function sampleText(lines: string[], w: number, h: number, count: number) {
     c.font = `800 ${size}px Inter, system-ui, sans-serif`
   }
 
-  const lh = size * 1.3
+  const lh = size
   const totalH = lines.length * lh
   const centerY = h * 0.40
   const startY = centerY - totalH / 2 + lh / 2
@@ -96,7 +96,7 @@ export default function Hero() {
     let h = 0
     let orderStart = 0
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
-    const lines = ["Hi, I’m Vedanth"]
+    const lines = ["Hi, I’m", "Vedanth"]
 
     const setOpacities = (canvasOp: number, textOp: number) => {
       canvas.style.opacity = String(canvasOp)
@@ -219,7 +219,7 @@ export default function Hero() {
       {/* Ghost text: starts at opacity 0.06, darkens to 1 as particles arrive */}
       <h1
         ref={textRef}
-        className="absolute left-0 right-0 px-6 text-center font-extrabold text-slate-900 leading-none pointer-events-none"
+        className="absolute left-0 right-0 px-6 text-center font-extrabold text-slate-900 leading-none pointer-events-none select-none"
         style={{
           top: '40%',
           transform: 'translateY(-50%)',
@@ -227,7 +227,7 @@ export default function Hero() {
           fontSize: headlineSize ? `${headlineSize}px` : undefined,
         }}
       >
-        Hi, I&rsquo;m Vedanth
+        Hi, I&rsquo;m<br />Vedanth
       </h1>
 
       {/* Below-fold content reveals after particles settle */}
