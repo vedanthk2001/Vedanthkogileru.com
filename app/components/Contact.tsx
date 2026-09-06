@@ -1,4 +1,5 @@
 import Reveal from './Reveal'
+import { LINKS } from '../links'
 
 const links = [
   {
@@ -49,6 +50,36 @@ export default function Contact() {
             product problems. Whether it&apos;s a new role, a collaboration, or just
             comparing notes. I reply to every message.
           </p>
+
+          {/* Primary action: a call beats a form. Booking sits above the
+              secondary contact methods and is the only filled button here. */}
+          <a
+            href={LINKS.calendar}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-4 group p-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition-colors mb-4 shadow-sm"
+          >
+            <span className="text-white group-hover:scale-110 transition-transform">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3M4 11h16M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-xs text-indigo-200 font-medium uppercase tracking-wider">
+                Book a slot
+              </p>
+              <p className="text-white font-semibold">30 minutes, straight in my calendar</p>
+            </div>
+            <svg
+              className="w-4 h-4 text-indigo-200 group-hover:translate-x-1 ml-auto transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
 
           <div className="space-y-4">
             {links.map((link) => (

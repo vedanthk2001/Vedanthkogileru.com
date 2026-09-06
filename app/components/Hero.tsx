@@ -272,7 +272,7 @@ export default function Hero() {
         transition={{ duration: 0.7, delay: 0.4 }}
       >
         <a
-          href="#projects"
+          href="#work"
           className="px-6 py-3 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors"
         >
           See the work
