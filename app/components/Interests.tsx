@@ -9,6 +9,8 @@ type Interest = {
   /** Optional photo. Cards without one keep the emoji at full size.
    *  `caption` renders as a small line under it, for a place or credit. */
   image?: { src: string; w: number; h: number; caption?: string }
+  /** A second photo. The square media box splits into two stacked bands. */
+  image2?: { src: string; alt: string }
   /** Optional outbound link. The whole card becomes clickable when set. */
   href?: string
 }
@@ -31,7 +33,8 @@ const interests: Interest[] = [
     icon: '🎱',
     title: 'Snooker',
     description: 'Precision, patience, and playing position for the shot after this one.',
-    image: { src: '/img/snooker.jpg', w: 900, h: 900 },
+    image: { src: '/img/snooker.jpg', w: 900, h: 450, caption: 'Tournament win' },
+    image2: { src: '/img/snooker-win.jpg', alt: 'Carried off after the tournament win' },
   },
   {
     icon: '📈',
@@ -68,14 +71,33 @@ export default function Interests() {
             >
               {interest.image ? (
                 <figure className="mb-5">
-                <img
-                  src={interest.image.src}
-                  alt={interest.title}
-                  width={interest.image.w}
-                  height={interest.image.h}
-                  loading="lazy"
-                  className="w-full aspect-square object-cover rounded-xl bg-white border border-slate-100"
-                />
+                {interest.image2 ? (
+                  // Two photos share the square box as stacked bands, so this card
+                  // stays the same height as the rest of the grid.
+                  <div className="w-full aspect-square grid grid-rows-2 gap-2">
+                    <img
+                      src={interest.image.src}
+                      alt={interest.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover rounded-xl bg-white border border-slate-100"
+                    />
+                    <img
+                      src={interest.image2.src}
+                      alt={interest.image2.alt}
+                      loading="lazy"
+                      className="w-full h-full object-cover rounded-xl bg-white border border-slate-100"
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={interest.image.src}
+                    alt={interest.title}
+                    width={interest.image.w}
+                    height={interest.image.h}
+                    loading="lazy"
+                    className="w-full aspect-square object-cover rounded-xl bg-white border border-slate-100"
+                  />
+                )}
                 {interest.image.caption && (
                   <figcaption className="text-xs text-slate-400 mt-2">{interest.image.caption}</figcaption>
                 )}
