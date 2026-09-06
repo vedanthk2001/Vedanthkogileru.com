@@ -24,6 +24,8 @@ type Chapter = {
   body: ReactNode
   /** Optional — the earliest chapter has no metric, and inventing one would show. */
   stat?: { value: string; label: string }
+  /** Optional photo, shown in the column the stat would otherwise occupy. */
+  image?: { src: string; alt: string; caption: string }
 }
 
 const chapters: Chapter[] = [
@@ -40,6 +42,11 @@ const chapters: Chapter[] = [
         find the mechanism, adjust. Both are still running.
       </>
     ),
+    image: {
+      src: '/img/vidyaranya.jpg',
+      alt: 'Vidyaranya High School, Hyderabad',
+      caption: 'Vidyaranya High School, Hyderabad',
+    },
   },
   {
     number: '02',
@@ -126,6 +133,21 @@ export default function About() {
 
               {/* Stat */}
               <div className="md:col-span-3 md:text-right">
+                {ch.image && (
+                  <figure className="md:text-left">
+                    <img
+                      src={ch.image.src}
+                      alt={ch.image.alt}
+                      width={640}
+                      height={480}
+                      loading="lazy"
+                      className="w-full rounded-2xl border border-slate-200 object-cover aspect-[4/3]"
+                    />
+                    <figcaption className="text-xs text-slate-400 mt-2 leading-relaxed">
+                      {ch.image.caption}
+                    </figcaption>
+                  </figure>
+                )}
                 {ch.stat && (
                   <>
                     <p className="text-5xl font-bold text-indigo-600">{ch.stat.value}</p>
