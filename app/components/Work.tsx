@@ -59,27 +59,21 @@ type Era = {
 
 const eras: Era[] = [
   {
-    initials: 'TV',
-    color: 'bg-sky-500',
-    company: 'Teenvesting',
-    role: 'Founder',
-    period: 'Jun 2020 to Sep 2022',
-    summary: 'The first 0→1. Solo, during college.',
+    initials: 'IG',
+    color: 'bg-violet-600',
+    mark: '/logos/ignosis.png',
+    site: 'https://ignosis.ai/',
+    company: 'Ignosis',
+    role: 'Product Manager, Voice AI',
+    period: 'Mar 2026 to Present',
+    summary: 'Building the orchestration layer underneath real-time financial conversations.',
     pieces: [
       {
-        name: 'Teenvesting',
-        kind: 'YouTube · Financial Literacy',
+        name: 'Voice AI Platform',
+        kind: 'LLM · STT · TTS orchestration',
         logo: '',
-        body: (
-          <>
-            Financial literacy for teenagers, on YouTube and Instagram &mdash;
-            explaining investing to people my own age at a point when almost nobody
-            was. Partnered with Groww for influencer marketing. 100K+ impressions,
-            12,500+ views and a 5%+ click-through rate, and the reason everything
-            after it happened. Still up: <Teenvesting />.
-          </>
-        ),
-        metric: { value: '100K+', label: 'impressions' },
+        body: 'Ignosis built its own voice stack rather than buying one, so the work runs the full depth of it — provider selection across LLM, speech-to-text and text-to-speech, latency budgets tight enough to hold a natural conversation, and the orchestration that stitches the three layers together.',
+        metric: { value: '0→1', label: 'again, in AI' },
       },
     ],
   },
@@ -117,21 +111,27 @@ const eras: Era[] = [
     ],
   },
   {
-    initials: 'IG',
-    color: 'bg-violet-600',
-    mark: '/logos/ignosis.png',
-    site: 'https://ignosis.ai/',
-    company: 'Ignosis',
-    role: 'Product Manager, Voice AI',
-    period: 'Mar 2026 to Present',
-    summary: 'Building the orchestration layer underneath real-time financial conversations.',
+    initials: 'TV',
+    color: 'bg-sky-500',
+    company: 'Teenvesting',
+    role: 'Founder',
+    period: 'Jun 2020 to Sep 2022',
+    summary: 'The first 0→1. Solo, during college.',
     pieces: [
       {
-        name: 'Voice AI Platform',
-        kind: 'LLM · STT · TTS orchestration',
+        name: 'Teenvesting',
+        kind: 'YouTube · Financial Literacy',
         logo: '',
-        body: 'Ignosis built its own voice stack rather than buying one, so the work runs the full depth of it — provider selection across LLM, speech-to-text and text-to-speech, latency budgets tight enough to hold a natural conversation, and the orchestration that stitches the three layers together.',
-        metric: { value: '0→1', label: 'again, in AI' },
+        body: (
+          <>
+            Financial literacy for teenagers, on YouTube and Instagram &mdash;
+            explaining investing to people my own age at a point when almost nobody
+            was. Partnered with Groww for influencer marketing. 100K+ impressions,
+            12,500+ views and a 5%+ click-through rate, and the reason everything
+            after it happened. Still up: <Teenvesting />.
+          </>
+        ),
+        metric: { value: '100K+', label: 'impressions' },
       },
     ],
   },
