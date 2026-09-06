@@ -84,7 +84,7 @@ const chapters: Chapter[] = [
     number: '03',
     label: 'The Builder',
     headline: 'Then I built the products they would actually invest through.',
-    body: 'At CASHe I went from intern to Founding PM. Twice over. I built a P2P lending platform, then took Karat Wealth (FD) and KaratClub (MF rewards) from first wireframes to production apps — reaching more than 20,000 investors along the way. And I built the analytics infrastructure the whole team ran on.',
+    body: 'At CASHe I went from intern to Founding PM. Twice over. I built a P2P lending platform, then took Karat Wealth (FD) and KaratClub (MF rewards) from first wireframes to production apps — reaching more than 50,000 investors along the way. And I built the analytics infrastructure the whole team ran on.',
     stat: { value: '2', label: 'products as Founding PM' },
   },
   {
