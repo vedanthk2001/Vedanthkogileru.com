@@ -1,9 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="VK">
-  <rect width="100" height="100" rx="24" fill="#0f172a"/>
-  <g fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" transform="translate(-0.5 0)">
-    <path d="M17 32 L32 68 L47 32"/>
-    <path d="M64 32 L64 68"/>
-    <path d="M64 50 L84 32"/>
-    <path d="M64 50 L84 68"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6.221 0.4 11.558 19" role="img" aria-label="Vedanth Kogileru">
+  <style>
+    path { stroke: #0F172A }
+    @media (prefers-color-scheme: dark) { path { stroke: #ffffff } }
+  </style>
+  <g fill="none" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="6">
+    <path d="M7.68 8.058 L12 16.537 L16.32 8.058" stroke-width="2.6"/>
+    <path d="M10.618 4.029 L12 1.316 L13.382 4.029" stroke-width="1.48"/>
   </g>
 </svg>

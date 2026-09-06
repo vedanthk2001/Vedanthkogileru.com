@@ -4,6 +4,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* The navbar is fixed at h-16 (4rem). Without this every #anchor scrolls the
+     section heading underneath it. */
+  scroll-padding-top: 5rem;
 }
 
 @layer base {
@@ -16,4 +19,35 @@ html {
   .section-padding {
     @apply py-20 px-6 md:px-12 lg:px-24;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Logo draw-on. Strokes carry pathLength="1", so the dash maths is independent
+   of the mark's actual path length and of the size it renders at. Order is the
+   order a hand would draw it: V in one down-up motion, then the hat, then the
+   underline.
+   --------------------------------------------------------------------------- */
+@keyframes logo-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Gated on no-preference rather than overridden afterwards: if these rules never
+   apply, the mark simply renders fully drawn. Hiding it by default and relying on
+   an animation to reveal it would mean any failure leaves an invisible logo. */
+@media (prefers-reduced-motion: no-preference) {
+  .logo-draw path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: logo-draw var(--d) cubic-bezier(0.5, 0, 0.35, 1) var(--t) both;
+  }
+  /* Timed against Hero.tsx: CHAOS_MS 2200 + COLLAPSE_MS 1800, so the name lands
+     at ~4.0s. The mark starts as the particles begin collapsing and finishes at
+     ~3.8s — the two come to rest together instead of competing. */
+  .logo-draw .lg-v { --d: 0.70s; --t: 2.40s; }
+  .logo-draw .lg-c { --d: 0.32s; --t: 3.14s; }
+  .logo-draw .lg-r { --d: 0.32s; --t: 3.46s; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
