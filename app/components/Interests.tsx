@@ -2,11 +2,20 @@
 
 import { motion } from 'framer-motion'
 
-const interests = [
+type Interest = {
+  icon: string
+  title: string
+  description: string
+  /** Optional photo. Cards without one keep the emoji at full size. */
+  image?: { src: string; w: number; h: number }
+}
+
+const interests: Interest[] = [
   {
     icon: '🧗',
     title: 'Rock Climbing',
     description: 'Reading the wall, committing to the move. Problem-solving with consequences.',
+    image: { src: '/img/climbing.jpg', w: 640, h: 853 },
   },
   {
     icon: '♟️',
@@ -17,6 +26,7 @@ const interests = [
     icon: '🎱',
     title: 'Snooker',
     description: 'Precision, patience, and playing position for the shot after this one.',
+    image: { src: '/img/snooker.jpg', w: 800, h: 600 },
   },
   {
     icon: '📈',
@@ -51,7 +61,22 @@ export default function Interests() {
               whileHover={{ y: -6 }}
               className="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-colors"
             >
-              <span className="text-3xl mb-4 block">{interest.icon}</span>
+              {interest.image ? (
+                <img
+                  src={interest.image.src}
+                  alt={interest.title}
+                  width={interest.image.w}
+                  height={interest.image.h}
+                  loading="lazy"
+                  className="w-full h-32 object-cover rounded-xl mb-4"
+                />
+              ) : (
+                // Same 8rem block as a photo, so a mixed row of photo and
+                // emoji cards keeps one rhythm instead of leaving dead space.
+                <span className="w-full h-32 mb-4 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-4xl">
+                  {interest.icon}
+                </span>
+              )}
               <h3 className="font-semibold text-slate-900 mb-2">{interest.title}</h3>
               <p className="text-slate-500 text-sm leading-relaxed">{interest.description}</p>
             </motion.div>
