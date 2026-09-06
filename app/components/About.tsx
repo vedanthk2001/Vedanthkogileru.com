@@ -62,8 +62,8 @@ const chapters: Chapter[] = [
       <>
         BITS Pilani, Hyderabad, 2019 to 2024 &mdash; where the physics carried over
         and finance arrived. Electrical engineering, a master&apos;s in physics and a
-        minor in finance, graduating at 8.26: a combination I picked precisely because
-        I could not choose between them. What tied them together was reading Buffett,
+        minor in finance: a combination I picked precisely because I could not choose
+        between them. What tied them together was reading Buffett,
         Munger, Peter Lynch and Howard Marks &mdash; investing as clear thinking under
         uncertainty, not a spreadsheet exercise. So I started{' '}
         <Teenvesting />, explaining it to people my own age. Partnered with Groww.
