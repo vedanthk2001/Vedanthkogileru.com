@@ -88,11 +88,11 @@ const eras: Era[] = [
     summary: 'Two and a half years, three roles, three products — from building the data layer to founding PM on two launches.',
     pieces: [
       {
-        name: '13Karat',
-        kind: 'P2P Lending',
+        name: 'KaratClub',
+        kind: 'MF Privilege Platform',
         logo: '',
-        body: 'A peer-to-peer lending platform putting retail investors directly opposite borrowers. I was on it from the day it went live through to ₹100Cr. Built the complete analytics suite in Python, SQL and Power BI across onboarding, investing and withdrawals, shipped repayment tracking that cut customer queries by 70%, and replaced brittle name matching with fuzzy logic to cut bank-verification failures by 40%.',
-        metric: { value: '₹100Cr', label: 'scaled to, from launch' },
+        body: "Founding PM. India's first portfolio-powered privilege programme: a ₹5L+ mutual fund portfolio unlocks member-only rates on phones, travel and dining — without selling a single unit. Wireframes through to a production app.",
+        metric: { value: '1st', label: 'of its kind in India' },
       },
       {
         name: 'Karat Wealth',
@@ -102,11 +102,11 @@ const eras: Era[] = [
         metric: { value: '+74%', label: 'user-to-investor conversion' },
       },
       {
-        name: 'KaratClub',
-        kind: 'MF Privilege Platform',
+        name: '13Karat',
+        kind: 'P2P Lending',
         logo: '',
-        body: "Founding PM. India's first portfolio-powered privilege programme: a ₹5L+ mutual fund portfolio unlocks member-only rates on phones, travel and dining — without selling a single unit. Wireframes through to a production app.",
-        metric: { value: '1st', label: 'of its kind in India' },
+        body: 'A peer-to-peer lending platform putting retail investors directly opposite borrowers. I was on it from the day it went live through to ₹100Cr. Built the complete analytics suite in Python, SQL and Power BI across onboarding, investing and withdrawals, shipped repayment tracking that cut customer queries by 70%, and replaced brittle name matching with fuzzy logic to cut bank-verification failures by 40%.',
+        metric: { value: '₹100Cr', label: 'scaled to, from launch' },
       },
     ],
   },
