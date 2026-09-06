@@ -46,6 +46,10 @@ type Piece = {
 type Era = {
   initials: string
   color: string
+  /** Square brand mark in public/logos/. Falls back to initials when absent. */
+  mark?: string
+  /** Official site. The company name becomes a link when present. */
+  site?: string
   company: string
   role: string
   period: string
@@ -55,25 +59,35 @@ type Era = {
 
 const eras: Era[] = [
   {
-    initials: 'IG',
-    color: 'bg-violet-600',
-    company: 'Ignosis',
-    role: 'Product Manager, Voice AI',
-    period: 'Mar 2026 to Present',
-    summary: 'Building the orchestration layer underneath real-time financial conversations.',
+    initials: 'TV',
+    color: 'bg-sky-500',
+    company: 'Teenvesting',
+    role: 'Founder',
+    period: 'Jun 2020 to Sep 2022',
+    summary: 'The first 0→1. Solo, during college.',
     pieces: [
       {
-        name: 'Voice AI Platform',
-        kind: 'LLM · STT · TTS orchestration',
+        name: 'Teenvesting',
+        kind: 'YouTube · Financial Literacy',
         logo: '',
-        body: 'Ignosis built its own voice stack rather than buying one, so the work runs the full depth of it — provider selection across LLM, speech-to-text and text-to-speech, latency budgets tight enough to hold a natural conversation, and the orchestration that stitches the three layers together.',
-        metric: { value: '0→1', label: 'again, in AI' },
+        body: (
+          <>
+            Financial literacy for teenagers, on YouTube and Instagram &mdash;
+            explaining investing to people my own age at a point when almost nobody
+            was. Partnered with Groww for influencer marketing. 100K+ impressions,
+            12,500+ views and a 5%+ click-through rate, and the reason everything
+            after it happened. Still up: <Teenvesting />.
+          </>
+        ),
+        metric: { value: '100K+', label: 'impressions' },
       },
     ],
   },
   {
     initials: 'CS',
     color: 'bg-indigo-600',
+    mark: '/logos/cashe.png',
+    site: 'https://www.cashe.co.in/',
     company: 'CASHe',
     role: 'Intern → Product Analyst → Associate PM',
     period: 'Jul 2023 to Mar 2026',
@@ -103,27 +117,21 @@ const eras: Era[] = [
     ],
   },
   {
-    initials: 'TV',
-    color: 'bg-sky-500',
-    company: 'Teenvesting',
-    role: 'Founder',
-    period: 'Jun 2020 to Sep 2022',
-    summary: 'The first 0→1. Solo, during college.',
+    initials: 'IG',
+    color: 'bg-violet-600',
+    mark: '/logos/ignosis.png',
+    site: 'https://ignosis.ai/',
+    company: 'Ignosis',
+    role: 'Product Manager, Voice AI',
+    period: 'Mar 2026 to Present',
+    summary: 'Building the orchestration layer underneath real-time financial conversations.',
     pieces: [
       {
-        name: 'Teenvesting',
-        kind: 'YouTube · Financial Literacy',
+        name: 'Voice AI Platform',
+        kind: 'LLM · STT · TTS orchestration',
         logo: '',
-        body: (
-          <>
-            Financial literacy for teenagers, on YouTube and Instagram &mdash;
-            explaining investing to people my own age at a point when almost nobody
-            was. Partnered with Groww for influencer marketing. 100K+ impressions,
-            12,500+ views and a 5%+ click-through rate, and the reason everything
-            after it happened. Still up: <Teenvesting />.
-          </>
-        ),
-        metric: { value: '100K+', label: 'impressions' },
+        body: 'Ignosis built its own voice stack rather than buying one, so the work runs the full depth of it — provider selection across LLM, speech-to-text and text-to-speech, latency budgets tight enough to hold a natural conversation, and the orchestration that stitches the three layers together.',
+        metric: { value: '0→1', label: 'again, in AI' },
       },
     ],
   },
@@ -164,14 +172,42 @@ export default function Work() {
                   viewport={{ once: true, margin: '-40px' }}
                   transition={{ duration: 0.55, delay: i * 0.08 }}
                 >
-                  <div className={`relative z-10 w-10 h-10 rounded-xl ${era.color} flex items-center justify-center flex-shrink-0 shadow-sm`}>
-                    <span className="text-white text-xs font-bold tracking-wide">{era.initials}</span>
+                  <div
+                    className={`relative z-10 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden ${
+                      era.mark ? 'bg-white border border-slate-200' : era.color
+                    }`}
+                  >
+                    {era.mark ? (
+                      <img
+                        src={era.mark}
+                        alt=""
+                        className="w-7 h-7 object-contain"
+                        loading="lazy"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                      />
+                    ) : (
+                      <span className="text-white text-xs font-bold tracking-wide">{era.initials}</span>
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-2">
                       <div>
-                        <p className="font-bold text-slate-900 text-lg leading-tight">{era.company}</p>
+                        {era.site ? (
+                          <a
+                            href={era.site}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-bold text-slate-900 text-lg leading-tight hover:text-indigo-600 transition-colors inline-flex items-center gap-1.5 group/link"
+                          >
+                            {era.company}
+                            <svg className="w-3.5 h-3.5 text-slate-300 group-hover/link:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5h5m0 0v5m0-5L10 14M9 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-3" />
+                            </svg>
+                          </a>
+                        ) : (
+                          <p className="font-bold text-slate-900 text-lg leading-tight">{era.company}</p>
+                        )}
                         <p className="text-indigo-600 text-sm font-medium">{era.role}</p>
                       </div>
                       <span className="text-slate-400 text-sm whitespace-nowrap">{era.period}</span>
