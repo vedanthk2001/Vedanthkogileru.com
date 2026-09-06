@@ -24,8 +24,10 @@ type Chapter = {
   body: ReactNode
   /** Optional — the earliest chapter has no metric, and inventing one would show. */
   stat?: { value: string; label: string }
-  /** Optional photo, shown in the column the stat would otherwise occupy. */
-  image?: { src: string; alt: string; caption: string }
+  /** Optional photo, shown in the column the stat would otherwise occupy.
+   *  w/h are the real pixel dimensions — the browser derives the aspect ratio
+   *  from them and reserves the space, so nothing is cropped and nothing shifts. */
+  image?: { src: string; alt: string; caption: string; w: number; h: number }
 }
 
 const chapters: Chapter[] = [
@@ -46,6 +48,8 @@ const chapters: Chapter[] = [
       src: '/img/vidyaranya.jpg',
       alt: 'Vidyaranya High School, Hyderabad',
       caption: 'Vidyaranya High School, Hyderabad',
+      w: 640,
+      h: 480,
     },
   },
   {
@@ -65,6 +69,13 @@ const chapters: Chapter[] = [
       </>
     ),
     stat: { value: '100K+', label: 'impressions' },
+    image: {
+      src: '/img/bits.jpg',
+      alt: 'At the BITS Pilani crest, Hyderabad campus',
+      caption: 'BITS Pilani, Hyderabad campus',
+      w: 640,
+      h: 853,
+    },
   },
   {
     number: '03',
@@ -132,16 +143,16 @@ export default function About() {
               </div>
 
               {/* Stat */}
-              <div className="md:col-span-3 md:text-right">
+              <div className={`md:col-span-3 ${ch.image ? '' : 'md:text-right'}`}>
                 {ch.image && (
-                  <figure className="md:text-left">
+                  <figure className="mb-6">
                     <img
                       src={ch.image.src}
                       alt={ch.image.alt}
-                      width={640}
-                      height={480}
+                      width={ch.image.w}
+                      height={ch.image.h}
                       loading="lazy"
-                      className="w-full rounded-2xl border border-slate-200 object-cover aspect-[4/3]"
+                      className="w-full h-auto rounded-2xl border border-slate-200"
                     />
                     <figcaption className="text-xs text-slate-400 mt-2 leading-relaxed">
                       {ch.image.caption}
