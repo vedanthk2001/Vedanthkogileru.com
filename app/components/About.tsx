@@ -37,11 +37,13 @@ const chapters: Chapter[] = [
     headline: 'Born and brought up in Hyderabad.',
     body: (
       <>
-        School at Vidyaranya, most of which I spent on a football pitch, a badminton
-        court or at a table tennis table. The rest went on physics &mdash; the only
-        subject that felt like taking something apart to find out why it worked.
-        Sport and physics turned out to be the same instinct: read the situation,
-        find the mechanism, adjust. Both are still running.
+        Vidyaranya, which had no exams until eighth grade and no uniform at all.
+        What it gave instead was room: whole afternoons under the tamarind tree
+        playing football, basketball, badminton, whatever was going, and the freedom
+        to be interested in something because it was interesting rather than because
+        it was marked. Physics was always closest to my heart &mdash; the only subject
+        that felt like taking something apart to find out why it worked. Sport taught
+        the same instinct from the other side, and both are still running.
       </>
     ),
     image: {
