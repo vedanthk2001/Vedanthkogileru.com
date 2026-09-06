@@ -27,7 +27,7 @@ const interests = [
 
 export default function Interests() {
   return (
-    <section className="bg-white py-20 px-6 md:px-12 border-t border-slate-100">
+    <section id="interests" className="bg-white py-20 px-6 md:px-12 border-t border-slate-100">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
           <p className="text-indigo-600 font-medium text-sm tracking-widest uppercase mb-3">
