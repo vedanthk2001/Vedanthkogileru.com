@@ -22,20 +22,37 @@ type Chapter = {
   label: string
   headline: string
   body: ReactNode
-  stat: { value: string; label: string }
+  /** Optional — the earliest chapter has no metric, and inventing one would show. */
+  stat?: { value: string; label: string }
 }
 
 const chapters: Chapter[] = [
   {
     number: '01',
-    label: 'The Beginning',
+    label: 'Early Days',
+    headline: 'Born and brought up in Hyderabad.',
+    body: (
+      <>
+        School at Vidyaranya, most of which I spent on a football pitch, a badminton
+        court or at a table tennis table. The rest went on physics &mdash; the only
+        subject that felt like taking something apart to find out why it worked.
+        Sport and physics turned out to be the same instinct: read the situation,
+        find the mechanism, adjust. Both are still running.
+      </>
+    ),
+  },
+  {
+    number: '02',
+    label: 'College',
     headline: 'Fell in love with personal finance in my college days.',
     body: (
       <>
-        Electrical engineering, a physics master&apos;s, a minor in finance &mdash; I
-        could never pick one lane and never wanted to. What tied it together was
-        reading Buffett, Munger, Peter Lynch and Howard Marks: investing as clear
-        thinking under uncertainty, not a spreadsheet exercise. So I started{' '}
+        BITS Pilani, where the physics carried over and finance arrived. A combination
+        I picked precisely because I could not choose between them: electrical
+        engineering, a master&apos;s in physics, a minor in finance. What tied them
+        together was reading Buffett, Munger, Peter Lynch and Howard Marks &mdash;
+        investing as clear thinking under uncertainty, not a spreadsheet exercise.
+        So I started{' '}
         <Teenvesting />, explaining it to people my own age. Partnered with Groww.
         100K+ impressions, and proof that young Indians were hungry for it.
       </>
@@ -43,14 +60,14 @@ const chapters: Chapter[] = [
     stat: { value: '100K+', label: 'impressions' },
   },
   {
-    number: '02',
+    number: '03',
     label: 'The Builder',
     headline: 'Then I built the products they would actually invest through.',
     body: 'At CASHe I went from intern to Founding PM. Twice over. I built a P2P lending platform, then took Karat Wealth (FD) and KaratClub (MF rewards) from first wireframes to production apps. Along the way I built the analytics infrastructure the whole team ran on.',
     stat: { value: '2', label: 'products as Founding PM' },
   },
   {
-    number: '03',
+    number: '04',
     label: 'The AI',
     headline: 'Now I\'m building the AI behind financial conversations.',
     body: "At Ignosis I work on voice AI. Orchestrating LLM, STT and TTS providers into natural conversations. The mission hasn't changed. The medium is now your voice.",
@@ -109,8 +126,12 @@ export default function About() {
 
               {/* Stat */}
               <div className="md:col-span-3 md:text-right">
-                <p className="text-5xl font-bold text-indigo-600">{ch.stat.value}</p>
-                <p className="text-sm text-slate-400 mt-1">{ch.stat.label}</p>
+                {ch.stat && (
+                  <>
+                    <p className="text-5xl font-bold text-indigo-600">{ch.stat.value}</p>
+                    <p className="text-sm text-slate-400 mt-1">{ch.stat.label}</p>
+                  </>
+                )}
               </div>
             </motion.div>
           ))}
