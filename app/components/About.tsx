@@ -63,11 +63,13 @@ const chapters: Chapter[] = [
         BITS Pilani, Hyderabad, 2019 to 2024 &mdash; where the physics carried over
         and finance arrived. Electrical engineering, a master&apos;s in physics and a
         minor in finance: a combination I picked precisely because I could not choose
-        between them. What tied them together was reading Buffett,
-        Munger, Peter Lynch and Howard Marks &mdash; investing as clear thinking under
-        uncertainty, not a spreadsheet exercise. So I started{' '}
-        <Teenvesting />, explaining it to people my own age. Partnered with Groww.
-        100K+ impressions, and proof that young Indians were hungry for it.
+        between them. Newton, Schr&ouml;dinger and Feynman on one side; Buffett,
+        Munger, Peter Lynch and Howard Marks on the other. Both turned out to be doing
+        the same thing &mdash; clear thinking under uncertainty, not a spreadsheet
+        exercise. Feynman also supplied the reason to start teaching: you do not
+        really understand something until you can explain it simply. So I started{' '}
+        <Teenvesting />, explaining investing to people my own age. Partnered with
+        Groww. 100K+ impressions, and proof that young Indians were hungry for it.
       </>
     ),
     stat: { value: '100K+', label: 'impressions' },
