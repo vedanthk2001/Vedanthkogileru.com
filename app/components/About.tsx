@@ -47,12 +47,12 @@ const chapters: Chapter[] = [
     headline: 'Fell in love with personal finance in my college days.',
     body: (
       <>
-        BITS Pilani, where the physics carried over and finance arrived. A combination
-        I picked precisely because I could not choose between them: electrical
-        engineering, a master&apos;s in physics, a minor in finance. What tied them
-        together was reading Buffett, Munger, Peter Lynch and Howard Marks &mdash;
-        investing as clear thinking under uncertainty, not a spreadsheet exercise.
-        So I started{' '}
+        BITS Pilani, Hyderabad, 2019 to 2024 &mdash; where the physics carried over
+        and finance arrived. Electrical engineering, a master&apos;s in physics and a
+        minor in finance, graduating at 8.26: a combination I picked precisely because
+        I could not choose between them. What tied them together was reading Buffett,
+        Munger, Peter Lynch and Howard Marks &mdash; investing as clear thinking under
+        uncertainty, not a spreadsheet exercise. So I started{' '}
         <Teenvesting />, explaining it to people my own age. Partnered with Groww.
         100K+ impressions, and proof that young Indians were hungry for it.
       </>

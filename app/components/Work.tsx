@@ -129,20 +129,6 @@ const eras: Era[] = [
   },
 ]
 
-const education = {
-  degree: 'BE Electrical & Electronics + MSc Physics',
-  minor: 'Minor in Finance',
-  school: 'BITS Pilani, Hyderabad',
-  period: '2019 to 2024',
-  cgpa: '8.26',
-}
-
-const toolkit = [
-  { label: 'Data', items: ['Python', 'SQL', 'Power BI', 'Excel'] },
-  { label: 'Product', items: ['UX Research', 'Wireframing', 'A/B Testing', 'Analytics'] },
-  { label: 'Domain', items: ['Fintech', 'P2P', 'Fixed Deposits', 'Mutual Funds', 'Voice AI'] },
-]
-
 export default function Work() {
   return (
     <section id="work" className="bg-white py-24 px-6 md:px-12">
@@ -164,9 +150,8 @@ export default function Work() {
           <h2 className="text-4xl font-bold text-slate-900">Work</h2>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-16">
-          {/* Timeline */}
-          <div className="lg:col-span-2 relative">
+        <div className="max-w-3xl">
+          <div className="relative">
             <div className="absolute left-5 top-6 bottom-6 w-px bg-slate-100" />
 
             <div className="space-y-14">
@@ -221,41 +206,6 @@ export default function Work() {
             </div>
           </div>
 
-          {/* Education + toolkit */}
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-5">Education</p>
-              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 mb-8">
-                <p className="font-bold text-slate-900 leading-snug">{education.degree}</p>
-                <p className="text-indigo-600 text-sm font-medium mt-1">{education.minor}</p>
-                <p className="text-slate-400 text-sm mt-3">{education.school} · {education.period}</p>
-                <div className="mt-4 inline-flex items-center gap-2 bg-indigo-50 rounded-lg px-3 py-1.5">
-                  <span className="text-indigo-600 font-bold text-sm">CGPA {education.cgpa}</span>
-                </div>
-              </div>
-
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-5">Toolkit</p>
-              <div className="space-y-4">
-                {toolkit.map((group) => (
-                  <div key={group.label}>
-                    <p className="text-xs text-slate-400 mb-2">{group.label}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {group.items.map((item) => (
-                        <span key={item} className="text-xs bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full">
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
         </div>
       </div>
     </section>
