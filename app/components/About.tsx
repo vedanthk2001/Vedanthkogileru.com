@@ -42,8 +42,7 @@ const chapters: Chapter[] = [
         playing football, basketball, badminton, whatever was going, and the freedom
         to be interested in something because it was interesting rather than because
         it was marked. Physics was always closest to my heart &mdash; the only subject
-        that felt like taking something apart to find out why it worked. Sport taught
-        the same instinct from the other side, and both are still running.
+        that felt like taking something apart to find out why it worked.
       </>
     ),
     image: {
