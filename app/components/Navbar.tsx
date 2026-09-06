@@ -72,7 +72,7 @@ export default function Navbar() {
         <a
           href="#"
           className="col-start-1 justify-self-start text-slate-900 hover:opacity-60 transition-opacity focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-600 rounded-sm"
-          aria-label="Vedanth Kogileru — back to top"
+          aria-label="Vedanth Kogileru, back to top"
         >
           <Logo className="h-9 w-auto" animate accent />
         </a>

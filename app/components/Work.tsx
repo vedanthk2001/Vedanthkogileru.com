@@ -72,7 +72,7 @@ const eras: Era[] = [
         name: 'Voice AI Platform',
         kind: 'LLM · STT · TTS orchestration',
         logo: '',
-        body: 'Ignosis built its own voice stack rather than buying one, so the work runs the full depth of it — provider selection across LLM, speech-to-text and text-to-speech, latency budgets tight enough to hold a natural conversation, and the orchestration that stitches the three layers together.',
+        body: 'Ignosis built its own voice stack rather than buying one, so the work runs the full depth of it: provider selection across LLM, speech-to-text and text-to-speech, latency budgets tight enough to hold a natural conversation, and the orchestration that stitches the three layers together.',
         metric: { value: '0→1', label: 'again, in AI' },
       },
     ],
@@ -85,20 +85,20 @@ const eras: Era[] = [
     company: 'CASHe',
     role: 'Intern → Product Analyst → Associate PM',
     period: 'Jul 2023 to Mar 2026',
-    summary: 'Two and a half years, three roles, three products — from building the data layer to founding PM on two launches.',
+    summary: 'Two and a half years, three roles, three products: from building the data layer to founding PM on two launches.',
     pieces: [
       {
         name: 'KaratClub',
         kind: 'MF Privilege Platform',
         logo: '',
-        body: "Founding PM. India's first portfolio-powered privilege programme: a ₹5L+ mutual fund portfolio unlocks member-only rates on phones, travel and dining — without selling a single unit. Wireframes through to a production app.",
+        body: "Founding PM. India's first portfolio-powered privilege programme: a ₹5L+ mutual fund portfolio unlocks member-only rates on phones, travel and dining, without selling a single unit. Wireframes through to a production app.",
         metric: { value: '1st', label: 'of its kind in India' },
       },
       {
         name: 'Karat Wealth',
         kind: 'Fixed Deposits · Mutual Funds',
         logo: '',
-        body: 'Founding PM. The platform repositioned onto regulated fixed income — FDs, RDs and bonds sourced from partner banks through Upswing. Led a team of 14 from wireframes to launch across the app, the web journey and the website, then built the analytics suite that ran daily ops and the lifecycle campaigns that fed it.',
+        body: 'Founding PM. The platform repositioned onto regulated fixed income: FDs, RDs and bonds sourced from partner banks through Upswing. Led a team of 14 from wireframes to launch across the app, the web journey and the website, then built the analytics suite that ran daily ops and the lifecycle campaigns that fed it.',
         metric: { value: '+74%', label: 'user-to-investor conversion' },
       },
       {
@@ -124,8 +124,8 @@ const eras: Era[] = [
         logo: '',
         body: (
           <>
-            Financial literacy for teenagers, on YouTube and Instagram &mdash;
-            explaining investing to people my own age at a point when almost nobody
+            Financial literacy for teenagers, on YouTube and Instagram, explaining
+            investing to people my own age at a point when almost nobody
             was. Partnered with Groww for influencer marketing. 100K+ impressions,
             12,500+ views and a 5%+ click-through rate, and the reason everything
             after it happened. Still up: <Teenvesting />.

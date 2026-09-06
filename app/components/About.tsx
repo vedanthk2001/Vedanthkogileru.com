@@ -41,7 +41,7 @@ const chapters: Chapter[] = [
         What it gave instead was room: whole afternoons under the tamarind tree
         playing football, basketball, badminton, whatever was going, and the freedom
         to be interested in something because it was interesting rather than because
-        it was marked. Physics was always closest to my heart &mdash; the only subject
+        it was marked. Physics was always closest to my heart: the only subject
         that felt like taking something apart to find out why it worked.
       </>
     ),
@@ -59,12 +59,12 @@ const chapters: Chapter[] = [
     headline: 'Fell in love with personal finance in my college days.',
     body: (
       <>
-        BITS Pilani, Hyderabad, 2019 to 2024 &mdash; where the physics carried over
+        BITS Pilani, Hyderabad, 2019 to 2024, where the physics carried over
         and finance arrived. Electrical engineering, a master&apos;s in physics and a
         minor in finance: a combination I picked precisely because I could not choose
         between them. Newton, Schr&ouml;dinger and Feynman on one side; Buffett,
         Munger, Peter Lynch and Howard Marks on the other. Both turned out to be doing
-        the same thing &mdash; clear thinking under uncertainty, not a spreadsheet
+        the same thing: clear thinking under uncertainty, not a spreadsheet
         exercise. Feynman also supplied the reason to start teaching: you do not
         really understand something until you can explain it simply. So I started{' '}
         <Teenvesting />, explaining investing to people my own age. Partnered with
@@ -84,7 +84,7 @@ const chapters: Chapter[] = [
     number: '03',
     label: 'The Builder',
     headline: 'Then I built the products they would actually invest through.',
-    body: 'At CASHe I went from intern to Founding PM. Twice over. I built a P2P lending platform, then took Karat Wealth (FD) and KaratClub (MF rewards) from first wireframes to production apps — reaching more than 50,000 investors along the way. And I built the analytics infrastructure the whole team ran on.',
+    body: 'At CASHe I went from intern to Founding PM. Twice over. I built a P2P lending platform, then took Karat Wealth (FD) and KaratClub (MF rewards) from first wireframes to production apps, reaching more than 50,000 investors along the way. And I built the analytics infrastructure the whole team ran on.',
     stat: { value: '2', label: 'products as Founding PM' },
   },
   {

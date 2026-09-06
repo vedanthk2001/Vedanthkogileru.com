@@ -32,7 +32,7 @@ const interests: Interest[] = [
   {
     icon: '🎱',
     title: 'Snooker',
-    description: 'Chess with balls \u{1F3B1} — precision, patience, and playing position for the shot after this one.',
+    description: 'Chess with balls \u{1F3B1}: precision, patience, and playing position for the shot after this one.',
     image: { src: '/img/snooker.jpg', w: 900, h: 592, caption: 'Tournament win' },
     image2: { src: '/img/snooker-win.jpg', alt: 'Carried off after the tournament win' },
   },
@@ -128,7 +128,7 @@ export default function Interests() {
                     rel="noopener noreferrer"
                     className="absolute inset-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    <span className="sr-only">{interest.title} — view profile</span>
+                    <span className="sr-only">{interest.title}: view profile</span>
                   </a>
                 </>
               )}
