@@ -7,47 +7,70 @@ const projects = [
     number: '01',
     title: 'Karat Wealth',
     company: 'CASHe · Founding PM',
-    category: 'Fixed Deposits · 0→1',
+    category: 'Fixed Deposits · Mutual Funds · 0→1',
+    logo: '',
     headline: 'Took a blank canvas to a production FD platform with a team of 14.',
-    body: 'Integrated with Upswing for partner-bank sourcing. Designed and launched the app, web journey, and website. Built the analytics suite that ran daily ops. Ran automated Push, SMS and WhatsApp campaigns by user-journey stage.',
+    body: 'A digital investment platform for Fixed Deposits and Mutual Funds, integrated with Upswing for partner-bank sourcing. Wireframes to production across the app, the web journey and the website. Built the analytics suite that ran daily ops, and the lifecycle campaigns that fed it.',
     metric: { value: '+74%', label: 'user-to-investor conversion' },
-    tags: ['0-to-1', 'Lifecycle Marketing', 'Analytics'],
+    tags: ['0-to-1', 'Fixed Deposits', 'Mutual Funds', 'Analytics'],
     featured: true,
   },
   {
     number: '02',
+    title: '13Karat',
+    company: 'CASHe · Intern → Analyst',
+    category: 'P2P Lending',
+    logo: '',
+    headline: 'On it from the day it went live, through to ₹100Cr.',
+    body: 'A P2P lending platform putting retail investors directly opposite borrowers. I built the analytics suite the whole team ran on, shipped repayment tracking, and replaced brittle name matching with fuzzy logic.',
+    metric: { value: '₹100Cr', label: 'scaled to, from launch' },
+    tags: ['P2P Lending', 'Data', 'A/B Testing'],
+    featured: false,
+  },
+  {
+    number: '03',
     title: 'KaratClub',
     company: 'CASHe · Founding PM',
     category: 'Mutual Funds · Rewards',
+    logo: '',
     headline: "India's first portfolio-powered privilege program.",
-    body: 'Wireframes to production app. MF investors with ₹5L+ portfolios unlock lifestyle rewards across phones, travel and dining at members-only rates.',
+    body: 'A lifestyle rewards platform for mutual fund investors. A ₹5L+ portfolio unlocks member-only rates on phones, travel and dining — without selling a single unit. Wireframes to production app.',
     metric: { value: '1st', label: 'of its kind in India' },
     tags: ['Mutual Funds', 'Rewards', 'Product Strategy'],
     featured: false,
   },
   {
-    number: '03',
-    title: '13Karat',
-    company: 'CASHe · Analyst → APM',
-    category: 'P2P Lending · Data',
-    headline: 'Built the data layer the platform ran on.',
-    body: 'Complete analytics suite in Python, SQL and Power BI. Shipped repayment tracking and fuzzy-logic bank verification.',
-    metric: { value: '-70%', label: 'customer queries' },
-    tags: ['P2P Lending', 'Data', 'A/B Testing'],
-    featured: false,
-  },
-  {
     number: '04',
     title: 'Teenvesting',
+    logo: '',
     company: 'Independent · Founder',
     category: 'Content · Financial Literacy',
-    headline: 'Where the whole mission started. Teaching young Indians to invest.',
-    body: 'A YouTube channel and Instagram page built in college. Partnered with Groww for influencer marketing. 100K+ impressions, 5%+ CTR.',
+    headline: 'Where the whole mission started. Teaching teenagers to invest.',
+    body: 'A YouTube channel and Instagram page built solo in college, alongside an engineering degree, a physics master\u2019s and a finance minor. Partnered with Groww for influencer marketing. 100K+ impressions, 5%+ CTR.',
     metric: { value: '100K+', label: 'impressions' },
     tags: ['Content', '0-to-1', 'Growth'],
     featured: false,
   },
 ]
+
+/**
+ * Product logo slot. Renders nothing while `src` is empty, and removes itself if
+ * the file 404s — so a missing asset can never leave a broken image on the page.
+ * Third-party marks are desaturated so they sit inside the slate/indigo palette
+ * instead of fighting it; drop transparent SVG or PNG into public/logos/.
+ */
+function ProductLogo({ src, name, className = 'h-7' }: { src: string; name: string; className?: string }) {
+  if (!src) return null
+  return (
+    <img
+      src={src}
+      alt={`${name} logo`}
+      className={`${className} w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all`}
+      loading="lazy"
+      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+    />
+  )
+}
 
 export default function Projects() {
   const [featured, ...rest] = projects
@@ -90,6 +113,7 @@ export default function Projects() {
                 <span className="text-4xl font-bold text-slate-100 leading-none">{featured.number}</span>
                 <span className="text-xs font-semibold text-indigo-500 uppercase tracking-widest">{featured.category}</span>
               </div>
+              <ProductLogo src={featured.logo} name={featured.title} className="h-9 mb-4" />
               <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">{featured.title}</h3>
               <p className="text-indigo-600 text-sm font-medium mb-6">{featured.company}</p>
               <p className="text-xl text-slate-700 font-medium leading-snug mb-4">{featured.headline}</p>
@@ -124,6 +148,7 @@ export default function Projects() {
               <div className="flex items-center gap-3 mb-5">
                 <span className="text-3xl font-bold text-slate-100 leading-none">{p.number}</span>
                 <span className="text-xs font-semibold text-indigo-500 uppercase tracking-wider">{p.category}</span>
+                <ProductLogo src={p.logo} name={p.title} className="h-6 ml-auto" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-1">{p.title}</h3>
               <p className="text-indigo-600 text-xs font-medium mb-4">{p.company}</p>

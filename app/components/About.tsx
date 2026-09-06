@@ -1,13 +1,45 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import type { ReactNode } from 'react'
+import { LINKS } from '../links'
 
-const chapters = [
+/** Renders the channel name as a link once a URL exists, plain text until then. */
+function Teenvesting() {
+  const cls =
+    'text-indigo-600 hover:text-indigo-700 underline underline-offset-4 decoration-indigo-200 hover:decoration-indigo-400 transition-colors'
+  return LINKS.teenvesting ? (
+    <a href={LINKS.teenvesting} target="_blank" rel="noopener noreferrer" className={cls}>
+      Teenvesting
+    </a>
+  ) : (
+    <span className="text-slate-700 font-medium">Teenvesting</span>
+  )
+}
+
+type Chapter = {
+  number: string
+  label: string
+  headline: string
+  body: ReactNode
+  stat: { value: string; label: string }
+}
+
+const chapters: Chapter[] = [
   {
     number: '01',
     label: 'The Beginning',
-    headline: 'Started a YouTube channel to teach kids how to invest.',
-    body: 'Before building products, I was teaching. Teenvesting was a financial literacy channel I built in college. Partnered with Groww, racked up 100K+ impressions, and proved that young Indians were hungry for this. The mission was set.',
+    headline: 'Fell in love with personal finance in my college days.',
+    body: (
+      <>
+        Electrical engineering, a physics master&apos;s, a minor in finance &mdash; I
+        could never pick one lane and never wanted to. What tied it together was
+        reading Buffett, Munger, Peter Lynch and Howard Marks: investing as clear
+        thinking under uncertainty, not a spreadsheet exercise. So I built{' '}
+        <Teenvesting />, explaining it to people my own age. Partnered with Groww.
+        100K+ impressions, and proof that young Indians were hungry for it.
+      </>
+    ),
     stat: { value: '100K+', label: 'impressions' },
   },
   {
