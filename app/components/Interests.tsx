@@ -20,20 +20,20 @@ const interests: Interest[] = [
     icon: '🧗',
     title: 'Rock Climbing',
     description: 'Reading the wall, committing to the move. Problem-solving with consequences.',
-    image: { src: '/img/climbing.jpg', w: 900, h: 900, caption: 'The Sahyadris' },
+    image: { src: '/img/climbing.jpg', w: 900, h: 1200, caption: 'The Sahyadris' },
   },
   {
     icon: '♟️',
     title: 'Chess',
     description: 'Thinking several moves ahead and adapting when the board changes.',
     href: 'https://www.chess.com/member/vedanthkogileru/stats/rapid?time=0',
-    image: { src: '/img/chess-pawn.jpg', w: 900, h: 900 },
+    image: { src: '/img/chess-pawn.jpg', w: 900, h: 1200 },
   },
   {
     icon: '🎱',
     title: 'Snooker',
-    description: 'Precision, patience, and playing position for the shot after this one.',
-    image: { src: '/img/snooker.jpg', w: 900, h: 450, caption: 'Tournament win' },
+    description: 'Chess with balls \u{1F3B1} — precision, patience, and playing position for the shot after this one.',
+    image: { src: '/img/snooker.jpg', w: 900, h: 592, caption: 'Tournament win' },
     image2: { src: '/img/snooker-win.jpg', alt: 'Carried off after the tournament win' },
   },
   {
@@ -74,7 +74,7 @@ export default function Interests() {
                 {interest.image2 ? (
                   // Two photos share the square box as stacked bands, so this card
                   // stays the same height as the rest of the grid.
-                  <div className="w-full aspect-square grid grid-rows-2 gap-2">
+                  <div className="w-full aspect-[3/4] grid grid-rows-2 gap-2">
                     <img
                       src={interest.image.src}
                       alt={interest.title}
@@ -95,7 +95,7 @@ export default function Interests() {
                     width={interest.image.w}
                     height={interest.image.h}
                     loading="lazy"
-                    className="w-full aspect-square object-cover rounded-xl bg-white border border-slate-100"
+                    className="w-full aspect-[3/4] object-cover rounded-xl bg-white border border-slate-100"
                   />
                 )}
                 {interest.image.caption && (
@@ -103,9 +103,9 @@ export default function Interests() {
                 )}
                 </figure>
               ) : (
-                // Same square block as a photo, so a mixed row of photo and
+                // Same 3:4 block as a photo, so a mixed row of photo and
                 // emoji cards keeps one rhythm instead of leaving dead space.
-                <span className="w-full aspect-square mb-5 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-6xl">
+                <span className="w-full aspect-[3/4] mb-5 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-6xl">
                   {interest.icon}
                 </span>
               )}
