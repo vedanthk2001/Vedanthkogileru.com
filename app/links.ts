@@ -3,9 +3,9 @@
  * between components.
  */
 export const LINKS = {
-  /** Teenvesting YouTube channel. Empty until confirmed — an empty string makes
-   *  the components render the name as plain text rather than a dead link. */
-  teenvesting: '',
+  /** Teenvesting YouTube channel. Empty string renders the name as plain text
+   *  instead of a dead link, so this is safe to blank out. */
+  teenvesting: 'https://www.youtube.com/@Teenvesting',
   linkedin: 'https://linkedin.com/in/vedanth-kogileru',
   github: 'https://github.com/vedanthk2001',
 } as const

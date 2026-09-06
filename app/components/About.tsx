@@ -35,7 +35,7 @@ const chapters: Chapter[] = [
         Electrical engineering, a physics master&apos;s, a minor in finance &mdash; I
         could never pick one lane and never wanted to. What tied it together was
         reading Buffett, Munger, Peter Lynch and Howard Marks: investing as clear
-        thinking under uncertainty, not a spreadsheet exercise. So I built{' '}
+        thinking under uncertainty, not a spreadsheet exercise. So I started{' '}
         <Teenvesting />, explaining it to people my own age. Partnered with Groww.
         100K+ impressions, and proof that young Indians were hungry for it.
       </>
