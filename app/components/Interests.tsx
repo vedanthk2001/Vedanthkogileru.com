@@ -17,20 +17,20 @@ const interests: Interest[] = [
     icon: '🧗',
     title: 'Rock Climbing',
     description: 'Reading the wall, committing to the move. Problem-solving with consequences.',
-    image: { src: '/img/climbing.jpg', w: 900, h: 600 },
+    image: { src: '/img/climbing.jpg', w: 900, h: 900 },
   },
   {
     icon: '♟️',
     title: 'Chess',
     description: 'Thinking several moves ahead and adapting when the board changes.',
     href: 'https://www.chess.com/member/vedanthkogileru/stats/rapid?time=0',
-    image: { src: '/img/chess.jpg', w: 900, h: 600 },
+    image: { src: '/img/chess.jpg', w: 900, h: 900 },
   },
   {
     icon: '🎱',
     title: 'Snooker',
     description: 'Precision, patience, and playing position for the shot after this one.',
-    image: { src: '/img/snooker.jpg', w: 900, h: 600 },
+    image: { src: '/img/snooker.jpg', w: 900, h: 900 },
   },
   {
     icon: '📈',
@@ -63,7 +63,7 @@ export default function Interests() {
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               whileHover={{ y: -6 }}
-              className="relative bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-colors"
+              className="group relative bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-colors"
             >
               {interest.image ? (
                 <img
@@ -72,12 +72,12 @@ export default function Interests() {
                   width={interest.image.w}
                   height={interest.image.h}
                   loading="lazy"
-                  className="w-full aspect-[3/2] object-cover rounded-xl mb-5 bg-white border border-slate-100"
+                  className="w-full aspect-square object-cover rounded-xl mb-5 bg-white border border-slate-100"
                 />
               ) : (
-                // Same 3:2 block as a photo, so a mixed row of photo and
+                // Same square block as a photo, so a mixed row of photo and
                 // emoji cards keeps one rhythm instead of leaving dead space.
-                <span className="w-full aspect-[3/2] mb-5 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-6xl">
+                <span className="w-full aspect-square mb-5 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-6xl">
                   {interest.icon}
                 </span>
               )}
@@ -85,15 +85,13 @@ export default function Interests() {
               <p className="text-slate-500 text-sm leading-relaxed">{interest.description}</p>
               {interest.href && (
                 <>
-                  <svg
-                    className="absolute top-5 right-5 w-4 h-4 text-slate-300"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5h5m0 0v5m0-5L10 14M9 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-3" />
-                  </svg>
+                  {/* Sits on the media box so it reads against any image, and is
+                      solid enough to be an obvious affordance rather than a hint. */}
+                  <span className="absolute top-9 right-9 w-8 h-8 rounded-full bg-white/95 shadow-sm flex items-center justify-center text-slate-700 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M14 5h5m0 0v5m0-5L10 14M9 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-3" />
+                    </svg>
+                  </span>
                   {/* Stretched link: keeps the card a single hit target without
                       nesting an anchor around the motion wrapper. */}
                   <a
