@@ -46,7 +46,7 @@ const projects = [
     company: 'Independent · Founder',
     category: 'Content · Financial Literacy',
     headline: 'Where the whole mission started. Teaching teenagers to invest.',
-    body: 'A YouTube channel and Instagram page built solo in college, alongside an engineering degree, a physics master\u2019s and a finance minor. Partnered with Groww for influencer marketing. 100K+ impressions, 5%+ CTR.',
+    body: 'A YouTube channel and Instagram page teaching teenagers to invest, built solo in college alongside an engineering degree, a physics master\u2019s and a finance minor. Partnered with Groww for influencer marketing. 100K+ impressions, 5%+ CTR.',
     metric: { value: '100K+', label: 'impressions' },
     tags: ['Content', '0-to-1', 'Growth'],
     featured: false,
