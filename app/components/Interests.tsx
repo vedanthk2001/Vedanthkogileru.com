@@ -27,7 +27,7 @@ const interests: Interest[] = [
     title: 'Chess',
     description: 'Thinking several moves ahead and adapting when the board changes.',
     href: 'https://www.chess.com/member/vedanthkogileru/stats/rapid?time=0',
-    image: { src: '/img/chess.jpg', w: 900, h: 900 },
+    image: { src: '/img/chess-pawn.jpg', w: 900, h: 900 },
   },
   {
     icon: '🎱',
