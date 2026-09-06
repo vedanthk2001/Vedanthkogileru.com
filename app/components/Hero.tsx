@@ -259,8 +259,8 @@ export default function Hero() {
           animate={settled ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.25 }}
         >
-          AI Product Manager. Disorder is the default state of every product
-          and team, and my work is the energy that keeps it in order.
+          AI Product Manager. Disorder is the default state of every system,
+          and my work is the energy that keeps it in order.
         </motion.p>
       </div>
 

@@ -6,8 +6,9 @@ type Interest = {
   icon: string
   title: string
   description: string
-  /** Optional photo. Cards without one keep the emoji at full size. */
-  image?: { src: string; w: number; h: number }
+  /** Optional photo. Cards without one keep the emoji at full size.
+   *  `caption` renders as a small line under it, for a place or credit. */
+  image?: { src: string; w: number; h: number; caption?: string }
   /** Optional outbound link. The whole card becomes clickable when set. */
   href?: string
 }
@@ -17,7 +18,7 @@ const interests: Interest[] = [
     icon: '🧗',
     title: 'Rock Climbing',
     description: 'Reading the wall, committing to the move. Problem-solving with consequences.',
-    image: { src: '/img/climbing.jpg', w: 900, h: 900 },
+    image: { src: '/img/climbing.jpg', w: 900, h: 900, caption: 'The Sahyadris' },
   },
   {
     icon: '♟️',
@@ -66,14 +67,19 @@ export default function Interests() {
               className="group relative bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-colors"
             >
               {interest.image ? (
+                <figure className="mb-5">
                 <img
                   src={interest.image.src}
                   alt={interest.title}
                   width={interest.image.w}
                   height={interest.image.h}
                   loading="lazy"
-                  className="w-full aspect-square object-cover rounded-xl mb-5 bg-white border border-slate-100"
+                  className="w-full aspect-square object-cover rounded-xl bg-white border border-slate-100"
                 />
+                {interest.image.caption && (
+                  <figcaption className="text-xs text-slate-400 mt-2">{interest.image.caption}</figcaption>
+                )}
+                </figure>
               ) : (
                 // Same square block as a photo, so a mixed row of photo and
                 // emoji cards keeps one rhythm instead of leaving dead space.
