@@ -40,7 +40,7 @@ const interests: Interest[] = [
 
 export default function Interests() {
   return (
-    <section id="interests" className="bg-white py-20 px-6 md:px-12 border-t border-slate-100">
+    <section id="interests" className="bg-slate-50 py-20 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
           <p className="text-indigo-600 font-medium text-sm tracking-widest uppercase mb-3">
@@ -58,7 +58,7 @@ export default function Interests() {
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               whileHover={{ y: -6 }}
-              className="group relative bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-colors"
+              className="group relative bg-white rounded-2xl p-6 border border-slate-200 hover:border-indigo-200 hover:shadow-sm transition-colors"
             >
               {interest.image ? (
                 <figure className="mb-5">

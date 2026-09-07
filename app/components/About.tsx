@@ -98,7 +98,7 @@ const chapters: Chapter[] = [
 
 export default function About() {
   return (
-    <section id="about" className="bg-white py-24 px-6 md:px-12">
+    <section id="about" className="bg-slate-50 py-24 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
 
         {/* Opening statement */}
@@ -127,7 +127,7 @@ export default function About() {
             >
               {/* Chapter number + label */}
               <div className="md:col-span-2">
-                <p className="text-7xl font-bold text-slate-100 leading-none select-none">
+                <p className="text-7xl font-bold text-slate-200 leading-none select-none">
                   {ch.number}
                 </p>
                 <p className="text-xs font-semibold text-indigo-500 uppercase tracking-widest mt-2">
