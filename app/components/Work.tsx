@@ -66,13 +66,13 @@ const eras: Era[] = [
     company: 'Ignosis',
     role: 'Product Manager, Voice AI',
     period: 'Mar 2026 to Present',
-    summary: 'Building the orchestration layer underneath real-time financial conversations.',
+    summary: 'Building agents that take financial conversations end to end, not just the plumbing underneath them.',
     pieces: [
       {
         name: 'Voice AI Platform',
-        kind: 'LLM · STT · TTS orchestration',
+        kind: 'Multi-agent workflows · 10+ languages',
         logo: '',
-        body: 'Ignosis built its own voice stack rather than buying one, so the work runs the full depth of it: provider selection across LLM, speech-to-text and text-to-speech, latency budgets tight enough to hold a natural conversation, and the orchestration that stitches the three layers together.',
+        body: 'We built our own voice stack rather than buying one, so the work runs from provider selection across LLM, speech-to-text and text-to-speech all the way up into the application layer. That is where the value is: deep multi-agent workflows that take a problem end to end in 10+ languages, rather than infrastructure that hands the hard part back to someone else.',
         metric: { value: '0→1', label: 'again, in AI' },
       },
     ],
