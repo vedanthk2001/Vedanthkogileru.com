@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 type Interest = {
   icon: string
   title: string
-  description: string
   /** Optional photo. Cards without one keep the emoji at full size.
    *  `caption` renders as a small line under it, for a place or credit. */
   image?: { src: string; w: number; h: number; caption?: string }
@@ -19,27 +18,23 @@ const interests: Interest[] = [
   {
     icon: '🧗',
     title: 'Rock Climbing',
-    description: 'Reading the wall, committing to the move. Problem-solving with consequences.',
     image: { src: '/img/climbing.jpg', w: 900, h: 1200, caption: 'The Sahyadris' },
   },
   {
     icon: '♟️',
     title: 'Chess',
-    description: 'Thinking several moves ahead and adapting when the board changes.',
     href: 'https://www.chess.com/member/vedanthkogileru/stats/rapid?time=0',
     image: { src: '/img/chess-pawn.jpg', w: 900, h: 1200 },
   },
   {
     icon: '🎱',
     title: 'Snooker',
-    description: 'Chess with balls \u{1F3B1}: precision, patience, and playing position for the shot after this one.',
     image: { src: '/img/snooker.jpg', w: 900, h: 592, caption: 'Tournament win' },
     image2: { src: '/img/snooker-win.jpg', alt: 'Carried off after the tournament win' },
   },
   {
     icon: '📈',
     title: 'Equity Research',
-    description: 'The fintech obsession, off the clock. Digging into businesses and markets.',
   },
 ]
 
@@ -52,10 +47,6 @@ export default function Interests() {
             Off the Clock
           </p>
           <h2 className="text-4xl font-bold text-slate-900">Beyond Product</h2>
-          <p className="text-slate-500 mt-3 text-lg max-w-xl">
-            The games and pursuits that keep me sharp. Most of them reward the same
-            patience and strategy that good product work does.
-          </p>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-6">
@@ -109,8 +100,7 @@ export default function Interests() {
                   {interest.icon}
                 </span>
               )}
-              <h3 className="font-semibold text-slate-900 text-lg mb-2">{interest.title}</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">{interest.description}</p>
+              <h3 className="font-semibold text-slate-900 text-lg">{interest.title}</h3>
               {interest.href && (
                 <>
                   {/* Sits on the media box so it reads against any image, and is
