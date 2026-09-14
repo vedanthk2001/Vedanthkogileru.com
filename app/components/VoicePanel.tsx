@@ -9,8 +9,29 @@ const ASSISTANT_ID = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID
  *  hiding the overflow with CSS gets slower every minute of a call. */
 const MAX_LINES = 7
 
-type Line = { role: 'assistant' | 'user'; text: string; final: boolean }
+type Role = 'assistant' | 'user'
+type Line = { role: Role; text: string }
 type Status = 'idle' | 'connecting' | 'live' | 'insecure' | 'error'
+
+/** Vapi emits a final transcript per chunk as speech streams, so one spoken
+ *  sentence arrives as several messages. Start a new line only when the speaker
+ *  changes; otherwise the opening turn renders as four separate bubbles. */
+function appendChunk(prev: Line[], role: Role, chunk: string): Line[] {
+  const text = chunk.trim()
+  if (!text) return prev
+  const next = [...prev]
+  const last = next[next.length - 1]
+  if (!last || last.role !== role) {
+    next.push({ role, text })
+    return next
+  }
+  // Some providers resend the whole utterance rather than the delta. Treat a
+  // superset as a correction and a subset as a duplicate, or the line doubles.
+  if (last.text === text || last.text.endsWith(text)) return next
+  if (text.startsWith(last.text)) next[next.length - 1] = { role, text }
+  else next[next.length - 1] = { role, text: `${last.text} ${text}` }
+  return next
+}
 
 /** The SDK type is only needed for the ref, and importing it eagerly would pull
  *  the whole module into the initial bundle. */
@@ -24,6 +45,7 @@ type VapiClient = {
 export default function VoicePanel() {
   const [status, setStatus] = useState<Status>('idle')
   const [lines, setLines] = useState<Line[]>([])
+  const [partial, setPartial] = useState<{ role: Role; text: string } | null>(null)
   const vapiRef = useRef<VapiClient | null>(null)
 
   useEffect(() => {
@@ -33,16 +55,16 @@ export default function VoicePanel() {
     }
   }, [])
 
-  /** Partials replace the in-flight line for that role; finals commit it. Append
-   *  on partial and the caller's own sentence stutters down the panel. */
-  const push = (role: Line['role'], text: string, final: boolean) => {
-    setLines((prev) => {
-      const next = [...prev]
-      const last = next[next.length - 1]
-      if (last && last.role === role && !last.final) next[next.length - 1] = { role, text, final }
-      else next.push({ role, text, final })
-      return next.slice(-MAX_LINES)
-    })
+  /** Finals commit into the current speaker's line. Partials are held separately
+   *  and rendered as dimmed trailing text, so an in-flight sentence firms up in
+   *  place rather than stuttering down the panel. */
+  const push = (role: Role, text: string, final: boolean) => {
+    if (final) {
+      setPartial(null)
+      setLines((prev) => appendChunk(prev, role, text).slice(-MAX_LINES))
+    } else {
+      setPartial({ role, text })
+    }
   }
 
   const start = async () => {
@@ -53,6 +75,7 @@ export default function VoicePanel() {
 
     setStatus('connecting')
     setLines([])
+    setPartial(null)
     try {
       const { default: Vapi } = await import('@vapi-ai/web')
       const vapi = new Vapi(PUBLIC_KEY) as unknown as VapiClient
@@ -78,6 +101,15 @@ export default function VoicePanel() {
   }
 
   const live = status === 'live' || status === 'connecting'
+
+  // Fold the in-flight partial onto the current speaker's line so it grows in
+  // place. A partial from the other speaker opens its own dimmed line.
+  const renderLines: (Line & { tail?: string })[] = lines.map((l) => ({ ...l }))
+  if (partial) {
+    const last = renderLines[renderLines.length - 1]
+    if (last && last.role === partial.role) last.tail = partial.text
+    else renderLines.push({ role: partial.role, text: '', tail: partial.text })
+  }
 
   return (
     <div className="w-full bg-white border border-slate-200 rounded-2xl shadow-sm p-6 flex flex-col min-h-[340px]">
@@ -132,10 +164,10 @@ export default function VoicePanel() {
             aria-live="polite"
           >
             <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-3 pt-4">
-              {lines.map((l, i) => (
+              {renderLines.map((l, i) => (
                 <div
                   key={i}
-                  className={`text-sm leading-relaxed ${l.final ? '' : 'opacity-40'} ${
+                  className={`text-sm leading-relaxed ${
                     l.role === 'assistant' ? 'text-slate-800' : 'text-slate-500'
                   }`}
                 >
@@ -147,6 +179,7 @@ export default function VoicePanel() {
                     {l.role === 'assistant' ? 'Vedanth' : 'You'}
                   </span>
                   {l.text}
+                  {l.tail && <span className="opacity-40">{l.text ? ' ' : ''}{l.tail}</span>}
                 </div>
               ))}
             </div>
