@@ -71,7 +71,6 @@ const chapters: Chapter[] = [
         Groww. 100K+ impressions, and proof that young Indians were hungry for it.
       </>
     ),
-    stat: { value: '100K+', label: 'impressions' },
     image: {
       src: '/img/bits.jpg',
       alt: 'At the BITS Pilani crest, Hyderabad campus',
