@@ -29,7 +29,7 @@ const interests: Interest[] = [
   {
     icon: '🎱',
     title: 'Snooker',
-    image: { src: '/img/snooker.jpg', w: 900, h: 592, caption: 'Tournament win' },
+    image: { src: '/img/snooker.jpg', w: 900, h: 592 },
     image2: { src: '/img/snooker-win.jpg', alt: 'Carried off after the tournament win' },
   },
   {
