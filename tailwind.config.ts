@@ -11,6 +11,18 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)'],
       },
+      keyframes: {
+        // Expanding ring on the mic button. A box-shadow rather than a scaled
+        // pseudo-element, so it never affects layout or hit area.
+        'mic-ring': {
+          '0%': { boxShadow: '0 0 0 0 rgba(79,70,229,0.40)' },
+          '70%': { boxShadow: '0 0 0 18px rgba(79,70,229,0)' },
+          '100%': { boxShadow: '0 0 0 0 rgba(79,70,229,0)' },
+        },
+      },
+      animation: {
+        'mic-ring': 'mic-ring 2.4s ease-out infinite',
+      },
       colors: {
         indigo: {
           50: '#eef2ff',

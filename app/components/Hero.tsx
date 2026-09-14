@@ -2,6 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import VoicePanel from './VoicePanel'
+
+/** The copy finishes laying out ~980ms after the name lands (the last item
+ *  starts at 380 and runs 600). Hold from there before opening the panel, so
+ *  the hero is never doing two things at once. */
+const OPEN_DELAY_MS = 980 + 1000
 
 const CHAOS_MS = 2200
 const COLLAPSE_MS = 1800
@@ -79,7 +85,14 @@ export default function Hero() {
   const textRef = useRef<HTMLHeadingElement>(null)
   const rafRef = useRef<number>(0)
   const [settled, setSettled] = useState(false)
+  const [opened, setOpened] = useState(false)
   const [headlineSize, setHeadlineSize] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!settled) return
+    const id = setTimeout(() => setOpened(true), OPEN_DELAY_MS)
+    return () => clearTimeout(id)
+  }, [settled])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -338,6 +351,13 @@ export default function Hero() {
         <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] rounded-full bg-sky-50 blur-3xl" />
       </div>
 
+      {/* Canvas and copy share one wrapper so they travel left together as a
+          single object when the voice panel opens. Pure transform, no reflow. */}
+      <div
+        className={`absolute inset-0 transition-transform duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] ${
+          opened ? 'md:-translate-x-1/4' : ''
+        }`}
+      >
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" aria-hidden="true" />
 
       {/* Name — ghost at 0, crossfades in once particles settle */}
@@ -402,6 +422,18 @@ export default function Hero() {
           Get in touch
         </a>
       </motion.div>
+      </div>
+
+      {/* Voice panel: arrives from the right edge once the copy has settled.
+          Hidden below md, where there is no room for a second column. */}
+      <div
+        className={`hidden md:block absolute top-1/2 right-0 w-1/2 -translate-y-1/2 pr-8 lg:pr-12 pl-4
+          transition-all duration-[800ms] ease-[cubic-bezier(.22,1,.36,1)] ${
+            opened ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[115%]'
+          }`}
+      >
+        <VoicePanel />
+      </div>
 
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
