@@ -6,15 +6,16 @@ import { motion } from 'framer-motion'
 const CHAOS_MS = 2200
 const COLLAPSE_MS = 1800
 const MAX_PARTICLES = 600
+const TAU = Math.PI * 2
 
-type Particle = {
-  x: number; y: number
-  vx: number; vy: number
-  sx: number; sy: number
-  tx: number; ty: number
-  r: number
-  color: string
-}
+/** Depth slices used for both draw order and alpha batching. Every particle in
+ *  a slice shares one fill, so this is the number of draw calls per frame, not
+ *  a quality knob. 16 is past the point where more slices are visible. */
+const DEPTH_BINS = 16
+/** Four base opacities, as before. Combined with the depth slice this gives
+ *  DEPTH_BINS * 4 draw groups. */
+const ALPHA_LEVELS = [0.9, 0.7, 0.55, 0.85]
+const GROUPS = DEPTH_BINS * ALPHA_LEVELS.length
 
 function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
@@ -22,12 +23,17 @@ function easeInOutCubic(t: number) {
 
 function rand(a: number, b: number) { return Math.random() * (b - a) + a }
 
-const COLORS = [
-  'rgba(15, 15, 15, 0.90)',
-  'rgba(15, 15, 15, 0.70)',
-  'rgba(15, 15, 15, 0.55)',
-  'rgba(15, 15, 15, 0.85)',
-]
+/** Headline size only. Cheap enough to run on every resize, unlike sampleText,
+ *  which rasterises the text and reads it back. */
+function measureHeadline(lines: string[], w: number) {
+  const c = document.createElement('canvas').getContext('2d')!
+  let size = Math.min(w / 7, 120)
+  c.font = `800 ${size}px Inter, system-ui, sans-serif`
+  const longest = lines.reduce((a, b) => (a.length > b.length ? a : b))
+  const measured = c.measureText(longest).width
+  if (measured > w * 0.88) size *= (w * 0.88) / measured
+  return size
+}
 
 function sampleText(lines: string[], w: number, h: number, count: number) {
   const off = document.createElement('canvas')
@@ -37,16 +43,10 @@ function sampleText(lines: string[], w: number, h: number, count: number) {
   c.fillStyle = '#fff'
   c.fillRect(0, 0, w, h)
 
-  let size = Math.min(w / 7, 120)
+  const size = measureHeadline(lines, w)
   c.font = `800 ${size}px Inter, system-ui, sans-serif`
   c.textAlign = 'center'
   c.textBaseline = 'middle'
-  const longest = lines.reduce((a, b) => (a.length > b.length ? a : b))
-  const measured = c.measureText(longest).width
-  if (measured > w * 0.88) {
-    size *= (w * 0.88) / measured
-    c.font = `800 ${size}px Inter, system-ui, sans-serif`
-  }
 
   const lh = size
   const totalH = lines.length * lh
@@ -78,10 +78,6 @@ export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const textRef = useRef<HTMLHeadingElement>(null)
   const rafRef = useRef<number>(0)
-  const particlesRef = useRef<Particle[]>([])
-  const phaseRef = useRef<'chaos' | 'order'>('chaos')
-  const startRef = useRef<number>(0)
-  const settledRef = useRef(false)
   const [settled, setSettled] = useState(false)
   const [headlineSize, setHeadlineSize] = useState<number | null>(null)
 
@@ -92,124 +88,246 @@ export default function Hero() {
     if (!ctx) return
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    let w = 0
-    let h = 0
-    let orderStart = 0
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
-    const lines = ["Hi, I’m", "Vedanth"]
+    const lines = ['Hi, I’m', 'Vedanth']
+
+    let w = 0, h = 0, cx = 0, cy = 0
+    let n = 0
+    let focal = 900, zNear = 0, zFar = 0, minDenom = 0
+    let phase: 'chaos' | 'order' = 'chaos'
+    let start = 0, orderStart = 0, lastAngle = 0
+    let isSettled = false
+
+    // Parallel typed arrays rather than an array of objects: no per-frame
+    // allocation, no GC pressure during the animation, and the counting sort
+    // below can reorder indices without touching particle data.
+    let px!: Float32Array, py!: Float32Array, pz!: Float32Array
+    let vx!: Float32Array, vy!: Float32Array, vz!: Float32Array
+    let sx!: Float32Array, sy!: Float32Array, sz!: Float32Array
+    let tx!: Float32Array, ty!: Float32Array
+    let rad!: Float32Array, lvl!: Uint8Array
+    // Projection scratch, reused every frame.
+    let ox!: Float32Array, oy!: Float32Array, or_!: Float32Array
+    let group!: Int32Array, order!: Int32Array
+    const counts = new Int32Array(GROUPS)
+    const offsets = new Int32Array(GROUPS)
+    /** Alpha per draw group, recomputed only when geometry changes. */
+    const groupAlpha = new Float32Array(GROUPS)
 
     const setOpacities = (canvasOp: number, textOp: number) => {
       canvas.style.opacity = String(canvasOp)
       if (textRef.current) textRef.current.style.opacity = String(textOp)
     }
 
+    /** Alpha depends only on the slice's centre depth, so it is computed once
+     *  per resize instead of once per particle per frame. */
+    const buildGroupAlpha = () => {
+      const span = (zFar - zNear) / DEPTH_BINS
+      for (let b = 0; b < DEPTH_BINS; b++) {
+        const zc = zNear + span * (b + 0.5)
+        const s = focal / Math.max(minDenom, focal + zc)
+        const depth = Math.min(1.25, Math.max(0.12, s * s))
+        for (let l = 0; l < ALPHA_LEVELS.length; l++) {
+          groupAlpha[b * ALPHA_LEVELS.length + l] = Math.min(0.95, ALPHA_LEVELS[l] * depth)
+        }
+      }
+    }
+
     const init = () => {
       const rect = canvas.getBoundingClientRect()
-      w = rect.width
-      h = rect.height
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      w = rect.width; h = rect.height
+      cx = w / 2; cy = h / 2
       canvas.width = w * dpr
       canvas.height = h * dpr
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      const { pts: targets, size: hSize } = sampleText(lines, w, h, MAX_PARTICLES)
-      setHeadlineSize(hSize)
+      // Focal length tracks viewport width so the perspective reads the same on
+      // a phone and a wide monitor. The depth volume is expressed as a fraction
+      // of it for the same reason.
+      focal = Math.max(900, w * 0.9)
+      zNear = -0.42 * focal
+      zFar = 0.90 * focal
+      // Rotation can swing a particle's depth to roughly -focal, which would put
+      // it behind the camera and turn the projection inside out. Clamping the
+      // denominator bounds the near scale at about 2.9x instead.
+      minDenom = 0.35 * focal
+      buildGroupAlpha()
 
-      particlesRef.current = targets.map((t, i) => ({
-        x: rand(0, w),
-        y: rand(0, h),
-        vx: rand(-3, 3),
-        vy: rand(-3, 3),
-        sx: 0, sy: 0,
-        tx: t.x,
-        ty: t.y,
-        r: rand(1.2, 2.0),
-        color: COLORS[i % COLORS.length],
-      }))
+      const { pts, size } = sampleText(lines, w, h, MAX_PARTICLES)
+      setHeadlineSize(size)
+      n = pts.length
 
-      phaseRef.current = 'chaos'
-      startRef.current = performance.now()
+      px = new Float32Array(n); py = new Float32Array(n); pz = new Float32Array(n)
+      vx = new Float32Array(n); vy = new Float32Array(n); vz = new Float32Array(n)
+      sx = new Float32Array(n); sy = new Float32Array(n); sz = new Float32Array(n)
+      tx = new Float32Array(n); ty = new Float32Array(n)
+      rad = new Float32Array(n); lvl = new Uint8Array(n)
+      ox = new Float32Array(n); oy = new Float32Array(n); or_ = new Float32Array(n)
+      group = new Int32Array(n); order = new Int32Array(n)
+
+      const drift = focal / 620
+      for (let i = 0; i < n; i++) {
+        px[i] = rand(0, w); py[i] = rand(0, h); pz[i] = rand(zNear, zFar)
+        vx[i] = rand(-3, 3); vy[i] = rand(-3, 3); vz[i] = rand(-1.4, 1.4) * drift
+        tx[i] = pts[i].x; ty[i] = pts[i].y
+        rad[i] = rand(1.2, 2.0)
+        lvl[i] = i % ALPHA_LEVELS.length
+      }
+
+      phase = 'chaos'
+      start = performance.now()
       orderStart = 0
-      settledRef.current = false
+      lastAngle = 0
+      isSettled = false
       setSettled(false)
       canvas.style.transition = ''
       if (textRef.current) textRef.current.style.transition = ''
       setOpacities(1, 0)
 
+      cancelAnimationFrame(rafRef.current)
+
       if (reduced) {
-        particlesRef.current.forEach(p => { p.x = p.tx; p.y = p.ty })
-        phaseRef.current = 'order'
-        settledRef.current = true
+        // Snap to the settled state. No rotation, no loop started at all.
+        isSettled = true
         setOpacities(0, 1)
         setSettled(true)
+        return
+      }
+
+      rafRef.current = requestAnimationFrame(draw)
+    }
+
+    /** Projects every particle, then draws them far to near in one fill per
+     *  depth-and-alpha group: ~64 fills per frame rather than 600. */
+    const paint = (angle: number) => {
+      const cos = Math.cos(angle), sin = Math.sin(angle)
+      const binScale = DEPTH_BINS / (zFar - zNear)
+      const nLevels = ALPHA_LEVELS.length
+
+      counts.fill(0)
+
+      for (let i = 0; i < n; i++) {
+        const dx = px[i] - cx
+        // Rotation about the vertical axis through the centre. Only x and z
+        // change; y is untouched, which is why this needs no matrix.
+        const rz = dx * sin + pz[i] * cos
+        const rx = cx + dx * cos - pz[i] * sin
+        const s = focal / Math.max(minDenom, focal + rz)
+
+        ox[i] = cx + (rx - cx) * s
+        oy[i] = cy + (py[i] - cy) * s
+        or_[i] = rad[i] * s
+
+        let b = ((rz - zNear) * binScale) | 0
+        if (b < 0) b = 0; else if (b >= DEPTH_BINS) b = DEPTH_BINS - 1
+        const g = b * nLevels + lvl[i]
+        group[i] = g
+        counts[g]++
+      }
+
+      // Counting sort into draw order: O(n), allocation free, and it doubles as
+      // the grouping pass since a group is contiguous in the result.
+      let running = 0
+      for (let g = GROUPS - 1; g >= 0; g--) {
+        offsets[g] = running
+        running += counts[g]
+      }
+      for (let i = 0; i < n; i++) order[offsets[group[i]]++] = i
+
+      // Groups are contiguous in `order`, so a single cursor walks the spans.
+      let cursor = 0
+      for (let g = GROUPS - 1; g >= 0; g--) {
+        const c = counts[g]
+        if (c === 0) continue
+        ctx.beginPath()
+        for (let k = 0; k < c; k++) {
+          const i = order[cursor + k]
+          const r = or_[i]
+          if (r < 0.3) continue
+          // moveTo before each arc, or consecutive arcs are joined by a line.
+          ctx.moveTo(ox[i] + r, oy[i])
+          ctx.arc(ox[i], oy[i], r, 0, TAU)
+        }
+        ctx.fillStyle = `rgba(15,15,15,${groupAlpha[g]})`
+        ctx.fill()
+        cursor += c
       }
     }
 
     const draw = (now: number) => {
       ctx.clearRect(0, 0, w, h)
-      const ps = particlesRef.current
-      if (!ps.length) { rafRef.current = requestAnimationFrame(draw); return }
 
-      const chaosElapsed = now - startRef.current
-      if (phaseRef.current === 'chaos' && chaosElapsed > CHAOS_MS) {
-        phaseRef.current = 'order'
+      if (phase === 'chaos' && now - start > CHAOS_MS) {
+        phase = 'order'
         orderStart = now
-        for (const p of ps) { p.sx = p.x; p.sy = p.y }
+        sx.set(px); sy.set(py); sz.set(pz)
       }
 
-      if (phaseRef.current === 'order') {
+      let angle = 0
+
+      if (phase === 'order') {
         const t = Math.min(1, (now - orderStart) / COLLAPSE_MS)
+        const e = easeInOutCubic(t)
+        // Spin decelerates to square-on exactly as the letterforms resolve.
+        angle = lastAngle * (1 - e)
 
-        if (!settledRef.current) {
-          const e = easeInOutCubic(t)
-          for (const p of ps) {
-            p.x = p.sx + (p.tx - p.sx) * e
-            p.y = p.sy + (p.ty - p.sy) * e
-            ctx.beginPath()
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-            ctx.fillStyle = p.color
-            ctx.fill()
-          }
+        for (let i = 0; i < n; i++) {
+          px[i] = sx[i] + (tx[i] - sx[i]) * e
+          py[i] = sy[i] + (ty[i] - sy[i]) * e
+          // z eases to 0, where the projection scale is exactly 1, so every
+          // particle lands on the same pixel the flat version would have used.
+          pz[i] = sz[i] * (1 - e)
+        }
+        paint(angle)
 
-          if (t >= 1) {
-            settledRef.current = true
-            setSettled(true)
-            // particles fully settled — crossfade canvas out, text in
-            canvas.style.transition = 'opacity 0.5s ease'
-            canvas.style.opacity = '0'
-            if (textRef.current) {
-              textRef.current.style.transition = 'opacity 0.5s ease'
-              textRef.current.style.opacity = '1'
-            }
+        if (t >= 1) {
+          isSettled = true
+          setSettled(true)
+          canvas.style.transition = 'opacity 0.5s ease'
+          canvas.style.opacity = '0'
+          if (textRef.current) {
+            textRef.current.style.transition = 'opacity 0.5s ease'
+            textRef.current.style.opacity = '1'
           }
+          // Nothing left to animate. Stop the loop rather than clearing an
+          // empty canvas sixty times a second for the rest of the visit.
+          return
         }
       } else {
-        // chaos: just draw particles, opacities stay at their defaults
-        for (const p of ps) {
-          p.x += p.vx
-          p.y += p.vy
-          if (p.x <= 0 || p.x >= w) { p.vx *= -1; p.x = Math.max(0, Math.min(w, p.x)) }
-          if (p.y <= 0 || p.y >= h) { p.vy *= -1; p.y = Math.max(0, Math.min(h, p.y)) }
-          ctx.beginPath()
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-          ctx.fillStyle = p.color
-          ctx.fill()
+        angle = ((now - start) / 1000) * 0.55
+        lastAngle = angle
+        for (let i = 0; i < n; i++) {
+          px[i] += vx[i]; py[i] += vy[i]; pz[i] += vz[i]
+          if (px[i] <= 0) { px[i] = 0; vx[i] = -vx[i] }
+          else if (px[i] >= w) { px[i] = w; vx[i] = -vx[i] }
+          if (py[i] <= 0) { py[i] = 0; vy[i] = -vy[i] }
+          else if (py[i] >= h) { py[i] = h; vy[i] = -vy[i] }
+          if (pz[i] < zNear || pz[i] > zFar) vz[i] = -vz[i]
         }
+        paint(angle)
       }
 
       rafRef.current = requestAnimationFrame(draw)
+    }
+
+    // Once settled the canvas is already faded out, so replaying the whole
+    // animation on a resize would be noise. Only the headline needs to track
+    // the new width, and measuring that is cheap.
+    const onResize = () => {
+      if (isSettled) setHeadlineSize(measureHeadline(lines, canvas.getBoundingClientRect().width))
+      else init()
     }
 
     const boot = async () => {
       await document.fonts.ready
       init()
-      rafRef.current = requestAnimationFrame(draw)
     }
 
     boot()
-    window.addEventListener('resize', init)
+    window.addEventListener('resize', onResize)
     return () => {
       cancelAnimationFrame(rafRef.current)
-      window.removeEventListener('resize', init)
+      window.removeEventListener('resize', onResize)
     }
   }, [])
 
