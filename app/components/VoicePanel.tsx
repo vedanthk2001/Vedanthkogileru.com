@@ -1,15 +1,12 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
-const ASSISTANT_ID = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID
+import { voice, type Role, type VoiceSession } from '../voice'
 
 /** Only the last few lines are kept in state. Rendering an unbounded list and
  *  hiding the overflow with CSS gets slower every minute of a call. */
 const MAX_LINES = 7
 
-type Role = 'assistant' | 'user'
 type Line = { role: Role; text: string }
 type Status = 'idle' | 'connecting' | 'live' | 'insecure' | 'error'
 
@@ -33,15 +30,6 @@ function appendChunk(prev: Line[], role: Role, chunk: string): Line[] {
   return next
 }
 
-/** The SDK type is only needed for the ref, and importing it eagerly would pull
- *  the whole module into the initial bundle. */
-type VapiClient = {
-  start: (id: string) => Promise<unknown>
-  stop: () => void
-  on: (e: string, fn: (...a: never[]) => void) => void
-  removeAllListeners?: () => void
-}
-
 const MicIcon = ({ className }: { className: string }) => (
   <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
     <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11Z" />
@@ -52,13 +40,10 @@ export default function VoicePanel({ variant = 'card' }: { variant?: 'card' | 's
   const [status, setStatus] = useState<Status>('idle')
   const [lines, setLines] = useState<Line[]>([])
   const [partial, setPartial] = useState<{ role: Role; text: string } | null>(null)
-  const vapiRef = useRef<VapiClient | null>(null)
+  const sessionRef = useRef<VoiceSession | null>(null)
 
   useEffect(() => {
-    return () => {
-      vapiRef.current?.removeAllListeners?.()
-      vapiRef.current?.stop()
-    }
+    return () => sessionRef.current?.stop()
   }, [])
 
   /** Finals commit into the current speaker's line. Partials are held separately
@@ -73,8 +58,10 @@ export default function VoicePanel({ variant = 'card' }: { variant?: 'card' | 's
     }
   }
 
-  const start = async () => {
-    if (!PUBLIC_KEY || !ASSISTANT_ID) return setStatus('error')
+  /** The panel never touches a vendor SDK. `voice` is whichever adapter the
+   *  build selected in app/voice/, so changing platform does not change this. */
+  const start = () => {
+    if (!voice?.configured) return setStatus('error')
     // getUserMedia needs a secure context. Say so rather than presenting a
     // button that silently does nothing.
     if (!window.isSecureContext) return setStatus('insecure')
@@ -82,27 +69,18 @@ export default function VoicePanel({ variant = 'card' }: { variant?: 'card' | 's
     setStatus('connecting')
     setLines([])
     setPartial(null)
-    try {
-      const { default: Vapi } = await import('@vapi-ai/web')
-      const vapi = new Vapi(PUBLIC_KEY) as unknown as VapiClient
-      vapiRef.current = vapi
-
-      vapi.on('call-start', (() => setStatus('live')) as never)
-      vapi.on('call-end', (() => setStatus('idle')) as never)
-      vapi.on('error', (() => setStatus('error')) as never)
-      vapi.on('message', ((m: { type: string; role: string; transcriptType: string; transcript: string }) => {
-        if (m?.type !== 'transcript') return
-        push(m.role === 'user' ? 'user' : 'assistant', m.transcript, m.transcriptType === 'final')
-      }) as never)
-
-      await vapi.start(ASSISTANT_ID)
-    } catch {
-      setStatus('error')
-    }
+    const session = voice.start({
+      onLive: () => setStatus('live'),
+      onEnd: () => setStatus('idle'),
+      onError: () => setStatus('error'),
+      onTranscript: push,
+    })
+    sessionRef.current = session
+    session.connected.catch(() => setStatus('error'))
   }
 
   const stop = () => {
-    vapiRef.current?.stop()
+    sessionRef.current?.stop()
     setStatus('idle')
   }
 

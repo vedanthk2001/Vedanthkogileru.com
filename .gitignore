@@ -26,12 +26,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local-only notes, not for the public repo
-/CLAUDE.md
 
 # macOS
 .DS_Store
 
-# voice agent: its own PRIVATE repo, nested here on purpose.
-# never track it from the public repo.
-/voice-agent/
+# Local-only notes: candid, and this repo is public.
+/CLAUDE.md
