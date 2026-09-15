@@ -19,6 +19,27 @@ html {
   .section-padding {
     @apply py-20 px-6 md:px-12 lg:px-24;
   }
+
+  /* The hero's height. NOT `h-screen`.
+     
+     On Chrome for Android `100vh` is the *large* viewport: the height with the
+     URL bar retracted. While the bar is showing, the box is around 120px taller
+     than what you can actually see, so everything anchored by percentage sits
+     too low and the bottom row falls off the screen entirely. That is what hid
+     the two links on a Moto G54 on first load.
+
+     `100svh` is the small viewport: the height with the browser chrome fully
+     shown. The hero then fits whatever the bar is doing. Deliberately not
+     `100dvh`, which tracks the bar live and would resize the hero mid-scroll,
+     re-running the headline measurement on every frame of the bar's animation.
+
+     Two declarations, not a Tailwind class pair: order in the cascade decides
+     the winner, and a browser too old for `svh` simply ignores the second line
+     and keeps the `vh` fallback. */
+  .h-hero {
+    height: 100vh;
+    height: 100svh;
+  }
 }
 
 /* ---------------------------------------------------------------------------

@@ -374,7 +374,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative h-screen bg-white overflow-hidden">
+    <section className="relative h-hero bg-white overflow-hidden">
       <div className="absolute inset-0 -z-10 pointer-events-none">
         <div className="absolute -top-32 -left-24 w-[34rem] h-[34rem] rounded-full bg-indigo-50 blur-3xl" />
         <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] rounded-full bg-sky-50 blur-3xl" />
@@ -458,7 +458,13 @@ export default function Hero() {
           stay in the markup at both sizes rather than being swapped by JS, so
           they survive in the static HTML. */}
       <motion.div
-        className="absolute bottom-10 md:bottom-16 left-0 right-0 flex items-center justify-center gap-7 md:gap-4 px-6"
+        /* Mobile sits on the hero's floor with its clearance as padding, so a
+           gesture bar or home indicator pushes the row up instead of covering
+           it. This has to be a responsive class and not an inline style: an
+           inline style cannot be media-queried, and it would add the same
+           padding on top of `md:bottom-16` on desktop. Desktop is unchanged. */
+        className="absolute bottom-0 md:bottom-16 left-0 right-0 flex items-center justify-center gap-7 md:gap-4 px-6
+                   pb-[max(2.5rem,env(safe-area-inset-bottom))] md:pb-0"
         initial={{ opacity: 0 }}
         animate={settled ? { opacity: 1 } : {}}
         transition={{ duration: 0.7, delay: 0.4 }}
