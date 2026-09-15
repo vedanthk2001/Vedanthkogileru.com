@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hero: one continuous move, centre to split</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,-apple-system,system-ui,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1{font-size:18px;font-weight:700;margin:0 0 4px}
+  .sub{color:#64748b;font-size:13px;margin:0 0 16px;line-height:1.6}
+  .bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+  button{font:inherit;font-size:13px;font-weight:600;padding:9px 16px;border-radius:9px;cursor:pointer;
+    border:1px solid #cbd5e1;background:#fff;color:#334155}
+  button:hover{border-color:#818cf8;background:#eef2ff}
+  button.primary{background:#4f46e5;border-color:#4f46e5;color:#fff}
+  button.primary:hover{background:#4338ca}
+  .hint{font-size:12px;color:#94a3b8}
+  .beats{font-size:12px;color:#64748b;margin:14px 0 0;line-height:1.7}
+  .beats b{color:#4f46e5;font-variant-numeric:tabular-nums}
+
+  .hero{position:relative;height:620px;background:#fff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden}
+  .glow1{position:absolute;top:-130px;left:-100px;width:34rem;height:34rem;border-radius:50%;background:#eef2ff;filter:blur(64px)}
+  .glow2{position:absolute;bottom:0;right:0;width:30rem;height:30rem;border-radius:50%;background:#f0f9ff;filter:blur(64px)}
+  canvas{position:absolute;inset:0;width:100%;height:100%}
+
+  /* Canvas and text share one wrapper, so the particles and the letterforms
+     travel left as a single object. The slide starts before the collapse has
+     finished, which is what makes it read as one continuous move rather than
+     two animations played back to back. */
+  .stage{
+    position:absolute;inset:0;
+    transition:transform .9s cubic-bezier(.22,1,.36,1);
+    will-change:transform;
+  }
+  .stage.shifted{transform:translateX(-25%)}
+  .textblock{
+    position:absolute;left:0;right:0;top:50%;
+    transform:translateY(-50%);
+    text-align:center;padding:0 32px;
+  }
+  .name{font-weight:800;letter-spacing:-.025em;line-height:1.02;margin:0;opacity:0;color:#0f172a}
+  .tagline{font-size:clamp(17px,1.7vw,26px);font-weight:600;color:#334155;margin:20px 0 0;opacity:0;transform:translateY(8px)}
+  .blurb{font-size:14px;line-height:1.65;color:#64748b;margin:14px auto 0;max-width:38ch;opacity:0;transform:translateY(8px)}
+  .ctas{display:flex;gap:10px;margin-top:26px;justify-content:center;opacity:0;transform:translateY(8px)}
+  .cta{padding:11px 20px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none}
+  .cta.solid{background:#4f46e5;color:#fff}
+  .cta.ghost{border:1px solid #e2e8f0;color:#475569}
+
+  /* Panel occupies the right half and arrives from off the right edge. */
+  .panelwrap{position:absolute;top:50%;right:0;width:50%;transform:translateY(-50%);
+    padding:0 clamp(20px,3vw,48px) 0 clamp(8px,1.5vw,20px)}
+  .panel{
+    width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:18px;
+    box-shadow:0 18px 44px -28px rgba(15,23,42,.30);
+    padding:22px;display:flex;flex-direction:column;min-height:340px;
+    opacity:0;transform:translateX(115%);
+    transition:opacity .5s ease,transform .8s cubic-bezier(.22,1,.36,1);
+    will-change:transform;
+  }
+  .panel.in{opacity:1;transform:translateX(0)}
+
+  .panel-head{display:flex;align-items:center;gap:11px;padding-bottom:16px;border-bottom:1px solid #f1f5f9}
+  .dot{width:9px;height:9px;border-radius:50%;background:#cbd5e1;flex:none}
+  .dot.live{background:#4f46e5;animation:pulse 1.5s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.82)}}
+  .panel-title{font-size:13px;font-weight:700}
+  .panel-sub{font-size:11.5px;color:#94a3b8;margin-top:2px}
+
+  .idle{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+  .mic{width:64px;height:64px;border-radius:50%;background:#4f46e5;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;animation:ring 2.4s ease-out infinite}
+  @keyframes ring{0%{box-shadow:0 0 0 0 rgba(79,70,229,.40)}70%{box-shadow:0 0 0 18px rgba(79,70,229,0)}100%{box-shadow:0 0 0 0 rgba(79,70,229,0)}}
+  .mic svg{width:26px;height:26px;fill:#fff}
+  .idle-label{font-size:14px;font-weight:600;color:#1e293b}
+  .idle-note{font-size:11.5px;color:#94a3b8;max-width:30ch;line-height:1.5}
+
+  .transcript{flex:1;overflow:hidden;position:relative;display:none;
+    -webkit-mask-image:linear-gradient(to bottom,transparent,#000 26%);
+    mask-image:linear-gradient(to bottom,transparent,#000 26%)}
+  .lines{position:absolute;bottom:0;left:0;right:0;display:flex;flex-direction:column;gap:11px;padding:16px 2px 4px}
+  .line{font-size:13.5px;line-height:1.55;animation:rise .22s ease-out}
+  @keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  .line .who{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px}
+  .line.agent .who{color:#4f46e5}
+  .line.agent{color:#1e293b}
+  .line.caller .who{color:#94a3b8}
+  .line.caller{color:#64748b}
+  .line.partial{opacity:.45}
+  .panel-foot{padding-top:14px;border-top:1px solid #f1f5f9;display:none;align-items:center;justify-content:space-between}
+  .end{font-size:12px;font-weight:600;color:#dc2626;background:none;border:none;cursor:pointer;padding:0}
+  .rec{font-size:11px;color:#94a3b8}
+
+  @media (max-width:820px){
+    .stage.shifted{transform:none}
+    .panelwrap{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hero: everything lands, holds, then the panel arrives</h1>
+  <p class="sub">One thing at a time. The name resolves dead centre, the tagline, blurb and buttons lay out under it, and only once all of that has settled does the hero hold still. After the lag it slides left and the voice panel arrives from the right.</p>
+
+  <div class="bar">
+    <button class="primary" onclick="run()">Replay whole sequence</button>
+    <button onclick="setLag(1000)" id="b1">Lag 1s</button>
+    <button onclick="setLag(2000)" id="b2">Lag 2s</button>
+    <button onclick="setLag(3000)" id="b3">Lag 3s</button>
+    <button onclick="startCall()">Simulate a call</button>
+    <span class="hint">Click the mic for the live transcript view.</span>
+  </div>
+
+  <div class="hero" id="hero">
+    <div class="glow1"></div><div class="glow2"></div>
+    <div class="stage" id="stage">
+    <canvas id="cv"></canvas>
+
+    <div class="textblock" id="textblock">
+      <h2 class="name" id="name">Hi, I&rsquo;m<br>Vedanth</h2>
+      <p class="tagline" id="tag">and my job is to absorb entropy.</p>
+      <p class="blurb" id="blurb">AI Product Manager. Disorder is the default state of every system, and my work is the energy that keeps it in order.</p>
+      <div class="ctas" id="ctas">
+        <a class="cta solid" href="#">See the work</a>
+        <a class="cta ghost" href="#">Get in touch</a>
+      </div>
+    </div>
+    </div>
+
+    <div class="panelwrap">
+      <div class="panel" id="panel">
+        <div class="panel-head">
+          <span class="dot" id="dot"></span>
+          <div>
+            <div class="panel-title" id="ptitle">Talk to me</div>
+            <div class="panel-sub" id="psub">not actually me but you get the point</div>
+          </div>
+        </div>
+
+        <div class="idle" id="idle">
+          <button class="mic" onclick="startCall()" aria-label="Start a voice call">
+            <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11Z"/></svg>
+          </button>
+          <div class="idle-label">Ask me anything</div>
+                  </div>
+
+        <div class="transcript" id="transcript"><div class="lines" id="lines"></div></div>
+        <div class="panel-foot" id="foot">
+          <span class="rec">Recording</span>
+          <button class="end" onclick="run()">End call</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="beats">
+    <b>0.0s</b> chaos, cloud rotating &nbsp;·&nbsp;
+    <b>2.2s</b> collapse begins, spin decelerating &nbsp;·&nbsp;
+    <b>4.0s</b> name lands centred, canvas crossfades out &nbsp;·&nbsp;
+    <b>4.1&ndash;4.4s</b> tagline, blurb, CTAs &nbsp;·&nbsp;
+    <b>5.0s</b> copy fully laid out, hero holds still &nbsp;·&nbsp; hold for <b id="lagout">1s</b> &nbsp;·&nbsp; then slide left, panel <b>180ms</b> behind it</p>
+</div>
+
+<script>
+const CHAOS_MS=2200, COLLAPSE_MS=1800, MAX=600, TAU=Math.PI*2;
+const LINES=["Hi, I’m","Vedanth"];
+const ALPHAS=[0.9,0.7,0.55,0.85];
+let LAG=2000;
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const rand=(a,b)=>Math.random()*(b-a)+a;
+
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+const nameEl=document.getElementById('name');
+const stage=document.getElementById('stage');
+const panel=document.getElementById('panel');
+let W,H,CX,CY,focal,zNear,zFar,minDen,ps=[],phase,t0,tOrder,lastAng,raf,settled,shifted;
+let timers=[];
+
+/* Sample the headline exactly where it sits right now: centred, full width.
+   Identical to the live site, so the collapse target does not change. */
+function sample(){
+  const heroBox=document.getElementById('hero').getBoundingClientRect();
+  const box=nameEl.getBoundingClientRect();
+  const size=parseFloat(getComputedStyle(nameEl).fontSize);
+  const off=document.createElement('canvas');
+  off.width=W; off.height=H;
+  const c=off.getContext('2d');
+  c.fillStyle='#fff'; c.fillRect(0,0,W,H);
+  c.font=`800 ${size}px Inter, system-ui, sans-serif`;
+  c.textAlign='center'; c.textBaseline='middle';
+  c.fillStyle='#000';
+  const lh=size*1.02;
+  const midX=(box.left+box.right)/2-heroBox.left;
+  const top=box.top-heroBox.top;
+  LINES.forEach((l,i)=>c.fillText(l,midX,top+lh*(i+0.5)));
+  const img=c.getImageData(0,0,W,H).data;
+  const pts=[], step=Math.max(2,Math.floor(size/42));
+  for(let y=0;y<H;y+=step)for(let x=0;x<W;x+=step)
+    if(img[(y*W+x)*4]<80)pts.push({x,y});
+  for(let i=pts.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pts[i],pts[j]]=[pts[j],pts[i]];}
+  return pts.slice(0,MAX);
+}
+
+function init(){
+  cancelAnimationFrame(raf);
+  const r=cv.getBoundingClientRect(), dpr=Math.min(devicePixelRatio||1,2);
+  W=r.width;H=r.height;CX=W/2;CY=H/2;
+  cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  focal=Math.max(900,W*0.9); zNear=-0.42*focal; zFar=0.90*focal; minDen=0.35*focal;
+
+  ps=sample().map((p,i)=>({x:rand(0,W),y:rand(0,H),z:rand(zNear,zFar),
+    vx:rand(-3,3),vy:rand(-3,3),vz:rand(-1.4,1.4)*(focal/620),
+    sx:0,sy:0,sz:0,tx:p.x,ty:p.y,r:rand(1.2,2.0),a:ALPHAS[i%4]}));
+
+  phase='chaos'; t0=performance.now(); lastAng=0; settled=false;
+  cv.style.transition=''; cv.style.opacity='1';
+  raf=requestAnimationFrame(draw);
+}
+
+function paint(ang){
+  const cos=Math.cos(ang),sin=Math.sin(ang);
+  const drawn=ps.map(p=>{
+    const dx=p.x-CX;
+    const rz=dx*sin+p.z*cos;
+    const rx=CX+dx*cos-p.z*sin;
+    const s=focal/Math.max(minDen,focal+rz);
+    return{z:rz,x:CX+(rx-CX)*s,y:CY+(p.y-CY)*s,r:Math.max(.35,p.r*s),
+      a:Math.min(.95,p.a*Math.min(1.25,Math.max(.12,s*s)))};
+  });
+  drawn.sort((a,b)=>b.z-a.z);
+  for(const d of drawn){
+    ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,TAU);
+    ctx.fillStyle=`rgba(15,15,15,${d.a})`;ctx.fill();
+  }
+}
+
+function draw(now){
+  ctx.clearRect(0,0,W,H);
+  if(phase==='chaos'&&now-t0>CHAOS_MS){phase='order';tOrder=now;for(const p of ps){p.sx=p.x;p.sy=p.y;p.sz=p.z;}}
+  let ang=0;
+  if(phase==='order'){
+    const t=Math.min(1,(now-tOrder)/COLLAPSE_MS), e=ease(t);
+    ang=lastAng*(1-e);
+    for(const p of ps){p.x=p.sx+(p.tx-p.sx)*e;p.y=p.sy+(p.ty-p.sy)*e;p.z=p.sz*(1-e);}
+    paint(ang);
+    if(t>=1&&!settled){settled=true;reveal();return;}
+  }else{
+    ang=(now-t0)/1000*0.55; lastAng=ang;
+    for(const p of ps){
+      p.x+=p.vx;p.y+=p.vy;p.z+=p.vz;
+      if(p.x<=0||p.x>=W){p.vx*=-1;p.x=Math.max(0,Math.min(W,p.x));}
+      if(p.y<=0||p.y>=H){p.vy*=-1;p.y=Math.max(0,Math.min(H,p.y));}
+      if(p.z<zNear||p.z>zFar)p.vz*=-1;
+    }
+    paint(ang);
+  }
+  raf=requestAnimationFrame(draw);
+}
+
+function at(ms,fn){timers.push(setTimeout(fn,ms));}
+function anim(el,styles,delay){at(delay,()=>{
+  el.style.transition='opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1)';
+  Object.assign(el.style,styles);});}
+
+function reveal(){
+  cv.style.transition='opacity .5s ease'; cv.style.opacity='0';
+  nameEl.style.transition='opacity .5s ease'; nameEl.style.opacity='1';
+  anim(document.getElementById('tag'),{opacity:'1',transform:'none'},120);
+  anim(document.getElementById('blurb'),{opacity:'1',transform:'none'},240);
+  anim(document.getElementById('ctas'),{opacity:'1',transform:'none'},380);
+  // The copy is fully laid out at ~980ms after the name lands (last item starts
+  // at 380 and runs 600). Hold from there, THEN open up.
+  const openAt = 980 + LAG;
+  at(openAt,()=>{shifted=true;stage.classList.add('shifted');});
+  at(openAt+180,()=>panel.classList.add('in'));
+}
+
+const SCRIPT=[
+  ['agent',"Hey, I'm Vedanth. Not actually, I'm the AI version, but you get the idea. Product manager at Ignosis, working on voice AI. How can I help?"],
+  ['caller',"I'm looking for a PM for a fintech role."],
+  ['agent',"Happy to talk about that. Who am I talking to?"],
+  ['caller',"Priya, I recruit for a lending startup."],
+  ['agent',"Good to meet you, Priya. What do you do there?"],
+];
+
+function startCall(){
+  document.getElementById('idle').style.display='none';
+  document.getElementById('transcript').style.display='block';
+  document.getElementById('foot').style.display='flex';
+  document.getElementById('dot').className='dot live';
+  document.getElementById('ptitle').textContent='Live';
+  document.getElementById('psub').textContent='Speak whenever you like';
+  const lines=document.getElementById('lines'); lines.innerHTML='';
+  let d=350;
+  SCRIPT.forEach(([who,text])=>{
+    at(d,()=>{
+      const el=document.createElement('div');
+      el.className=`line ${who} partial`;
+      el.innerHTML=`<span class="who">${who==='agent'?'Vedanth':'You'}</span>${text}`;
+      lines.appendChild(el);
+      while(lines.children.length>7)lines.removeChild(lines.firstChild);
+      at(420,()=>el.classList.remove('partial'));
+    });
+    d+=Math.max(1500,text.length*34);
+  });
+}
+
+function setLag(ms){
+  LAG=ms;
+  [[1000,'b1'],[2000,'b2'],[3000,'b3']].forEach(([v,id])=>{
+    const b=document.getElementById(id);
+    b.style.borderColor = ms===v?'#4f46e5':'#cbd5e1';
+    b.style.background  = ms===v?'#eef2ff':'#fff';
+  });
+  document.getElementById('lagout').textContent=(ms/1000)+'s';
+  run();
+}
+
+function run(){
+  timers.forEach(clearTimeout); timers=[];
+  document.getElementById('idle').style.display='flex';
+  document.getElementById('transcript').style.display='none';
+  document.getElementById('foot').style.display='none';
+  document.getElementById('dot').className='dot';
+  document.getElementById('ptitle').textContent='Talk to me';
+  document.getElementById('psub').textContent='not actually me but you get the point';
+
+  shifted=false;
+  stage.style.transition='none'; stage.classList.remove('shifted');
+  panel.style.transition='none'; panel.classList.remove('in');
+  for(const id of ['name','tag','blurb','ctas']){
+    const el=document.getElementById(id);
+    el.style.transition='none'; el.style.opacity='0';
+    el.style.transform = id==='name'?'none':'translateY(8px)';
+  }
+  requestAnimationFrame(()=>{
+    stage.style.transition=''; panel.style.transition='';
+    nameEl.style.fontSize=Math.min(document.getElementById('hero').clientWidth/7,120)+'px';
+    init();
+  });
+}
+
+addEventListener('resize',()=>{if(!settled)run()});
+document.fonts.ready.then(()=>setLag(1000));
+</script>
+</body>
+</html>

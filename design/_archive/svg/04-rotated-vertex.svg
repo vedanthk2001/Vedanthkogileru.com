@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 24" color="#0F172A" role="img" aria-label="Rotated Vertex">
+  <g transform="translate(0.8,0)" fill="none" stroke="currentColor" stroke-width="2.8"
+     stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="6">
+    <path d="M1.5 8.72 L7.2 20.4 L12.9 8.72"/>
+    <path d="M16.6 8.72 L16.6 20.4"/>
+    <path class="accent" stroke="currentColor" d="M28.28 8.86 L16.6 14.56 L28.28 20.26" stroke-linejoin="round"/>
+    <circle cx="16.6" cy="14.56" r="1.8" fill="currentColor" stroke="none"/>
+  </g>
+</svg>

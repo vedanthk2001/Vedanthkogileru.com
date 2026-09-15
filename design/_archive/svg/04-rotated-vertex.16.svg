@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" color="#0F172A" role="img" aria-label="Rotated Vertex favicon">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="butt">
+    <path d="M8.5 5 L8.5 21"/>
+    <path class="accent" stroke="currentColor" d="M20.76 7.01 L8.5 13 L20.76 18.99" stroke-linejoin="round"/>
+    <circle cx="8.5" cy="13" r="2.1" fill="currentColor" stroke="none"/>
+  </g>
+</svg>

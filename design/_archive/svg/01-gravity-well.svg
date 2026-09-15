@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" color="#0F172A" role="img" aria-label="Gravity Well">
+  <g transform="translate(0,-1.2)" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="butt" stroke-linejoin="round">
+    <path d="M1.2 4 C4.73 5.88 8.93 13.11 12 19.4 C15.07 13.11 19.27 5.88 22.8 4"/>
+    <circle class="accent" cx="12" cy="19.4" r="2.6" fill="currentColor" stroke="none"/>
+  </g>
+</svg>

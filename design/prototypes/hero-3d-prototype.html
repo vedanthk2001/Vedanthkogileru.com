@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hero animation: 2D vs 3D</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Inter, -apple-system, system-ui, sans-serif;
+    background: #fff;
+    color: #0f172a;
+    padding: 32px 24px 64px;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 700; margin: 0 0 4px; }
+  .sub { color: #64748b; font-size: 14px; margin: 0 0 24px; }
+  .bar { display: flex; gap: 10px; align-items: center; margin-bottom: 28px; flex-wrap: wrap; }
+  button {
+    font: inherit; font-size: 13px; font-weight: 600;
+    padding: 9px 16px; border-radius: 9px; cursor: pointer;
+    border: 1px solid #cbd5e1; background: #fff; color: #334155;
+  }
+  button:hover { border-color: #818cf8; background: #eef2ff; }
+  button.primary { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+  button.primary:hover { background: #4338ca; }
+  .variant { margin-bottom: 34px; }
+  .label { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .tag {
+    font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+    color: #4f46e5;
+  }
+  .name { font-size: 15px; font-weight: 600; }
+  .note { font-size: 13px; color: #64748b; margin: 0 0 10px; line-height: 1.5; }
+  .stage {
+    position: relative; width: 100%; height: 300px;
+    border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; background: #fff;
+  }
+  canvas { display: block; width: 100%; height: 100%; }
+  .settled {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    padding-bottom: 6%;
+    font-weight: 800; letter-spacing: -.02em; line-height: 1.05; text-align: center;
+    opacity: 0; pointer-events: none; color: #0f172a;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hero animation: current 2D vs two 3D treatments</h1>
+  <p class="sub">Same particle count (600), same timing as the live site: 2200&#8202;ms chaos, 1800&#8202;ms collapse, name lands at ~4.0&#8202;s.</p>
+
+  <div class="bar">
+    <button class="primary" onclick="replayAll()">Replay all</button>
+    <button onclick="replay(0)">Replay A</button>
+    <button onclick="replay(1)">Replay B</button>
+    <button onclick="replay(2)">Replay C</button>
+  </div>
+
+  <div class="variant">
+    <div class="label"><span class="tag">A</span><span class="name">Current, flat 2D</span></div>
+    <p class="note">What ships today. Particles scatter on a plane and ease into the sampled letterforms.</p>
+    <div class="stage"><canvas id="c0"></canvas><div class="settled" id="t0"></div></div>
+  </div>
+
+  <div class="variant">
+    <div class="label"><span class="tag">B</span><span class="name">3D depth, static camera</span></div>
+    <p class="note">Each particle gains a z coordinate and is perspective-projected: near ones are larger and darker, far ones smaller and fainter. They collapse toward z&#8202;=&#8202;0, so the letterforms resolve out of a cloud that had real volume. No library, no rotation.</p>
+    <div class="stage"><canvas id="c1"></canvas><div class="settled" id="t1"></div></div>
+  </div>
+
+  <div class="variant">
+    <div class="label"><span class="tag">C</span><span class="name">3D depth + camera rotation</span></div>
+    <p class="note">Same projection, but the whole cloud rotates around the vertical axis during chaos and decelerates to square-on as it settles. This is the one that unmistakably reads as 3D, because parallax is what sells depth, not shading.</p>
+    <div class="stage"><canvas id="c2"></canvas><div class="settled" id="t2"></div></div>
+  </div>
+</div>
+
+<script>
+const CHAOS_MS = 2200, COLLAPSE_MS = 1800, MAX_PARTICLES = 600;
+const FOCAL = 620;
+const LINES = ["Hi, I’m", "Vedanth"];
+const COLORS = [0.90, 0.70, 0.55, 0.85];
+
+const easeInOutCubic = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+const rand = (a,b) => Math.random()*(b-a)+a;
+
+function sampleText(w, h, count) {
+  const off = document.createElement('canvas');
+  off.width = w; off.height = h;
+  const c = off.getContext('2d');
+  c.fillStyle = '#fff'; c.fillRect(0,0,w,h);
+
+  let size = Math.min(w/7, 120);
+  c.font = `800 ${size}px Inter, system-ui, sans-serif`;
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  const longest = LINES.reduce((a,b) => a.length > b.length ? a : b);
+  const measured = c.measureText(longest).width;
+  if (measured > w*0.88) { size *= (w*0.88)/measured; c.font = `800 ${size}px Inter, system-ui, sans-serif`; }
+
+  const lh = size, totalH = LINES.length*lh, centerY = h*0.40;
+  const startY = centerY - totalH/2 + lh/2;
+  c.fillStyle = '#000';
+  LINES.forEach((line,i) => c.fillText(line, w/2, startY + i*lh));
+
+  const img = c.getImageData(0,0,w,h);
+  const pts = [];
+  const step = Math.max(2, Math.floor(size/42));
+  for (let y=0; y<h; y+=step) for (let x=0; x<w; x+=step)
+    if (img.data[(y*w+x)*4] < 80) pts.push({x,y});
+
+  for (let i=pts.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [pts[i],pts[j]]=[pts[j],pts[i]]; }
+  return { pts: pts.slice(0, Math.min(count, pts.length)), size };
+}
+
+class Scene {
+  // mode: 'flat' | 'depth' | 'rotate'
+  constructor(canvasId, textId, mode) {
+    this.canvas = document.getElementById(canvasId);
+    this.textEl = document.getElementById(textId);
+    this.ctx = this.canvas.getContext('2d');
+    this.mode = mode;
+    this.raf = 0;
+    window.addEventListener('resize', () => this.init());
+  }
+
+  init() {
+    cancelAnimationFrame(this.raf);
+    const rect = this.canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.w = rect.width; this.h = rect.height;
+    this.canvas.width = this.w*dpr; this.canvas.height = this.h*dpr;
+    this.ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    const { pts, size } = sampleText(this.w, this.h, MAX_PARTICLES);
+    this.textEl.style.fontSize = size + 'px';
+    this.textEl.innerHTML = LINES.join('<br>');
+    this.textEl.style.transition = ''; this.textEl.style.opacity = '0';
+    this.canvas.style.transition = ''; this.canvas.style.opacity = '1';
+
+    // Depth range: behind the text plane and in front of it, so the cloud
+    // genuinely surrounds the viewer's focal plane rather than sitting behind it.
+    this.ps = pts.map((t,i) => ({
+      x: rand(0,this.w), y: rand(0,this.h),
+      z: this.mode === 'flat' ? 0 : rand(-260, 560),
+      vx: rand(-3,3), vy: rand(-3,3),
+      vz: this.mode === 'flat' ? 0 : rand(-1.4,1.4),
+      sx:0, sy:0, sz:0,
+      tx: t.x, ty: t.y,
+      r: rand(1.2,2.0),
+      a: COLORS[i % COLORS.length],
+    }));
+
+    this.phase = 'chaos';
+    this.start = performance.now();
+    this.orderStart = 0;
+    this.settled = false;
+    this.raf = requestAnimationFrame(now => this.draw(now));
+  }
+
+  // Perspective projection. At z = 0 the scale is exactly 1, so every particle
+  // lands on the identical pixel the 2D version would have used.
+  project(p, angle) {
+    const cx = this.w/2, cy = this.h/2;
+    let x = p.x, z = p.z;
+    if (angle) {
+      const dx = p.x - cx, cos = Math.cos(angle), sin = Math.sin(angle);
+      x = cx + dx*cos - p.z*sin;
+      z = dx*sin + p.z*cos;
+    }
+    const s = FOCAL / (FOCAL + z);
+    return {
+      x: cx + (x - cx)*s,
+      y: cy + (p.y - cy)*s,
+      r: Math.max(0.35, p.r*s),
+      // Fade with distance. Clamped so near particles never go fully opaque-black
+      // and far ones stay just visible.
+      a: p.a * Math.max(0.12, Math.min(1.25, s*s)),
+    };
+  }
+
+  draw(now) {
+    const ctx = this.ctx;
+    ctx.clearRect(0,0,this.w,this.h);
+    const ps = this.ps;
+
+    if (this.phase === 'chaos' && now - this.start > CHAOS_MS) {
+      this.phase = 'order';
+      this.orderStart = now;
+      for (const p of ps) { p.sx=p.x; p.sy=p.y; p.sz=p.z; }
+    }
+
+    let angle = 0, t = 0;
+    if (this.mode === 'rotate') {
+      if (this.phase === 'chaos') {
+        angle = (now - this.start)/1000 * 0.55;
+        this.lastAngle = angle;
+      } else {
+        // Decelerate the spin to zero over the collapse, so the cloud is
+        // square-on at the exact moment the letterforms resolve.
+        t = Math.min(1,(now - this.orderStart)/COLLAPSE_MS);
+        angle = (this.lastAngle || 0) * (1 - easeInOutCubic(t));
+      }
+    }
+
+    if (this.phase === 'order') {
+      t = Math.min(1,(now - this.orderStart)/COLLAPSE_MS);
+      if (!this.settled) {
+        const e = easeInOutCubic(t);
+        for (const p of ps) {
+          p.x = p.sx + (p.tx - p.sx)*e;
+          p.y = p.sy + (p.ty - p.sy)*e;
+          p.z = p.sz + (0 - p.sz)*e;
+        }
+        this.paint(angle);
+        if (t >= 1) {
+          this.settled = true;
+          this.canvas.style.transition = 'opacity .5s ease';
+          this.canvas.style.opacity = '0';
+          this.textEl.style.transition = 'opacity .5s ease';
+          this.textEl.style.opacity = '1';
+        }
+      }
+    } else {
+      for (const p of ps) {
+        p.x += p.vx; p.y += p.vy; p.z += p.vz;
+        if (p.x<=0||p.x>=this.w) { p.vx*=-1; p.x=Math.max(0,Math.min(this.w,p.x)); }
+        if (p.y<=0||p.y>=this.h) { p.vy*=-1; p.y=Math.max(0,Math.min(this.h,p.y)); }
+        if (p.z<-260||p.z>560) p.vz*=-1;
+      }
+      this.paint(angle);
+    }
+
+    this.raf = requestAnimationFrame(n => this.draw(n));
+  }
+
+  paint(angle) {
+    const ctx = this.ctx;
+    if (this.mode === 'flat') {
+      for (const p of this.ps) {
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle = `rgba(15,15,15,${p.a})`; ctx.fill();
+      }
+      return;
+    }
+    // Painter's algorithm: far particles first, so near ones overlap them.
+    const drawn = this.ps.map(p => ({ p, proj: this.project(p, angle) }));
+    drawn.sort((a,b) => (b.p.z) - (a.p.z));
+    for (const { proj } of drawn) {
+      ctx.beginPath(); ctx.arc(proj.x, proj.y, proj.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(15,15,15,${Math.min(0.95, proj.a)})`; ctx.fill();
+    }
+  }
+}
+
+const scenes = [
+  new Scene('c0','t0','flat'),
+  new Scene('c1','t1','depth'),
+  new Scene('c2','t2','rotate'),
+];
+
+function replay(i) { scenes[i].init(); }
+function replayAll() { scenes.forEach(s => s.init()); }
+
+document.fonts.ready.then(replayAll);
+</script>
+</body>
+</html>

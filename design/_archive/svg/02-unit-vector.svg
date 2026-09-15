@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" color="#0F172A" role="img" aria-label="Unit Vector">
+  <g transform="translate(0,-1.27)" fill="none" stroke="currentColor"
+     stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="6">
+    <path d="M6.192 9.439 L12 20.838 L17.808 9.439" stroke-width="2.6"/>
+    <path class="accent" stroke="currentColor" d="M10.634 4.573 L12 1.892 L13.366 4.573" stroke-width="1.4"/>
+  </g>
+</svg>

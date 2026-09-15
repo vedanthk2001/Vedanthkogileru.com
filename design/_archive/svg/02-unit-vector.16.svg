@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" color="#0F172A" role="img" aria-label="Unit Vector favicon">
+  <g fill="none" stroke="currentColor"
+     stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="6">
+    <path d="M6.926 10.309 L12 20.268 L17.074 10.309" stroke-width="3"/>
+    <path class="accent" stroke="currentColor" d="M10.518 5.161 L12 2.252 L13.482 5.161" stroke-width="2"/>
+  </g>
+</svg>
