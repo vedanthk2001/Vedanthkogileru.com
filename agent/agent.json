@@ -1,0 +1,106 @@
+{
+  "$comment": "What the agent is, independent of any platform. The system prompt is prompt.md. `runtime` names the folder in providers/ that runs it.",
+  "runtime": "vapi",
+  "name": "Vedanth Web Agent",
+  "firstMessage": "Hey, I'm Vedanth. Not actually, I'm the AI version, but you get the idea. Product manager, working in voice AI. How can I help?",
+  "speaksFirst": true,
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-4.1-mini",
+    "temperature": 0.4
+  },
+  "voice": {
+    "provider": "elevenlabs",
+    "voiceId": "CpYjrbIFmeB9e3TSK3No",
+    "model": "eleven_turbo_v2_5",
+    "stability": 0.5,
+    "similarityBoost": 0.75,
+    "optimizeStreamingLatency": 3
+  },
+  "pronunciation": [
+    {
+      "word": "Vedanth",
+      "say": "वेदांत"
+    }
+  ],
+  "transcriber": {
+    "provider": "deepgram",
+    "model": "nova-3",
+    "language": "en",
+    "keyterms": [
+      "Ignosis",
+      "Vedanth",
+      "Kogileru",
+      "CASHe",
+      "KaratClub",
+      "Karat Wealth",
+      "Teenvesting",
+      "BITS Pilani",
+      "Sahyadris",
+      "Gukesh",
+      "Pragg",
+      "Dubov",
+      "Vapi"
+    ]
+  },
+  "knowledge": {
+    "files": [
+      "knowledge/01-experience.md",
+      "knowledge/02-projects.md",
+      "knowledge/03-education-personal.md"
+    ],
+    "topK": 2
+  },
+  "limits": {
+    "maxDurationSeconds": 300,
+    "silenceTimeoutSeconds": 15
+  },
+  "endCall": {
+    "enabled": true,
+    "message": "Thanks for calling."
+  },
+  "capture": {
+    "summary": true,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "caller_name": {
+          "type": "string",
+          "description": "The caller's first name if they gave one, otherwise empty."
+        },
+        "caller_org_role": {
+          "type": "string",
+          "description": "The caller's organisation and role if offered, otherwise empty."
+        },
+        "caller_intent": {
+          "type": "string",
+          "enum": [
+            "recruiting",
+            "collaboration",
+            "sales",
+            "curiosity",
+            "other"
+          ],
+          "description": "Why they called. Recruiting is expected and fine."
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "booked",
+            "will email",
+            "no action"
+          ],
+          "description": "How the call was routed at the close."
+        },
+        "unanswered": {
+          "type": "string",
+          "description": "Anything the agent could not answer. This is the backlog for improving the knowledge base."
+        }
+      },
+      "required": [
+        "caller_intent",
+        "outcome"
+      ]
+    }
+  }
+}

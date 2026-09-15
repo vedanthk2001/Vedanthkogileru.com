@@ -1,0 +1,28 @@
+{
+  "$comment": "Only what Vapi needs that the agent itself does not define. `client` is inlined into the site's JS by next.config.js, so it holds public-by-design values only. The private key is never stored here. An empty client value falls back to the environment variable of the same name.",
+  "client": {
+    "NEXT_PUBLIC_VAPI_PUBLIC_KEY": "",
+    "NEXT_PUBLIC_VAPI_ASSISTANT_ID": "b5988c2d-375e-4165-9e6a-2b6869b919e8"
+  },
+  "elevenlabsCredentialId": "c5b8530d-5227-42ab-bc43-c604d715d92d",
+  "knowledgeBase": {
+    "provider": "canonical",
+    "fileIds": {
+      "knowledge/01-experience.md": "a878a041-fc4a-4a69-9eea-7ac18c4d8b5d",
+      "knowledge/02-projects.md": "c866de39-513f-4338-8fca-8d20f6f253e1",
+      "knowledge/03-education-personal.md": "09053d67-2e6a-4151-87e6-11186459f8bb"
+    }
+  },
+  "assistant": {
+    "backgroundSound": "off",
+    "clientMessages": [
+      "transcript",
+      "speech-update",
+      "status-update",
+      "conversation-update"
+    ],
+    "serverMessages": [
+      "end-of-call-report"
+    ]
+  }
+}
