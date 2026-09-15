@@ -94,6 +94,17 @@ export default function Hero() {
     return () => clearTimeout(id)
   }, [settled])
 
+  // Pick one presentation rather than mounting both and hiding one with CSS:
+  // two mounts means two Vapi clients, and a hidden one can still start a call.
+  const [isDesktop, setIsDesktop] = useState<boolean | null>(null)
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)')
+    const sync = () => setIsDesktop(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -424,31 +435,31 @@ export default function Hero() {
       </motion.div>
       </div>
 
-      {/* Voice panel: arrives from the right edge once the copy has settled.
-          Hidden below md, where there is no room for a second column. */}
-      <div
-        className={`hidden md:block absolute top-1/2 right-0 w-1/2 -translate-y-1/2 pr-8 lg:pr-12 pl-4
-          transition-all duration-[800ms] ease-[cubic-bezier(.22,1,.36,1)] ${
-            opened ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[115%]'
-          }`}
-      >
-        <VoicePanel />
-      </div>
-
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        initial={{ opacity: 0 }}
-        animate={settled ? { opacity: 1 } : {}}
-        transition={{ duration: 0.8, delay: 0.6 }}
-      >
-        <div className="w-5 h-8 rounded-full border-2 border-slate-200 flex justify-center pt-1.5">
-          <motion.div
-            className="w-1 h-1.5 rounded-full bg-slate-300"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-          />
+      {/* Voice entry point. On desktop the card arrives from the right edge into
+          the space the hero just vacated. On mobile there is no second column,
+          so it is a pill above the scroll cue that opens a bottom sheet. */}
+      {isDesktop === true && (
+        <div
+          className={`absolute top-1/2 right-0 w-1/2 -translate-y-1/2 pr-8 lg:pr-12 pl-4
+            transition-all duration-[800ms] ease-[cubic-bezier(.22,1,.36,1)] ${
+              opened ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-[115%]'
+            }`}
+        >
+          <VoicePanel variant="card" />
         </div>
-      </motion.div>
+      )}
+
+      {isDesktop === false && (
+        <div
+          className={`absolute bottom-32 left-0 right-0 flex justify-center
+            transition-all duration-[600ms] ease-[cubic-bezier(.22,1,.36,1)] ${
+              opened ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+            }`}
+        >
+          <VoicePanel variant="sheet" />
+        </div>
+      )}
+
     </section>
   )
 }
