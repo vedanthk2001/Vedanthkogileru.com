@@ -29,6 +29,18 @@ function easeInOutCubic(t: number) {
 
 function rand(a: number, b: number) { return Math.random() * (b - a) + a }
 
+/** The headline's vertical centre, as a fraction of the hero's height.
+ *
+ *  `sampleText` rasterises the headline at this fraction and `<h1>` renders at
+ *  it, so the two are the same number by construction. That is what lets the
+ *  particles land on the exact pixels of the real text. If you change it, it
+ *  has to change in one place, which is why this is a function and not two
+ *  literals. Mobile sits higher: there is no second column for the voice panel,
+ *  so the mic has to fit underneath the copy without being shoved to the floor. */
+function headlineTop(w: number) {
+  return w < 768 ? 0.30 : 0.40
+}
+
 /** Headline size only. Cheap enough to run on every resize, unlike sampleText,
  *  which rasterises the text and reads it back. */
 function measureHeadline(lines: string[], w: number) {
@@ -56,7 +68,7 @@ function sampleText(lines: string[], w: number, h: number, count: number) {
 
   const lh = size
   const totalH = lines.length * lh
-  const centerY = h * 0.40
+  const centerY = h * headlineTop(w)
   const startY = centerY - totalH / 2 + lh / 2
 
   c.fillStyle = '#000'
@@ -87,6 +99,8 @@ export default function Hero() {
   const [settled, setSettled] = useState(false)
   const [opened, setOpened] = useState(false)
   const [headlineSize, setHeadlineSize] = useState<number | null>(null)
+  // Mirrors what the sampler used, so the copy block never drifts from the text.
+  const [anchor, setAnchor] = useState(0.40)
 
   useEffect(() => {
     if (!settled) return
@@ -179,6 +193,7 @@ export default function Hero() {
 
       const { pts, size } = sampleText(lines, w, h, MAX_PARTICLES)
       setHeadlineSize(size)
+      setAnchor(headlineTop(w))
       n = pts.length
 
       px = new Float32Array(n); py = new Float32Array(n); pz = new Float32Array(n)
@@ -338,8 +353,11 @@ export default function Hero() {
     // animation on a resize would be noise. Only the headline needs to track
     // the new width, and measuring that is cheap.
     const onResize = () => {
-      if (isSettled) setHeadlineSize(measureHeadline(lines, canvas.getBoundingClientRect().width))
-      else init()
+      if (isSettled) {
+        const rw = canvas.getBoundingClientRect().width
+        setHeadlineSize(measureHeadline(lines, rw))
+        setAnchor(headlineTop(rw))
+      } else init()
     }
 
     const boot = async () => {
@@ -376,7 +394,7 @@ export default function Hero() {
         ref={textRef}
         className="absolute left-0 right-0 px-6 text-center font-extrabold text-slate-900 leading-none pointer-events-none select-none"
         style={{
-          top: '40%',
+          top: `${anchor * 100}%`,
           transform: 'translateY(-50%)',
           opacity: 0,
           fontSize: headlineSize ? `${headlineSize}px` : undefined,
@@ -385,13 +403,14 @@ export default function Hero() {
         Hi, I&rsquo;m<br />Vedanth
       </h1>
 
-      {/* Tagline + description grouped directly below the name */}
+      {/* Tagline + description grouped directly below the name.
+          The offset is folded into `top` rather than applied as a translateY.
+          A transform makes an element the containing block for any `position:
+          fixed` descendant, and the mobile mic lives in here: its bottom sheet
+          would have been positioned against this box instead of the viewport. */}
       <div
         className="absolute left-0 right-0 px-6"
-        style={{
-          top: '40%',
-          transform: `translateY(${(headlineSize ?? 0) + 24}px)`,
-        }}
+        style={{ top: `calc(${anchor * 100}% + ${(headlineSize ?? 0) + 24}px)` }}
       >
         <motion.h2
           className="text-center text-xl md:text-3xl font-semibold text-slate-700 leading-snug"
@@ -411,33 +430,60 @@ export default function Hero() {
           AI Product Manager. Disorder is the default state of every system,
           and my work is the energy that keeps it in order.
         </motion.p>
+
+        {/* Mobile has no second column for the panel to slide into, so the mic
+            sits directly under the copy rather than on the floor of the hero.
+            It is the one filled element on the screen, which is the whole point:
+            the two nav actions below are text, not buttons. */}
+        {isDesktop === false && (
+          /* Fades in, deliberately without a translate. Tailwind's translate-y-*
+             leaves an identity matrix() behind rather than `transform: none`,
+             and any transform here would make this div the containing block for
+             the call sheet's `position: fixed`, pinning it to this box instead
+             of the viewport. */
+          <div
+            className={`mt-9 flex justify-center transition-opacity duration-[700ms] ease-out ${
+              opened ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          >
+            <VoicePanel variant="sheet" />
+          </div>
+        )}
       </div>
 
-      {/* CTAs anchored to bottom */}
+      {/* CTAs anchored to bottom.
+          Desktop keeps the two pills. Mobile demotes them to plain text: with
+          the mic above them there were three filled pills on one screen, two of
+          them the same indigo, and the voice CTA had no hierarchy left. These
+          stay in the markup at both sizes rather than being swapped by JS, so
+          they survive in the static HTML. */}
       <motion.div
-        className="absolute bottom-16 left-0 right-0 flex items-center justify-center gap-4 px-6"
+        className="absolute bottom-10 md:bottom-16 left-0 right-0 flex items-center justify-center gap-7 md:gap-4 px-6"
         initial={{ opacity: 0 }}
         animate={settled ? { opacity: 1 } : {}}
         transition={{ duration: 0.7, delay: 0.4 }}
       >
         <a
           href="#work"
-          className="px-6 py-3 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors"
+          className="text-sm font-medium text-slate-500 underline underline-offset-4 decoration-slate-300
+                     md:no-underline md:px-6 md:py-3 md:rounded-full md:bg-indigo-600 md:text-white
+                     md:hover:bg-indigo-700 transition-colors"
         >
           See the work
         </a>
         <a
           href="#contact"
-          className="px-6 py-3 rounded-full border border-slate-200 text-slate-600 text-sm font-medium hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+          className="text-sm font-medium text-slate-500 underline underline-offset-4 decoration-slate-300
+                     md:no-underline md:px-6 md:py-3 md:rounded-full md:border md:border-slate-200
+                     md:text-slate-600 md:hover:border-indigo-300 md:hover:text-indigo-600 transition-colors"
         >
           Get in touch
         </a>
       </motion.div>
       </div>
 
-      {/* Voice entry point. On desktop the card arrives from the right edge into
-          the space the hero just vacated. On mobile there is no second column,
-          so it is a pill above the scroll cue that opens a bottom sheet. */}
+      {/* Desktop voice entry point: the card arrives from the right edge into the
+          space the hero just vacated. The mobile mic is up in the copy block. */}
       {isDesktop === true && (
         <div
           className={`absolute top-1/2 right-0 w-1/2 -translate-y-1/2 pr-8 lg:pr-12 pl-4
@@ -446,17 +492,6 @@ export default function Hero() {
             }`}
         >
           <VoicePanel variant="card" />
-        </div>
-      )}
-
-      {isDesktop === false && (
-        <div
-          className={`absolute bottom-32 left-0 right-0 flex justify-center
-            transition-all duration-[600ms] ease-[cubic-bezier(.22,1,.36,1)] ${
-              opened ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
-            }`}
-        >
-          <VoicePanel variant="sheet" />
         </div>
       )}
 

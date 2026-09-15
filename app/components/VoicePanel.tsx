@@ -193,16 +193,23 @@ export default function VoicePanel({ variant = 'card' }: { variant?: 'card' | 's
     return (
       <>
         {!live && (
-          <div className="flex flex-col items-center gap-2">
+          /* An orb, not a pill. A pill reads as one more button next to the nav
+             links; the ring says something is listening. Same affordance as the
+             desktop card, so the two sizes are recognisably one system. */
+          <div className="flex flex-col items-center">
             <button
               onClick={start}
-              className="flex items-center gap-2.5 pl-4 pr-5 h-12 rounded-full bg-indigo-600 active:bg-indigo-700 text-white shadow-lg shadow-indigo-600/20"
+              aria-label="Start a voice call"
+              className="w-[72px] h-[72px] rounded-full bg-indigo-600 active:bg-indigo-700 text-white
+                         flex items-center justify-center
+                         shadow-[0_0_0_0_rgba(79,70,229,0.4)] motion-safe:animate-mic-ring"
             >
-              <MicIcon className="w-5 h-5 fill-white" />
-              <span className="text-sm font-semibold">Talk to me</span>
+              <MicIcon className="w-7 h-7 fill-white" />
             </button>
+            <p className="mt-4 text-base font-semibold text-slate-900">Talk to me</p>
+            <p className="mt-1 text-xs text-slate-400">not actually me but you get the point</p>
             {notice && (
-              <p className="text-xs text-amber-600 max-w-[32ch] text-center leading-relaxed px-6">{notice}</p>
+              <p className="mt-2 text-xs text-amber-600 max-w-[32ch] text-center leading-relaxed px-6">{notice}</p>
             )}
           </div>
         )}
