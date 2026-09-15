@@ -86,7 +86,6 @@
 - **Rock Climbing**
 - **Chess**
 - **Snooker**
-- Equity Research
 - (To be enriched with images/videos Vedanth will share)
 
 ---
@@ -95,7 +94,7 @@
 
 - **Email:** vedanthkogileruofficial@gmail.com *(public — confirmed)*
 - **LinkedIn:** linkedin.com/in/vedanth-kogileru
-- **Phone:** 9246197942 (resume) — **decide if public**
+- **Phone:** not in this file. It lives in the gitignored `/CLAUDE.md`. This brief is tracked in the **public** repo, so no private number belongs here.
 - **Location:** Hyderabad, India
 
 ---
@@ -114,7 +113,7 @@
 - [x] Confirm CASHe APM end date vs. Ignosis start date — CASHe Apr 2025–Mar 2026, Ignosis from 11 Mar 2026.
 - [x] KaratClub — Founding PM, took it from wireframes to production app.
 - [x] Which email is the public one? — vedanthkogileruofficial@gmail.com.
-- [ ] Make phone number public on site? (Voice agent number will be separate.)
+- [x] Make phone number public on site? **No.** Removed from this file too, since the repo is public. The voice agent number, when it exists, is separate and publishable.
 - [ ] Voice agent: create Vapi + ElevenLabs accounts; provide public key + voice ID + ~2 min audio.
 - [ ] Images/videos: profile photo, hobby shots (climbing/chess/snooker), product screenshots.
 - [ ] Review design inspiration links; lock final visual direction.

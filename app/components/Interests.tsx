@@ -32,10 +32,6 @@ const interests: Interest[] = [
     image: { src: '/img/snooker.jpg', w: 900, h: 592 },
     image2: { src: '/img/snooker-win.jpg', alt: 'Carried off after the tournament win' },
   },
-  {
-    icon: '📈',
-    title: 'Equity Research',
-  },
 ]
 
 export default function Interests() {
@@ -49,7 +45,9 @@ export default function Interests() {
           <h2 className="text-4xl font-bold text-slate-900">Beyond Product</h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-6">
+        {/* Three tiles, so three columns: a 2-col grid leaves the last one
+            orphaned on its own row. Revisit if a fourth interest is added. */}
+        <div className="grid sm:grid-cols-3 gap-6">
           {interests.map((interest, i) => (
             <motion.div
               key={interest.title}
