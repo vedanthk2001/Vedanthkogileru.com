@@ -18,11 +18,17 @@ from build import build, load  # noqa: E402
 
 _MISSING = object()
 
+# Cloudflare in front of the API rejects urllib's default user agent with
+# error 1010, so every request identifies itself.
+USER_AGENT = "vedanthkogileru-site/1.0"
+
+
 
 def call(method, url, key, body=None):
     req = urllib.request.Request(
         url, method=method, data=None if body is None else json.dumps(body).encode(),
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json",
+                 "User-Agent": USER_AGENT})
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             return json.load(r)

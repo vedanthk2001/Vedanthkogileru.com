@@ -47,7 +47,8 @@
     "files": [
       "knowledge/01-experience.md",
       "knowledge/02-projects.md",
-      "knowledge/03-education-personal.md"
+      "knowledge/03-education-personal.md",
+      "knowledge/04-site.md"
     ],
     "topK": 2
   },

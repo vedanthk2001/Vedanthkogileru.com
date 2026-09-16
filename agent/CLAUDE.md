@@ -31,7 +31,7 @@ This is no longer a design doc alone. The agent exists and runs on the site.
 | System prompt | `prompt.md`, verbatim, ~13.6 KB, written from the reasoning in this file |
 | Transcriber | Deepgram **nova-3**, 13 keyterms |
 | Voice | **`11labs / CpYjrbIFmeB9e3TSK3No`** — his clone, live. `eleven_turbo_v2_5`, latency opt 3 |
-| Knowledge base | provider `canonical`, topK 2, the 3 files below |
+| Knowledge base | provider `canonical`, topK 2, the 4 files in `knowledge/`, uploaded as `.txt` |
 | Caps | `maxDurationSeconds` 300, `silenceTimeoutSeconds` 15 |
 | Analysis | structured extraction on, per the Capture section |
 | Repo | `agent/` in the site repo, its earlier history merged in. The separate `vedanth-web-agent` repo was never created and is not needed |
@@ -52,9 +52,16 @@ change in a dashboard, or the next push silently reverts that change.
    length afterwards.
 2. **nova-3 uses `keyterm`, not `keywords`.** Sending `keywords` to nova-3 is
    accepted and silently dropped. nova-2 is the opposite.
-3. **Uploading markdown needs an explicit mime type.** curl sends
-   `application/octet-stream` for `.md` and Vapi rejects it. Use
-   `-F "file=@x.md;type=text/markdown"`.
+3. **Markdown uploads are accepted and then silently fail to process.** Vapi
+   takes `text/markdown` with a 201 and leaves the file at `status: "failed"`
+   forever, so it is never retrieved. All three knowledge files sat like that
+   from the day they were uploaded: the agent had no working knowledge base at
+   all and nothing ever errored. Upload the same content as `.txt` with
+   `text/plain`, which reaches `status: "done"`, and **check the status after
+   every upload** instead of trusting the 201. `sync-knowledge.py` does both.
+4. **Cloudflare fronts the API and blocks urllib's default user agent**, with
+   `error code: 1010` and an empty body. curl works, a bare Python script does
+   not. The scripts here send an explicit `User-Agent`.
 
 
 ### The voice clone
@@ -116,11 +123,17 @@ attached.
 Edit `prompt.md` or `agent.json`, then from the repo root:
 
 ```bash
-export VAPI_PRIVATE_KEY=...                    # in your shell only, never in a file
-python3 agent/providers/vapi/push.py --check   # live vs repo, changes nothing
-python3 agent/providers/vapi/push.py           # build, PATCH, read back, verify
-python3 agent/providers/vapi/build.py          # only print what would be sent
+source ~/.config/vedanthkogileru/env                   # keys, kept outside this public repo
+python3 agent/providers/vapi/sync-knowledge.py         # upload any new knowledge/ file first
+python3 agent/providers/vapi/push.py --check           # live vs repo, changes nothing
+python3 agent/providers/vapi/push.py                   # build, PATCH, read back, verify
+python3 agent/providers/vapi/build.py                  # only print what would be sent
 ```
+
+**Editing a file in `knowledge/` changes nothing on its own.** The knowledge base
+is retrieval: a file reaches the agent only once it is uploaded and its id is
+recorded in `provider.json`. `build.py` refuses to build while a listed file has
+no id, so this cannot be forgotten silently.
 
 **The push sends the whole built assistant.** An older one-liner PATCHed only
 `model`, so nothing under `voice` (the name fix) or in `firstMessage` reached
@@ -147,7 +160,8 @@ agent/
 ├── knowledge/             ← retrieval corpus, uploaded to the platform
 │   ├── 01-experience.md
 │   ├── 02-projects.md
-│   └── 03-education-personal.md
+│   ├── 03-education-personal.md
+│   └── 04-site.md         ← what is actually on the website, section by section
 ├── voice/                 ← the ElevenLabs clone, independent of the platform
 │   ├── vedanth_sample.mp3 ← the exact 180s it was cloned from. NOT committed
 │   ├── vedanth-clone-test.mp3 ← the opening line, synthesised. NOT committed
@@ -162,6 +176,7 @@ agent/
 │   └── vapi/
 │       ├── provider.json  ← Vapi-only settings, file ids, public client config
 │       ├── build.py       ← agent.json + prompt.md → Vapi assistant
+│       ├── sync-knowledge.py ← upload knowledge/ files, record their ids
 │       └── push.py        ← build, PATCH, read back, verify
 ├── vedanth_flow.mmd       ← Mermaid source of the conversation flow
 └── vedanth_flow.svg       ← rendered flow diagram
@@ -175,6 +190,10 @@ committed on purpose.
 
 > `knowledge/` is **functional, not reference**. Those files are the agent's
 > retrieval corpus. Core facts stay in the prompt; only the long tail lives here.
+> `04-site.md` describes the page the caller is looking at, so the agent can
+> answer about the site itself rather than only about him. **Keep it in step with
+> `app/components/`**: if the work entries, About chapters or interests change,
+> that file is now wrong, and re-uploading is a `sync-knowledge.py --force` away.
 
 **Render pipeline:** edit `.mmd` → `mmdc -i vedanth_flow.mmd -o vedanth_flow.svg -b white`
 → rewrite the SVG width/height to explicit px. Diagram is **vertical** (`flowchart TD`).
