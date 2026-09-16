@@ -31,7 +31,7 @@ This is no longer a design doc alone. The agent exists and runs on the site.
 | System prompt | `prompt.md`, verbatim, ~13.6 KB, written from the reasoning in this file |
 | Transcriber | Deepgram **nova-3**, 13 keyterms |
 | Voice | **`11labs / CpYjrbIFmeB9e3TSK3No`** — his clone, live. `eleven_turbo_v2_5`, latency opt 3 |
-| Knowledge base | provider `canonical`, topK 2, the 4 files in `knowledge/`, uploaded as `.txt` |
+| Knowledge base | **inert, see below.** The facts live in `prompt.md` instead |
 | Caps | `maxDurationSeconds` 300, `silenceTimeoutSeconds` 15 |
 | Analysis | structured extraction on, per the Capture section |
 | Repo | `agent/` in the site repo, its earlier history merged in. The separate `vedanth-web-agent` repo was never created and is not needed |
@@ -188,8 +188,31 @@ the exact input needed to clone his voice at any provider, and it came from a
 work meeting. It lives in the working folder only. Everything else here is
 committed on purpose.
 
-> `knowledge/` is **functional, not reference**. Those files are the agent's
-> retrieval corpus. Core facts stay in the prompt; only the long tail lives here.
+> `knowledge/` is **not reaching the agent.** It is kept as the source the
+> `# BACKGROUND` section of `prompt.md` is written from, and as the corpus for
+> whenever retrieval is done properly. Nothing in it is live. See the next note.
+
+### The knowledge base has never worked
+
+Proved on a real call, 16 Sep 2026. Asked "tell me about Vidyaranya", a fact
+present in two knowledge files, the agent said "I don't have that one". The call
+record shows no retrieval step at all.
+
+The cause: `model.knowledgeBase` with `provider: "canonical"` **is not in Vapi's
+current API spec**. The only documented provider is `custom-knowledge-base`,
+which requires an HTTPS server of your own. Vapi stores the canonical object
+happily and never uses it, so `push.py`'s read-back passes: it proves Vapi
+*stored* the config, not that anything is retrieved at call time. Same shape as
+the other two silent failures here, `keywords` on nova-3 and markdown uploads
+stuck at `status: "failed"`.
+
+**So the facts moved into `prompt.md`, under `# BACKGROUND`.** The prompt went
+from 13.6 KB to 19.6 KB, about 4,900 tokens, which is not a problem for
+gpt-4.1-mini and is cache-friendly because it is stable across turns.
+
+Real retrieval, if it is ever wanted, means Trieve or a custom knowledge base
+server, and the test is a live call asking a knowledge-only question, never the
+config read-back.
 > `04-site.md` describes the page the caller is looking at, so the agent can
 > answer about the site itself rather than only about him. **Keep it in step with
 > `app/components/`**: if the work entries, About chapters or interests change,
@@ -368,9 +391,17 @@ the decline did not happen.
 > thinking under uncertainty. Started a YouTube channel teaching teenagers to
 > invest, and it went from there."
 
-### <<Education>>
+### <<School>> and <<College>>, two questions, not one
+> "School was Vidyaranya, here in Hyderabad. No exams until eighth grade and no
+> uniform at all, which mostly meant afternoons under the tamarind tree playing
+> whatever was going. College was a different story. Want that one too?"
+
 > "BITS Pilani, Hyderabad. Electrical engineering, a master's in physics, and a
 > minor in finance. I could not pick one, so I did all three."
+
+**"Where did you go to school" used to return BITS.** One prepared line covered
+both, so the agent skipped fourteen years and answered a question the caller had
+not asked. School leads with Vidyaranya and offers college after.
 
 ### <<Chess>>
 > "I play a fair bit. Tal and Dubov are the ones I like. Both of them would
