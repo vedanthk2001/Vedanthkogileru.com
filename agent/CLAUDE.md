@@ -895,6 +895,17 @@ edit: `Vaydaanth` or `Vay-dhaanth` bias the same vowels without a script switch.
 The knowledge base may keep them, since that is read by the model rather than
 voiced, but anything the agent says aloud is written as words.
 
+### Digits in the transcript come from the transcriber, not the voice
+
+The agent says "Thirteen Karat" and the panel reads "13 Karat". Deepgram writes
+spoken numbers back as numerals, so this is the transcription of the audio, not
+what was spoken and not `formatPlan`. `voice.chunkPlan.formatPlan.formattersEnabled`
+was set first on the assumption that it was the cause: it was live seventeen
+minutes before a call that still showed digits, which ruled it out. The setting
+stays because the prompt writes numbers as words deliberately and there is no
+reason to let the voice layer undo that, but `transcriber.numerals: false` is the
+one that governs what the caller reads.
+
 ### Status, 2026-09-15: still mispronounced on a live call
 
 Check in this order.

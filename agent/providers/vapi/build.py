@@ -70,6 +70,11 @@ def build(agent, prompt, provider):
     transcriber = {"provider": t["provider"], "model": t["model"], "language": t["language"]}
     if t.get("keyterms"):
         transcriber[keyterm_field(t["model"])] = t["keyterms"]
+    # Deepgram writes spoken numbers back as digits, so a line the agent says as
+    # "Thirteen Karat" reaches the on-screen transcript as "13 Karat". The audio
+    # is right either way: this is only about what the caller reads.
+    if "numerals" in t:
+        transcriber["numerals"] = t["numerals"]
 
     model = {**agent["llm"], "messages": [{"role": "system", "content": prompt}]}
     if agent.get("knowledge"):
