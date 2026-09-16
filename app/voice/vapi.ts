@@ -28,7 +28,16 @@ type VapiToolCall = { function?: { name?: string; arguments?: unknown } }
 /** What a tool with no `server` url and `async: true` delivers here instead of
  *  to a webhook. Only arrives while 'tool-calls' is in provider.json's
  *  clientMessages, which replaces Vapi's default list rather than adding to it. */
-type VapiToolCalls = { type: 'tool-calls'; toolCallList?: VapiToolCall[] }
+type VapiToolCalls = {
+  type: 'tool-calls'
+  toolCallList?: VapiToolCall[]
+  /* Documented as toolCallList, but the same calls appear as `toolCalls` on the
+     server-side message and as `toolWithToolCallList` elsewhere in the SDK's own
+     types. Reading all three costs nothing and means a shape change does not
+     turn the feature off with no error anywhere. */
+  toolCalls?: VapiToolCall[]
+  toolWithToolCallList?: { toolCall?: VapiToolCall }[]
+}
 
 /** Every other message type falls through every check below. */
 type VapiMessage = VapiTranscript | VapiSpeechUpdate | VapiToolCalls
@@ -74,7 +83,9 @@ export const vapi: VoiceProvider = {
           return
         }
         if (m?.type !== 'tool-calls') return
-        for (const call of m.toolCallList ?? []) {
+        const calls: VapiToolCall[] =
+          m.toolCallList ?? m.toolCalls ?? (m.toolWithToolCallList ?? []).map((w) => w?.toolCall ?? {})
+        for (const call of calls) {
           const fn = call?.function
           if (!fn?.name) continue
           // A throw here would land inside the SDK's own emit and can take the

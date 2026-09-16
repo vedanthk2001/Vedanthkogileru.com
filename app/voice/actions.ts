@@ -4,51 +4,40 @@
 
 import type { VoiceAction } from './types'
 
-/** Scrolled this recently and the visitor is reading under their own steam, so
- *  the agent stays out of the way. Long enough to bridge two flicks of a
- *  trackpad, short enough that the next thing it says still lands somewhere. */
-const HUMAN_SCROLL_GRACE_MS = 1200
-
-let lastHumanScroll = 0
-
-/* Only direct input counts as the visitor taking over. Deliberately NOT the
-   `scroll` event: inertial scrolling keeps firing it for a second or more after
-   a flick, and our own smooth scroll fires it too, so listening to it widens
-   this window unpredictably and the agent stops scrolling when it should.
-   Bound at import so the timestamp is warm before the agent first reaches for
-   the viewport, and guarded because the export build evaluates this module on
-   the server, where there is no window. */
-if (typeof window !== 'undefined') {
-  const stamp = () => {
-    lastHumanScroll = Date.now()
+/** The last action the browser was asked to run, and what came of it. The only
+ *  window a client-side tool has: the model cannot be told the scroll failed,
+ *  and nothing is logged, so without this a silent no-op is indistinguishable
+ *  from the call never arriving. Read it in the console after a call. */
+declare global {
+  interface Window {
+    __voiceAction?: { name: string; args: Record<string, unknown>; result: string; at: string }
   }
-  window.addEventListener('wheel', stamp, { passive: true })
-  window.addEventListener('touchmove', stamp, { passive: true })
-  /* The keys that scroll. Nothing else reports arrow or page navigation. */
-  const SCROLL_KEYS = new Set([
-    'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ',
-  ])
-  window.addEventListener('keydown', (e) => {
-    if (SCROLL_KEYS.has(e.key)) stamp()
-  }, { passive: true })
+}
+
+function record(name: string, args: Record<string, unknown>, result: string): void {
+  window.__voiceAction = { name, args, result, at: new Date().toISOString() }
 }
 
 function showSection(args: Record<string, unknown>): void {
   const id = args.section
-  if (typeof id !== 'string') return
+  if (typeof id !== 'string') return record('show_section', args, 'no section in args')
 
   /* The model can name a section that does not exist, and the page can lose one
      under it. Neither is worth a throw inside an SDK event handler. */
   const target = document.getElementById(id)
-  if (!target) return
-
-  if (Date.now() - lastHumanScroll < HUMAN_SCROLL_GRACE_MS) return
+  if (!target) return record('show_section', args, `no element with id ${id}`)
 
   /* 'auto' defers to the html `scroll-behavior` in globals.css, which the
      reduced-motion query there already turns off. The scroll still happens: the
-     caller asked to be shown the section, they only asked for no animation. */
+     caller asked to be shown the section, they only asked for no animation.
+
+     Nothing defers to a visitor who is scrolling themselves any more. That
+     deference was a guess, and it was also the only way a legitimate scroll
+     could do nothing at all with no trace, which is worse than the jolt it
+     avoided. They asked to be shown the section. */
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
+  record('show_section', args, `scrolled to ${id}`)
 }
 
 /** The one entry point. Switching on the name means a second action is a case
@@ -62,6 +51,7 @@ export function runAction(action: VoiceAction): void {
       break
     default:
       /* agent.json can ship an action before a build knows how to run it. */
+      record(action.name, action.args, 'no handler for this action')
       break
   }
 }
