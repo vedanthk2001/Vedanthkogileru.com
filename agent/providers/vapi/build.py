@@ -60,6 +60,15 @@ def build(agent, prompt, provider):
         model["knowledgeBase"] = {"provider": provider["knowledgeBase"]["provider"],
                                   "topK": agent["knowledge"]["topK"],
                                   "fileIds": [ids[f] for f in agent["knowledge"]["files"]]}
+    if agent.get("actions"):
+        # No `server` key is what makes these client-side: Vapi hands the call to
+        # the browser instead of posting it anywhere. `async` because a client
+        # tool has no way to return a result, which also means a request-start
+        # message would never be spoken, so none is sent.
+        model["tools"] = [{"type": "function", "async": True,
+                           "function": {"name": a["name"], "description": a["description"],
+                                        "parameters": a["parameters"]}}
+                          for a in agent["actions"]]
 
     assistant = {
         "name": agent["name"],

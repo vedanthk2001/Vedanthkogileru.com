@@ -20,7 +20,8 @@
       "transcript",
       "speech-update",
       "status-update",
-      "conversation-update"
+      "conversation-update",
+      "tool-calls"
     ],
     "serverMessages": [
       "end-of-call-report"

@@ -52,6 +52,31 @@
     ],
     "topK": 2
   },
+  "actions": [
+    {
+      "name": "show_section",
+      "description": "Scroll the caller's page to the section you are talking about. Call it in the same turn as your answer, never instead of one.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "section": {
+            "type": "string",
+            "enum": [
+              "work",
+              "about",
+              "interests",
+              "contact"
+            ],
+            "description": "work = roles and products. about = the story, school, college. interests = chess, snooker, climbing. contact = booking a call or email."
+          }
+        },
+        "required": [
+          "section"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
   "limits": {
     "maxDurationSeconds": 300,
     "silenceTimeoutSeconds": 15

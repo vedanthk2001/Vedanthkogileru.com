@@ -1,7 +1,8 @@
 import type { VoiceProvider } from './types'
 import { vapi } from './vapi'
 
-export type { Role, VoiceSession } from './types'
+export type { Role, VoiceSession, VoiceAction } from './types'
+export { runAction } from './actions'
 
 /** Every adapter, keyed by the name agent/agent.json uses as its `runtime`.
  *  Adding a platform is a file beside vapi.ts and one entry here. */

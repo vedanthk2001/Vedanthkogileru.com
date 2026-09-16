@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { voice, type Role, type VoiceSession } from '../voice'
+import { voice, runAction, type Role, type VoiceSession } from '../voice'
 
 /** Only the last few lines are kept in state. Rendering an unbounded list and
  *  hiding the overflow with CSS gets slower every minute of a call. */
@@ -74,6 +74,10 @@ export default function VoicePanel({ variant = 'card' }: { variant?: 'card' | 's
       onEnd: () => setStatus('idle'),
       onError: () => setStatus('error'),
       onTranscript: push,
+      // Nothing visible happens here on purpose. The page moving under the
+      // caller is its own feedback, and a banner would take attention off
+      // the transcript, which is the only thing this panel is for.
+      onAction: runAction,
     })
     sessionRef.current = session
     session.connected.catch(() => setStatus('error'))
