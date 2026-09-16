@@ -4,6 +4,8 @@
 
 export type Role = 'assistant' | 'user'
 
+export type SpeechStatus = 'started' | 'stopped'
+
 /** Something the agent asked the browser to do while it answers. Client-side
  *  tools cannot return a value to the model, so nothing here reports back and a
  *  failure is invisible to the conversation. `args` is whatever the model sent:
@@ -16,6 +18,11 @@ export type VoiceEvents = {
   onError: () => void
   /** `final: false` is an in-flight partial that a later event supersedes. */
   onTranscript: (role: Role, text: string, final: boolean) => void
+  /** Where one speaking turn ends and the next begins. Transcripts carry no
+   *  turn of their own, and the speaker flipping is not the same thing: a
+   *  visitor who makes a sound mid-answer would otherwise cut that answer in
+   *  two. `turn` is the platform's own counter where it sends one. */
+  onSpeech: (role: Role, status: SpeechStatus, turn?: number) => void
   onAction: (action: VoiceAction) => void
 }
 

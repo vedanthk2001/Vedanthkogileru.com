@@ -23,6 +23,9 @@
       "say": "वेदांत"
     }
   ],
+  "speech": {
+    "keepNumbersAsWritten": true
+  },
   "transcriber": {
     "provider": "deepgram",
     "model": "nova-3",

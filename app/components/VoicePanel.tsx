@@ -1,34 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { voice, runAction, type Role, type VoiceSession } from '../voice'
+import { voice, runAction, reduce, EMPTY, type TranscriptState, type VoiceSession } from '../voice'
 
-/** Only the last few lines are kept in state. Rendering an unbounded list and
- *  hiding the overflow with CSS gets slower every minute of a call. */
-const MAX_LINES = 7
-
-type Line = { role: Role; text: string }
 type Status = 'idle' | 'connecting' | 'live' | 'insecure' | 'error'
-
-/** Vapi emits a final transcript per chunk as speech streams, so one spoken
- *  sentence arrives as several messages. Start a new line only when the speaker
- *  changes; otherwise the opening turn renders as four separate bubbles. */
-function appendChunk(prev: Line[], role: Role, chunk: string): Line[] {
-  const text = chunk.trim()
-  if (!text) return prev
-  const next = [...prev]
-  const last = next[next.length - 1]
-  if (!last || last.role !== role) {
-    next.push({ role, text })
-    return next
-  }
-  // Some providers resend the whole utterance rather than the delta. Treat a
-  // superset as a correction and a subset as a duplicate, or the line doubles.
-  if (last.text === text || last.text.endsWith(text)) return next
-  if (text.startsWith(last.text)) next[next.length - 1] = { role, text }
-  else next[next.length - 1] = { role, text: `${last.text} ${text}` }
-  return next
-}
 
 const MicIcon = ({ className }: { className: string }) => (
   <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
@@ -38,25 +13,15 @@ const MicIcon = ({ className }: { className: string }) => (
 
 export default function VoicePanel({ variant = 'card' }: { variant?: 'card' | 'sheet' }) {
   const [status, setStatus] = useState<Status>('idle')
-  const [lines, setLines] = useState<Line[]>([])
-  const [partial, setPartial] = useState<{ role: Role; text: string } | null>(null)
+  /** Every rule about how chunks become turns lives in app/voice/transcript.ts.
+   *  The panel holds the result and nothing else, so the hard part is a pure
+   *  function that can be reasoned about without a browser or a call. */
+  const [convo, setConvo] = useState<TranscriptState>(EMPTY)
   const sessionRef = useRef<VoiceSession | null>(null)
 
   useEffect(() => {
     return () => sessionRef.current?.stop()
   }, [])
-
-  /** Finals commit into the current speaker's line. Partials are held separately
-   *  and rendered as dimmed trailing text, so an in-flight sentence firms up in
-   *  place rather than stuttering down the panel. */
-  const push = (role: Role, text: string, final: boolean) => {
-    if (final) {
-      setPartial(null)
-      setLines((prev) => appendChunk(prev, role, text).slice(-MAX_LINES))
-    } else {
-      setPartial({ role, text })
-    }
-  }
 
   /** The panel never touches a vendor SDK. `voice` is whichever adapter the
    *  build selected in app/voice/, so changing platform does not change this. */
@@ -67,13 +32,16 @@ export default function VoicePanel({ variant = 'card' }: { variant?: 'card' | 's
     if (!window.isSecureContext) return setStatus('insecure')
 
     setStatus('connecting')
-    setLines([])
-    setPartial(null)
+    setConvo(EMPTY)
     const session = voice.start({
       onLive: () => setStatus('live'),
       onEnd: () => setStatus('idle'),
       onError: () => setStatus('error'),
-      onTranscript: push,
+      // Turns are delimited by speech, not by the role changing: a cough from
+      // the caller mid-answer flips the role twice, and an answer that arrives
+      // as one spoken turn has to render as one bubble.
+      onSpeech: (role, phase, turn) => setConvo((s) => reduce(s, { kind: 'speech', role, status: phase, turn })),
+      onTranscript: (role, text, final) => setConvo((s) => reduce(s, { kind: 'transcript', role, text, final })),
       // Nothing visible happens here on purpose. The page moving under the
       // caller is its own feedback, and a banner would take attention off
       // the transcript, which is the only thing this panel is for.
@@ -90,14 +58,9 @@ export default function VoicePanel({ variant = 'card' }: { variant?: 'card' | 's
 
   const live = status === 'live' || status === 'connecting'
 
-  // Fold the in-flight partial onto the current speaker's line so it grows in
-  // place. A partial from the other speaker opens its own dimmed line.
-  const renderLines: (Line & { tail?: string })[] = lines.map((l) => ({ ...l }))
-  if (partial) {
-    const last = renderLines[renderLines.length - 1]
-    if (last && last.role === partial.role) last.tail = partial.text
-    else renderLines.push({ role: partial.role, text: '', tail: partial.text })
-  }
+  // A turn opens on speech, which can land a beat before any words do. Skip the
+  // empty ones or the panel flashes a bubble with nothing in it.
+  const turns = convo.turns.filter((t) => t.text || t.live)
 
   const notice =
     status === 'insecure'
@@ -133,30 +96,36 @@ export default function VoicePanel({ variant = 'card' }: { variant?: 'card' | 's
       }}
       aria-live="polite"
     >
-      <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-3 pt-4">
-        {renderLines.map((l, i) => (
-          <div
-            key={i}
-            className={`text-sm leading-relaxed ${
-              l.role === 'assistant' ? 'text-slate-800' : 'text-slate-500'
-            }`}
-          >
-            <span
-              className={`block text-[10px] font-bold tracking-widest uppercase mb-0.5 ${
-                l.role === 'assistant' ? 'text-indigo-600' : 'text-slate-400'
+      <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-2 pt-4">
+        {turns.map((turn) => {
+          const agent = turn.role === 'assistant'
+          return (
+            /* Filled and left for him, outlined and right for the caller. Two
+               speakers on a white panel need a difference in weight, not a
+               second colour: his answer is what the visitor came for, so the
+               caller's side recedes the way the old slate-500 line did. */
+            <div
+              key={turn.id}
+              className={`max-w-[85%] px-3.5 py-2 rounded-2xl text-sm leading-relaxed ${
+                agent
+                  ? 'self-start rounded-bl-md bg-indigo-50 text-slate-800'
+                  : 'self-end rounded-br-md border border-slate-200 text-slate-500'
               }`}
             >
-              {l.role === 'assistant' ? 'Vedanth' : 'You'}
-            </span>
-            {l.text}
-            {l.tail && (
-              <span className="opacity-40">
-                {l.text ? ' ' : ''}
-                {l.tail}
-              </span>
-            )}
-          </div>
-        ))}
+              {/* Shape and side carry the speaker on screen, so a visible label
+                  is one more thing to read. aria-live has neither, and would
+                  otherwise announce both halves of the call in one voice. */}
+              <span className="sr-only">{agent ? 'Vedanth:' : 'You:'}</span>
+              {turn.text}
+              {turn.live && (
+                <span className="opacity-40">
+                  {turn.text ? ' ' : ''}
+                  {turn.live}
+                </span>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )

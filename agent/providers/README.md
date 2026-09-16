@@ -45,6 +45,7 @@ pushes are ever automated. Each `push.py` names the variable it reads.
 | `knowledge.files`, `topK` | `model.knowledgeBase`, ids from `provider.json` |
 | `voice` | `voice`, with `elevenlabs` renamed `11labs`, settings verbatim |
 | `pronunciation` | `voice.chunkPlan.formatPlan.replacements`, exact match |
+| `speech.keepNumbersAsWritten` | `voice.chunkPlan.formatPlan.formattersEnabled`, every formatter but `number` |
 | `transcriber.keyterms` | `keyterm` on nova-3, `keywords` otherwise |
 | `limits` | `maxDurationSeconds`, `silenceTimeoutSeconds` |
 | `endCall` | `endCallFunctionEnabled`, `endCallMessage` |

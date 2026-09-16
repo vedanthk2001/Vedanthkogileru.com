@@ -1,4 +1,4 @@
-import type { VoiceProvider } from './types'
+import type { SpeechStatus, VoiceProvider } from './types'
 
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY
 const ASSISTANT_ID = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID
@@ -14,6 +14,12 @@ type VapiClient = {
 
 type VapiTranscript = { type: 'transcript'; role: string; transcriptType: string; transcript: string }
 
+/** The turn boundaries, and the only message carrying a turn number: a
+ *  transcript has none, and the speaker flipping does not mark a turn either.
+ *  Already listed in provider.json's clientMessages. `role` and `status` stay
+ *  `string` because this is wire data, checked at the call site not trusted. */
+type VapiSpeechUpdate = { type: 'speech-update'; role: string; status: string; turn?: number }
+
 /** `arguments` is a JSON string down one path and an already-parsed object down
  *  another, depending on how the call reached the browser, so it stays unknown
  *  until readArgs has looked at it. */
@@ -24,8 +30,8 @@ type VapiToolCall = { function?: { name?: string; arguments?: unknown } }
  *  clientMessages, which replaces Vapi's default list rather than adding to it. */
 type VapiToolCalls = { type: 'tool-calls'; toolCallList?: VapiToolCall[] }
 
-/** Every other message type falls through both checks below. */
-type VapiMessage = VapiTranscript | VapiToolCalls
+/** Every other message type falls through every check below. */
+type VapiMessage = VapiTranscript | VapiSpeechUpdate | VapiToolCalls
 
 function readArgs(raw: unknown): Record<string, unknown> {
   if (typeof raw === 'string') {
@@ -57,6 +63,14 @@ export const vapi: VoiceProvider = {
       client.on('message', ((m: VapiMessage) => {
         if (m?.type === 'transcript') {
           events.onTranscript(m.role === 'user' ? 'user' : 'assistant', m.transcript, m.transcriptType === 'final')
+          return
+        }
+        if (m?.type === 'speech-update') {
+          /* Any other status is dropped rather than coerced: guessing 'stopped'
+             would close a turn that is still being spoken. */
+          const status: SpeechStatus | null =
+            m.status === 'started' ? 'started' : m.status === 'stopped' ? 'stopped' : null
+          if (status) events.onSpeech(m.role === 'user' ? 'user' : 'assistant', status, m.turn)
           return
         }
         if (m?.type !== 'tool-calls') return

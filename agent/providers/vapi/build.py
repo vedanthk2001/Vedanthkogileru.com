@@ -17,6 +17,15 @@ AGENT = HERE.parent.parent
 # Vapi's name for a voice provider, where it differs from the agent's.
 VOICE_PROVIDERS = {"elevenlabs": "11labs"}
 
+# Every formatter Vapi applies to text on its way to TTS, from FormatPlan in
+# @vapi-ai/web's api.d.ts. `formattersEnabled` is an ALLOW LIST: name one and
+# every formatter left off the list stops running, so the only way to disable a
+# single formatter is to send all the others. A new formatter in a later SDK
+# version will be off until it is added here.
+FORMATTERS = ["markdown", "asterisk", "quote", "dash", "newline", "colon", "acronym",
+              "dollarAmount", "email", "date", "time", "distance", "unit", "percentage",
+              "phoneNumber", "number", "stripAsterisk"]
+
 
 def keyterm_field(model):
     # Deepgram nova-3 takes `keyterm`, nova-2 and older take `keywords`. Sending
@@ -39,12 +48,23 @@ def build(agent, prompt, provider):
     v = agent["voice"]
     voice = {"provider": VOICE_PROVIDERS.get(v["provider"], v["provider"]),
              **{k: val for k, val in v.items() if k != "provider"}}
+    format_plan = {}
     if agent.get("pronunciation"):
         # Rewrites text on its way to TTS only, so the transcript keeps the
         # written form. Exact match: a respelled occurrence silently won't fire.
-        voice["chunkPlan"] = {"enabled": True, "formatPlan": {"enabled": True, "replacements": [
+        format_plan["replacements"] = [
             {"type": "exact", "key": p["word"], "value": p["say"], "replaceAllEnabled": True}
-            for p in agent["pronunciation"]]}}
+            for p in agent["pronunciation"]]
+    if agent.get("speech", {}).get("keepNumbersAsWritten"):
+        # The prompt writes numbers as words on purpose, and the `number`
+        # formatter converts them back to digits, so "I don't have that one" is
+        # spoken and transcribed as "I don't have that 1". Every other formatter
+        # is listed because the field is an allow list, not a deny list.
+        format_plan["formattersEnabled"] = [f for f in FORMATTERS if f != "number"]
+    if format_plan:
+        # Either setting alone is reason enough to send a plan, so the chunkPlan
+        # is built from whatever the agent asked for rather than from one key.
+        voice["chunkPlan"] = {"enabled": True, "formatPlan": {"enabled": True, **format_plan}}
 
     t = agent["transcriber"]
     transcriber = {"provider": t["provider"], "model": t["model"], "language": t["language"]}
