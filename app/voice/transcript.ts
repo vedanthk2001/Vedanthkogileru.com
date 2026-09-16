@@ -62,8 +62,13 @@ function patch(state: TranscriptState, index: number, fields: Partial<Turn>): Tr
   return { turns, nextId: state.nextId }
 }
 
-function push(state: TranscriptState, role: Role, text: string, live: string): TranscriptState {
-  const turns = [...state.turns, { id: state.nextId, role, text, live, open: true }]
+/** `open` says this turn is still being spoken, so later words belong to it even
+ *  if somebody else has spoken in between. Only a speech-update can claim that.
+ *  A turn conjured out of a transcript cannot: nothing has promised the speaker
+ *  is still going, and treating it as open makes it swallow every later thing
+ *  they say. */
+function push(state: TranscriptState, role: Role, text: string, live: string, open: boolean): TranscriptState {
+  const turns = [...state.turns, { id: state.nextId, role, text, live, open }]
   return { turns: turns.slice(-MAX_TURNS), nextId: state.nextId + 1 }
 }
 
@@ -80,7 +85,7 @@ export function reduce(state: TranscriptState, event: TranscriptEvent): Transcri
       // bubble for it would be the bug this file exists to fix.
       const j = openTurn(state.turns, event.role)
       if (j !== -1 && state.turns[j].open) return state
-      return push(state, event.role, '', '')
+      return push(state, event.role, '', '', true)
     }
     // Stopping does not close the bubble to late finals, which are the common
     // case, it only drops a partial that the final has already superseded. A
@@ -97,9 +102,16 @@ export function reduce(state: TranscriptState, event: TranscriptEvent): Transcri
   if (!chunk) return state
 
   const i = openTurn(state.turns, event.role)
-  // No turn for this speaker yet, so a speech-update was dropped or is still in
-  // flight. The transcript is proof enough that somebody spoke.
-  if (i === -1) return push(state, event.role, event.final ? chunk : '', event.final ? '' : chunk)
+  // A closed turn keeps taking words only while nothing has happened since, which
+  // is a final landing a moment after silence ended the turn. Once anyone else
+  // has spoken, this is new speech and needs its own bubble. Without that test
+  // every later question from the visitor is appended to whatever they said
+  // first, which sits far up the panel and out of sight, and their side of the
+  // call looks like it was never transcribed at all.
+  // The i === -1 case is the same push: no turn yet because a speech-update was
+  // dropped or is still in flight, and a transcript is proof enough someone spoke.
+  const reusable = i !== -1 && (state.turns[i].open === true || i === state.turns.length - 1)
+  if (!reusable) return push(state, event.role, event.final ? chunk : '', event.final ? '' : chunk, false)
 
   const turn = state.turns[i]
   if (event.final) {
