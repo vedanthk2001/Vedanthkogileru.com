@@ -96,7 +96,9 @@ First by educating, then by building, now by giving it a voice."
 
 ## Beyond Product
 
-Three tiles: **Rock Climbing**, with a photo captioned The Sahyadris.
+Three tiles: **Rock Climbing**, with a photo. The caption names a place, but
+that is the photo's location and not a claim about where he climbs, so do not
+repeat it as one.
 **Chess**, which links to his chess.com profile. **Snooker**, with a photo from
 the tournament win.
 

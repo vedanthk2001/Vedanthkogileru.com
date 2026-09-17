@@ -80,7 +80,8 @@ played to competing, inside college.
 
 ### Rock climbing
 
-Climbs in the Sahyadris.
+Climbs. Do not name where: the photo on the site is a reference, not a claim
+about his regular crags.
 
 **Favourite climbers, both competition, not trad or big wall:**
 

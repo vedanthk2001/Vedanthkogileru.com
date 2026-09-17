@@ -39,7 +39,20 @@
   /* ---- the panel, placement ---- */
   .panel{position:absolute;display:flex;flex-direction:column;overflow:hidden;transition:all .5s cubic-bezier(.22,1,.36,1)}
   .desktop .panel{right:20px;bottom:20px;width:320px;height:210px}
-  .mobile  .panel{left:0;right:0;bottom:0;height:150px}
+  /* Mobile shows the mic and nothing else: the transcript was covering the page
+     the agent had just scrolled to, which is the only reason it scrolls. */
+  .mobile .panel{left:0;right:0;bottom:26px;height:118px;background:none;border:none;box-shadow:none;
+                 align-items:center;justify-content:flex-end}
+  .mobile .phead,.mobile .body,.mobile .pfoot{display:none}
+  .mobile .mic{display:flex}
+  .mic{display:none;flex-direction:column;align-items:center;gap:9px}
+  .orb{width:64px;height:64px;border-radius:50%;background:var(--indigo);display:flex;align-items:center;justify-content:center;
+       box-shadow:0 0 0 0 rgba(79,70,229,.42)}
+  .orb.live{animation:ring 2.2s ease-out infinite}
+  @keyframes ring{0%{box-shadow:0 0 0 0 rgba(79,70,229,.42)}70%{box-shadow:0 0 0 17px rgba(79,70,229,0)}100%{box-shadow:0 0 0 0 rgba(79,70,229,0)}}
+  .orb svg{width:26px;height:26px;fill:#fff}
+  .miclabel{font-size:11px;font-weight:600;color:var(--s500);text-shadow:0 0 8px #fff,0 0 14px #fff}
+  .micend{font-size:11px;font-weight:700;color:#dc2626;text-shadow:0 0 8px #fff;cursor:pointer}
 
   /* ---- presentation ---- */
   /* card: the chat widget look */
@@ -78,11 +91,14 @@
   .pres-card .b.agent,.pres-frost .b.agent{align-self:flex-start;border-bottom-left-radius:6px;background:var(--indigo-50);color:var(--s800)}
   .pres-card .b.you,.pres-frost .b.you{align-self:flex-end;border-bottom-right-radius:6px;border:1px solid var(--s200);color:var(--s500);background:rgba(255,255,255,.7)}
 
-  /* bare: no bubbles, weight carries the speaker */
-  .pres-bare .b{font-size:13px;line-height:1.5;max-width:100%;text-shadow:0 1px 0 #fff,0 0 10px #fff,0 0 18px #fff}
-  .pres-bare .b.agent{color:var(--s900);font-weight:600}
+  /* bare: no bubbles. Both speakers stamped, so neither looks like an aside. */
+  .pres-bare .turns{gap:13px}
+  .pres-bare .b{font-size:13.5px;line-height:1.5;max-width:100%;text-shadow:0 1px 0 #fff,0 0 10px #fff,0 0 18px #fff}
+  .pres-bare .b::before{display:block;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+  .pres-bare .b.agent{color:var(--s900);font-weight:500}
+  .pres-bare .b.agent::before{content:'Vedanth';color:var(--indigo)}
   .pres-bare .b.you{color:var(--s400);font-weight:500}
-  .pres-bare .b.you::before{content:'You  ';font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--s200)}
+  .pres-bare .b.you::before{content:'You';color:var(--s300,#cbd5e1)}
 
   /* editorial: the current sentence, set large, older ones receding */
   .pres-edit .turns{gap:10px}
@@ -104,7 +120,7 @@
 
 <header>
   <h1>How should the words look?</h1>
-  <p class="sub">Placement is settled: a dock bottom right on desktop, a captions strip on mobile. This is about presentation. A bordered card with bubbles is the universal chat-widget signature, and this site is quieter than that, so three of these drop the container and let type carry the speaker instead.</p>
+  <p class="sub">Settled: a dock bottom right on desktop, and on mobile just a live mic with no transcript, since anything larger covers the section the agent has scrolled to. What is open is how the desktop words look. A bordered card with bubbles is the universal chat-widget signature, and this site is quieter than that, so three of these drop the container and let type carry the speaker.</p>
 </header>
 
 <div class="bar">
@@ -116,7 +132,7 @@
   </div></div>
   <div class="grp"><span class="lbl">Screen</span><div class="opts">
     <button data-scr="desktop" class="on">Desktop dock</button>
-    <button data-scr="mobile">Mobile captions</button>
+    <button data-scr="mobile">Mobile mic</button>
   </div></div>
   <div class="grp"><span class="lbl">&nbsp;</span><button id="play" class="go">Play the call</button></div>
 </div>
@@ -137,6 +153,11 @@
       <div class="phead"><span class="dot" id="dot"></span><div><div class="ptitle" id="ptitle">Talk to me</div><div class="psub" id="psub">not actually me but you get the point</div></div></div>
       <div class="body"><div class="turns" id="turns"></div></div>
       <div class="pfoot"><span id="pstate">In a call</span><span class="end">End</span></div>
+      <div class="mic">
+        <div class="orb" id="orb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11Z"/></svg></div>
+        <div class="miclabel" id="miclabel">Talk to me</div>
+        <div class="micend" id="micend" style="visibility:hidden">End call</div>
+      </div>
     </div>
   </div>
 </div>
@@ -147,8 +168,10 @@
   <p><b>Frosted.</b> Same bubbles, but the border and shadow go and the background becomes blurred glass. Stays readable over any section, without a hard edge announcing a container.</p>
   <p><b>Bare text.</b> No container at all. The words sit on the page, his in near-black and semibold, yours in light grey under a small YOU marker. A white glow behind the type keeps it legible over content. Furthest from a chatbot, most at risk over a busy section.</p>
   <p><b>Editorial.</b> Only the sentence being spoken, set at 17px like a pull quote, with your question above it as a small indigo label. On desktop older lines are dropped entirely; on mobile they fade. Closest to the site's own typography, and the least like software.</p>
-  <h3>On mobile</h3>
-  <p>All four stream word by word as the agent speaks, in the same place the "not actually me but you get the point" line sits today. Editorial and Bare leave the page fully visible behind the words, so the agent scrolling to a section actually reads.</p>
+  <h3>On mobile there is no transcript at all</h3>
+  <p>Just the mic, pulsing while the call is live. A phone screen is small enough that any transcript covers the section the agent has just scrolled to, which defeats the only reason it scrolls. The presentation buttons above only change the desktop dock.</p>
+  <h3>Bare text, both speakers stamped</h3>
+  <p>Previously only the caller was labelled, which made his side read as the page talking and theirs as an aside. Both are stamped now: his in indigo, theirs in light grey, the same size and weight, so the exchange reads as an exchange.</p>
 </div>
 
 <script>
@@ -182,6 +205,7 @@ $('#play').onclick = async () => {
   if (playing) return
   playing = true; $('#play').disabled = true; turns.innerHTML=''; go(0)
   dot.classList.add('live'); ptitle.textContent='Live'; psub.textContent='Speak whenever you like'; pstate.textContent='In a call'
+  $('#orb').classList.add('live'); $('#miclabel').textContent='Listening'; $('#micend').style.visibility='visible'
   await wait(400)
   await stream(bubble('agent'), "Hey, I'm Vedanth. Not actually, I'm the AI version, but you get the idea.")
   await wait(450)
@@ -198,6 +222,7 @@ $('#play').onclick = async () => {
   await wait(400); $('#interests').classList.add('flash'); go(Y.interests); await p2
   await wait(900)
   dot.classList.remove('live'); ptitle.textContent='Talk to me'; psub.textContent='not actually me but you get the point'
+  $('#orb').classList.remove('live'); $('#miclabel').textContent='Talk to me'; $('#micend').style.visibility='hidden'
   document.querySelectorAll('.flash').forEach(e=>e.classList.remove('flash'))
   playing=false; $('#play').disabled=false
 }

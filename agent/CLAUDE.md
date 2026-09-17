@@ -445,7 +445,7 @@ not asked. School leads with Vidyaranya and offers college after.
 > Do you play at all?"
 
 ### <<Rock climbing>>
-> "Mostly in the Sahyadris. Sorato Anraku and Janja Garnbret are the two I
+> "I get out when I can. Sorato Anraku and Janja Garnbret are the two I
 > watch. Competition climbing at that level is absurd. Do you climb?"
 
 ### <<Investing>>

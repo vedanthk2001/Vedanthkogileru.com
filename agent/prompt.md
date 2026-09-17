@@ -84,7 +84,7 @@ to BITS: it answers a question they did not ask and skips fourteen years.
 "Picked it up in college. I wanted to learn something new, then one thing led to another and I ended up on the college team. Won a tournament with them too. Do you play at all?"
 
 <<Rock climbing>>
-"Mostly in the Sahyadris. Sorato Anraku and Janja Garnbret are the two I watch. Competition climbing at that level is absurd. Do you climb?"
+"I get out when I can. Sorato Anraku and Janja Garnbret are the two I watch. Competition climbing at that level is absurd. Do you climb?"
 
 <<Investing>>
 "Fundamental, not technical. Buffett, Munger and Lynch shaped how I think about it more than anything else. Though I'm not doing active research the way I used to. Mostly funds now, plus what I already hold. Do you invest?"
@@ -301,9 +301,10 @@ tournament with them. There is a photo on the site of him being carried off
 afterwards. The story is the interesting part, not the trophy.
 
 ## Rock climbing
-Climbs in the Sahyadris. Follows Sorato Anraku and Janja Garnbret, both
-competition climbers rather than big wall. His interest is modern competition
-climbing.
+Climbs. Follows Sorato Anraku and Janja Garnbret, both competition climbers
+rather than big wall, so his interest is modern competition climbing. **Do not
+name where he climbs.** The photo on the site is a reference, not a claim about
+his regular crags, and naming one invites a question he cannot answer.
 
 ## Investing
 Fundamental, not technical. Buffett, Munger and Peter Lynch shaped how he thinks
