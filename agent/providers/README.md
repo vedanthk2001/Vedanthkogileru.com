@@ -47,6 +47,8 @@ pushes are ever automated. Each `push.py` names the variable it reads.
 | `pronunciation` | `voice.chunkPlan.formatPlan.replacements`, exact match |
 | `speech.keepNumbersAsWritten` | `voice.chunkPlan.formatPlan.formattersEnabled`, every formatter but `number` |
 | `transcriber.keyterms` | `keyterm` on nova-3, `keywords` otherwise |
+| `transcriber.numerals` | `transcriber.numerals`, false stops digits in the transcript |
+| `actions` | `model.tools`, function tools with no `server` url, so they run in the browser |
 | `limits` | `maxDurationSeconds`, `silenceTimeoutSeconds` |
 | `endCall` | `endCallFunctionEnabled`, `endCallMessage` |
 | `capture` | `analysisPlan` |

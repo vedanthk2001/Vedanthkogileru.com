@@ -142,46 +142,77 @@ problems solved.
 
 ## 4. Live transcript UI
 
-**This needs no backend.** The Web SDK emits transcript events client side; it is
-entirely a rendering problem.
+**This needs no backend.** The Web SDK emits everything client side; it is
+entirely a rendering problem. Built and shipped, so this section records what it
+actually does rather than what was planned.
 
-### Events
+### Events, and which one delimits a turn
 
 ```js
 vapi.on('message', (m) => {
-  if (m.type !== 'transcript') return
-  // m.role           'user' | 'assistant'
-  // m.transcriptType 'partial' | 'final'
-  // m.transcript     the text
+  // m.type 'transcript'    role, transcriptType 'partial' | 'final', transcript
+  // m.type 'speech-update' role, status 'started' | 'stopped', turn
+  // m.type 'tool-calls'    toolCallList[].function.{name, arguments}
 })
 ```
 
-- **`partial`** fires continuously as someone speaks. It **replaces** the current
-  in-flight line for that role. Do not append, or you get stutter
-- **`final`** commits the line. Append it and start a fresh in-flight line
+**Turns are cut by `speech-update`, never by the role changing.** Vapi emits a
+final transcript per chunk, so any sound from the caller mid-answer flips the
+role twice and one answer renders as three blocks. `speech-update` is also the
+only message carrying a turn number.
 
-Also useful: `speech-start`, `speech-end`, `call-start`, `call-end`.
+**`conversation-update` was considered and rejected for rendering.** It carries
+the authoritative history, but it commits the bot's entire message the moment it
+is generated, which is before it has been spoken. Rendering from it dumps the
+whole answer at once and loses the streaming, which is the point of watching it.
+
+- **`partial`** replaces the in-flight text for that turn. Do not append, or it
+  stutters
+- **`final`** commits into the open turn. Providers sometimes resend the whole
+  utterance rather than the delta, so a repeat is dropped, a superset replaces,
+  and anything else appends
+
+All of it lives in `app/voice/transcript.ts` as a pure reducer, outside React on
+purpose: it can be driven through a call's worth of events in a few seconds, and
+both of the bugs below were found that way rather than on a live call.
+
+### The two rules that are not obvious
+
+- **A closed turn keeps taking words only while nothing has happened since.**
+  That is a final landing a moment after silence ended the turn, which is the
+  normal order for the caller. Once anyone else has spoken, new speech gets a new
+  bubble. Without this the caller's every later question was appended to their
+  first bubble, scrolled out of view, and their side looked untranscribed.
+- **Only a `speech-update` may mark a turn as still in progress.** A turn
+  conjured out of a stray transcript cannot: nothing has promised the speaker is
+  still going, and treating it as open makes it swallow everything after.
+
+### What the caller reads is a transcription of the audio
+
+Not the text sent to the voice. This explains two things that look like bugs: the
+name is rewritten to `वेदांत` for ElevenLabs only and the panel still reads
+`Vedanth`, because Deepgram heard the sound. And the agent says "Thirteen Karat"
+while the panel read "13 Karat", because Deepgram converts spoken numbers to
+numerals. `transcriber.numerals: false` governs that, not `formatPlan`.
 
 ### The scroll-and-fade behaviour
 
-The effect is a fixed-height window where new lines enter at the bottom, push
-older ones up, and older lines fade as they approach the top.
-
 - Fixed height container, `overflow: hidden`, content anchored to the bottom
-- Keep only the last N lines in state, roughly 6 to 8. Drop the rest. Do not
-  render an unbounded list and rely on CSS to hide it
-- Fade with a CSS mask on the container rather than per-line opacity, so lines
+- Keep only the last 7 turns. Do not render an unbounded list and rely on CSS
+- Fade with a CSS mask on the container rather than per-line opacity, so turns
   fade continuously as they rise instead of stepping:
-  `mask-image: linear-gradient(to bottom, transparent, black 25%)`
-- New lines animate in with a small translate and opacity, roughly 200ms
-- Style user and assistant turns differently. Slate for him, lighter for the caller
-- The in-flight partial line renders at reduced opacity so it visibly firms up
-  when it commits
+  `mask-image: linear-gradient(to bottom, transparent, black 26%)`
+- One bubble per turn: his filled and left, the caller's outlined and right. Two
+  speakers on a white panel need a difference in weight, not a second colour
+- The in-flight partial renders inside the open bubble at reduced opacity
 
 ### Accessibility and privacy
 
 - `aria-live="polite"` on the container so screen readers follow it
-- `prefers-reduced-motion`: drop the translate, keep the fade
+- The speaker label is `sr-only`. Side and shape carry it on screen, but
+  `aria-live` has neither and would otherwise read both halves in one voice
+- `prefers-reduced-motion` drops the scroll animation, and the agent's own
+  `show_section` scroll falls back to `behavior: 'auto'`
 - The transcript is ephemeral in the UI. Never persist it to `localStorage`, and
   say so if anyone asks
 

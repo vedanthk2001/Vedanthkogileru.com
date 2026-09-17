@@ -34,16 +34,34 @@ This is no longer a design doc alone. The agent exists and runs on the site.
 | Knowledge base | **inert, see below.** The facts live in `prompt.md` instead |
 | Caps | `maxDurationSeconds` 300, `silenceTimeoutSeconds` 15 |
 | Analysis | structured extraction on, per the Capture section |
+| Tools | `show_section`, client-side, scrolls the caller's page. See below |
 | Repo | `agent/` in the site repo, its earlier history merged in. The separate `vedanth-web-agent` repo was never created and is not needed |
 
 Knowledge file ids in Vapi live in `providers/vapi/provider.json`, mapped from
 each file in `knowledge/`.
 
+### The agent can move the caller's page
+
+`show_section` is declared in `agent.json` as a neutral `actions` entry and built
+into `model.tools` as a function tool with **no `server` url**, which is what
+makes it client-side: Vapi hands the call to the browser rather than posting it
+anywhere. `async: true`, because a client tool cannot return a result, which also
+means a `request-start` message would never be spoken.
+
+It needs `"tool-calls"` in `clientMessages` to reach the browser at all, see
+gotcha 5. The browser half is `app/voice/actions.ts`, and `window.__voiceAction`
+records what became of the last one, because nothing in this path can report a
+failure to anyone.
+
+The enum in `agent.json` must match the section ids on the page and the list in
+`prompt.md`. A mismatch means the model names a section the browser cannot
+resolve, silently.
+
 **`agent.json` and `prompt.md` are the source of truth.** `providers/vapi/build.py`
 compiles them into Vapi's assistant shape. Keep them in sync with anything you
 change in a dashboard, or the next push silently reverts that change.
 
-### Three gotchas that cost real time
+### Gotchas that cost real time, all of them silent
 
 1. **PATCHing `model` replaces the WHOLE object.** Sending
    `{"model":{"provider":...,"model":...,"knowledgeBase":...}}` to attach a
@@ -62,6 +80,19 @@ change in a dashboard, or the next push silently reverts that change.
 4. **Cloudflare fronts the API and blocks urllib's default user agent**, with
    `error code: 1010` and an empty body. curl works, a bare Python script does
    not. The scripts here send an explicit `User-Agent`.
+5. **`clientMessages` REPLACES Vapi's default list, it does not add to it.** The
+   default includes `tool-calls`; this repo overrides the whole list, so a tool
+   fires, bills tokens, and the browser never hears about it. Nothing errors.
+6. **Deepgram writes spoken numbers back as numerals.** The agent says "Thirteen
+   Karat" and the transcript reads "13 Karat". This is the transcription of the
+   audio, not what was spoken, so the audio was right the whole time.
+   `transcriber.numerals: false` governs it. `formatPlan.formattersEnabled` was
+   changed first on the assumption that it was the cause: it was live seventeen
+   minutes before a call that still showed digits, which ruled it out.
+
+The pattern across all six: **Vapi accepts the wrong thing and says nothing.**
+Never trust a 200 or a config read-back as proof a feature works. The only proof
+is a live call, or a status field read afterwards.
 
 
 ### The voice clone
