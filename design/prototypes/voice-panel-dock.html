@@ -156,7 +156,6 @@
       <div class="mic">
         <div class="orb" id="orb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11Z"/></svg></div>
         <div class="miclabel" id="miclabel">Talk to me</div>
-        <div class="micend" id="micend" style="visibility:hidden">End call</div>
       </div>
     </div>
   </div>
@@ -169,7 +168,7 @@
   <p><b>Bare text.</b> No container at all. The words sit on the page, his in near-black and semibold, yours in light grey under a small YOU marker. A white glow behind the type keeps it legible over content. Furthest from a chatbot, most at risk over a busy section.</p>
   <p><b>Editorial.</b> Only the sentence being spoken, set at 17px like a pull quote, with your question above it as a small indigo label. On desktop older lines are dropped entirely; on mobile they fade. Closest to the site's own typography, and the least like software.</p>
   <h3>On mobile there is no transcript at all</h3>
-  <p>Just the mic, pulsing while the call is live. A phone screen is small enough that any transcript covers the section the agent has just scrolled to, which defeats the only reason it scrolls. The presentation buttons above only change the desktop dock.</p>
+  <p>Just the mic, in two states. Passive it starts the call; active it pulses and the same control ends it, so a phone never carries a second button. Any transcript here would cover the section the agent has just scrolled to, which defeats the only reason it scrolls. The presentation buttons above only change the desktop dock.</p>
   <h3>Bare text, both speakers stamped</h3>
   <p>Previously only the caller was labelled, which made his side read as the page talking and theirs as an aside. Both are stamped now: his in indigo, theirs in light grey, the same size and weight, so the exchange reads as an exchange.</p>
 </div>
@@ -205,7 +204,7 @@ $('#play').onclick = async () => {
   if (playing) return
   playing = true; $('#play').disabled = true; turns.innerHTML=''; go(0)
   dot.classList.add('live'); ptitle.textContent='Live'; psub.textContent='Speak whenever you like'; pstate.textContent='In a call'
-  $('#orb').classList.add('live'); $('#miclabel').textContent='Listening'; $('#micend').style.visibility='visible'
+  $('#orb').classList.add('live'); $('#miclabel').textContent='Tap to end'
   await wait(400)
   await stream(bubble('agent'), "Hey, I'm Vedanth. Not actually, I'm the AI version, but you get the idea.")
   await wait(450)
@@ -222,7 +221,7 @@ $('#play').onclick = async () => {
   await wait(400); $('#interests').classList.add('flash'); go(Y.interests); await p2
   await wait(900)
   dot.classList.remove('live'); ptitle.textContent='Talk to me'; psub.textContent='not actually me but you get the point'
-  $('#orb').classList.remove('live'); $('#miclabel').textContent='Talk to me'; $('#micend').style.visibility='hidden'
+  $('#orb').classList.remove('live'); $('#miclabel').textContent='Talk to me'
   document.querySelectorAll('.flash').forEach(e=>e.classList.remove('flash'))
   playing=false; $('#play').disabled=false
 }
