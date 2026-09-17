@@ -54,6 +54,27 @@ function readArgs(raw: unknown): Record<string, unknown> {
   return raw !== null && typeof raw === 'object' ? (raw as Record<string, unknown>) : {}
 }
 
+declare global {
+  interface Window {
+    __voiceLog?: { t: string; role?: string; status?: string; turn?: number; final?: boolean; text?: string }[]
+  }
+}
+
+function record(m: VapiMessage): void {
+  if (typeof window === 'undefined') return
+  const log = (window.__voiceLog ??= [])
+  if (log.length > 300) return
+  const any = m as { type?: string; role?: string; status?: string; turn?: number; transcriptType?: string; transcript?: string }
+  log.push({
+    t: any.type ?? '?',
+    role: any.role,
+    status: any.status,
+    turn: any.turn,
+    final: any.transcriptType ? any.transcriptType === 'final' : undefined,
+    text: any.transcript ? any.transcript.slice(0, 45) : undefined,
+  })
+}
+
 export const vapi: VoiceProvider = {
   configured: Boolean(PUBLIC_KEY && ASSISTANT_ID),
 
@@ -70,6 +91,11 @@ export const vapi: VoiceProvider = {
       client.on('call-end', (() => events.onEnd()) as never)
       client.on('error', (() => events.onError()) as never)
       client.on('message', ((m: VapiMessage) => {
+        /* The turn model here is inferred from what Vapi emits, and guessing at
+           it has already produced two bubble bugs. This is the record of what
+           actually arrived, in memory only and capped, so the next odd call can
+           be read rather than theorised about. */
+        record(m)
         if (m?.type === 'transcript') {
           events.onTranscript(m.role === 'user' ? 'user' : 'assistant', m.transcript, m.transcriptType === 'final')
           return
