@@ -181,8 +181,8 @@ both of the bugs below were found that way rather than on a live call.
 - **A closed turn keeps taking words only while nothing has happened since.**
   That is a final landing a moment after silence ended the turn, which is the
   normal order for the caller. Once anyone else has spoken, new speech gets a new
-  bubble. Without this the caller's every later question was appended to their
-  first bubble, scrolled out of view, and their side looked untranscribed.
+  entry. Without this the caller's every later question was appended to their
+  first one, scrolled out of view, and their side looked untranscribed.
 - **Only a `speech-update` may mark a turn as still in progress.** A turn
   conjured out of a stray transcript cannot: nothing has promised the speaker is
   still going, and treating it as open makes it swallow everything after.
@@ -202,9 +202,20 @@ numerals. `transcriber.numerals: false` governs that, not `formatPlan`.
 - Fade with a CSS mask on the container rather than per-line opacity, so turns
   fade continuously as they rise instead of stepping:
   `mask-image: linear-gradient(to bottom, transparent, black 26%)`
-- One bubble per turn: his filled and left, the caller's outlined and right. Two
-  speakers on a white panel need a difference in weight, not a second colour
-- The in-flight partial renders inside the open bubble at reduced opacity
+- **There is no panel during a call.** On desktop the words sit bare on the page
+  in a fixed dock at the bottom right: his in slate-900 under an indigo VEDANTH
+  stamp, the caller's in slate-400 under a grey YOU, both the same size and
+  weight so it reads as an exchange. A white halo behind the type, a text-shadow
+  rather than a background, is what keeps it legible crossing a heading
+- **On mobile there is no transcript at all**, only the mic, in two states:
+  passive it starts the call, active it pulses and the same control ends it. Any
+  transcript there covers the section the agent has just scrolled to, and the
+  scroll is the only reason it moves
+- **Both live states render through a portal into `document.body`.** They are
+  fixed, and the desktop wrapper in Hero.tsx carries a transform, which makes it
+  the containing block for every fixed descendant. A portal is the one
+  arrangement no ancestor can break
+- The in-flight partial renders after the committed text at reduced opacity
 
 ### Accessibility and privacy
 
