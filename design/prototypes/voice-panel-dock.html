@@ -1,212 +1,205 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Voice panel: where it lives during a call</title>
+<title>Voice panel: how the words are presented</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-  :root{--indigo:#4f46e5;--indigo-50:#eef2ff;--slate-900:#0f172a;--slate-500:#64748b;--slate-400:#94a3b8;--slate-200:#e2e8f0;--slate-100:#f1f5f9;--slate-50:#f8fafc}
+  :root{--indigo:#4f46e5;--indigo-50:#eef2ff;--s900:#0f172a;--s800:#1e293b;--s500:#64748b;--s400:#94a3b8;--s200:#e2e8f0;--s100:#f1f5f9;--s50:#f8fafc}
   *{box-sizing:border-box}
-  body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;background:var(--slate-50);color:var(--slate-900)}
-  header{padding:22px 28px 14px}
+  body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;background:var(--s50);color:var(--s900)}
+  header{padding:22px 28px 12px}
   h1{margin:0 0 4px;font-size:20px;font-weight:700}
-  .sub{color:var(--slate-500);max-width:70ch}
-  .bar{display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap;padding:14px 28px 18px;border-bottom:1px solid var(--slate-200);background:#fff;position:sticky;top:0;z-index:50}
+  .sub{color:var(--s500);max-width:76ch}
+  .bar{display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap;padding:14px 28px;border-bottom:1px solid var(--s200);background:#fff;position:sticky;top:0;z-index:50}
   .grp{display:flex;flex-direction:column;gap:6px}
   .lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--indigo)}
   .opts{display:flex;gap:6px}
-  button{font:inherit;cursor:pointer;border:1px solid var(--slate-200);background:#fff;color:var(--slate-900);padding:7px 13px;border-radius:9px}
+  button{font:inherit;cursor:pointer;border:1px solid var(--s200);background:#fff;color:var(--s900);padding:7px 13px;border-radius:9px}
   button.on{background:var(--indigo);border-color:var(--indigo);color:#fff;font-weight:600}
-  button.go{background:var(--slate-900);border-color:var(--slate-900);color:#fff;font-weight:600}
+  button.go{background:var(--s900);border-color:var(--s900);color:#fff;font-weight:600}
   button:disabled{opacity:.45;cursor:default}
-  .stage{display:flex;justify-content:center;padding:30px 20px 60px}
+  .stage{display:flex;justify-content:center;padding:30px 20px 50px}
 
-  /* the fake site, scaled down inside a frame */
-  .frame{position:relative;overflow:hidden;background:#fff;border:1px solid var(--slate-200);border-radius:16px;box-shadow:0 12px 34px rgba(15,23,42,.10);transition:width .35s,height .35s}
-  .frame.desktop{width:920px;height:560px}
+  .frame{position:relative;overflow:hidden;background:#fff;border:1px solid var(--s200);border-radius:16px;box-shadow:0 12px 34px rgba(15,23,42,.10);transition:width .35s,height .35s}
+  .frame.desktop{width:900px;height:540px}
   .frame.mobile{width:330px;height:620px}
-  .scroller{position:absolute;inset:0;overflow:hidden}
   .page{position:absolute;inset:0;transition:transform .9s cubic-bezier(.22,1,.36,1)}
-  section{padding:26px;border-bottom:1px solid var(--slate-100)}
-  .hero{height:300px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+  section{padding:24px;border-bottom:1px solid var(--s100)}
+  .hero{height:290px;display:flex;flex-direction:column;justify-content:center;gap:8px}
   .mobile .hero{height:330px}
-  .name{font-size:36px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+  .name{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
   .mobile .name{font-size:28px}
-  .tag{color:var(--slate-500);max-width:34ch}
-  .eyebrow{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--indigo);margin-bottom:6px}
-  h2{margin:0 0 8px;font-size:22px;font-weight:700}
-  .row{height:13px;border-radius:7px;background:var(--slate-100);margin:7px 0}
+  .tag{color:var(--s500);max-width:32ch}
+  .eyebrow{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--indigo);margin-bottom:5px}
+  h2{margin:0 0 8px;font-size:21px;font-weight:700}
+  .row{height:12px;border-radius:7px;background:var(--s100);margin:7px 0}
   .row.s{width:55%}.row.m{width:78%}
-  .flash{animation:flash 1.5s ease-out}
+  .flash{animation:flash 1.6s ease-out}
   @keyframes flash{0%{background:var(--indigo-50)}100%{background:transparent}}
 
-  /* the panel */
-  .panel{background:#fff;border:1px solid var(--slate-200);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.13);display:flex;flex-direction:column;overflow:hidden;
-         transition:all .55s cubic-bezier(.22,1,.36,1)}
-  .phead{display:flex;align-items:center;gap:9px;padding:11px 14px;border-bottom:1px solid var(--slate-100);flex:none}
-  .dot{width:9px;height:9px;border-radius:50%;background:var(--slate-200);flex:none}
-  .dot.live{background:var(--indigo);animation:pulse 1.6s infinite}
-  @keyframes pulse{50%{opacity:.35}}
-  .ptitle{font-weight:700;font-size:13px}
-  .psub{font-size:11px;color:var(--slate-400)}
-  .body{flex:1;overflow:hidden;position:relative;padding:12px 14px;
-        -webkit-mask-image:linear-gradient(to bottom,transparent,#000 26%);mask-image:linear-gradient(to bottom,transparent,#000 26%)}
-  .turns{position:absolute;left:14px;right:14px;bottom:12px;display:flex;flex-direction:column;gap:7px}
-  .b{max-width:85%;padding:8px 12px;border-radius:15px;font-size:12.5px;line-height:1.45;animation:rise .3s ease-out}
-  @keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
-  .b.agent{align-self:flex-start;border-bottom-left-radius:6px;background:var(--indigo-50);color:#1e293b}
-  .b.you{align-self:flex-end;border-bottom-right-radius:6px;border:1px solid var(--slate-200);color:var(--slate-500)}
-  .b .live{opacity:.4}
-  .pfoot{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-top:1px solid var(--slate-100);font-size:11px;color:var(--slate-400);flex:none}
-  .end{color:#dc2626;font-weight:700;font-size:12px;cursor:pointer}
+  /* ---- the panel, placement ---- */
+  .panel{position:absolute;display:flex;flex-direction:column;overflow:hidden;transition:all .5s cubic-bezier(.22,1,.36,1)}
+  .desktop .panel{right:20px;bottom:20px;width:320px;height:210px}
+  .mobile  .panel{left:0;right:0;bottom:0;height:150px}
 
-  /* placements */
-  /* Inside the page, at the hero. Scrolls away with it, which is the problem. */
-  .in-hero{position:absolute;top:150px;right:26px;width:310px;height:250px}
-  .pin{position:absolute;top:50%;right:26px;transform:translateY(-50%);width:310px;height:250px}
-  .mobile .pin{right:50%;transform:translate(50%,-50%);width:250px;height:210px}
-  .dock{position:absolute;right:20px;bottom:20px;width:288px;height:168px}
-  .mobile .dock{left:12px;right:12px;bottom:12px;width:auto;height:112px}
-  .dock.big{height:290px}
-  .mobile .dock.big{height:330px}
-  .sheet{position:absolute;left:0;right:0;bottom:0;height:68%;border-radius:16px 16px 0 0;border-bottom:none}
-  .caps{position:absolute;left:16px;right:16px;bottom:16px;height:74px;border-radius:13px}
-  .caps .body{padding:9px 14px}
-  .caps .turns{gap:3px}
-  .scrim{position:absolute;inset:0;background:rgba(15,23,42,.22);opacity:0;pointer-events:none;transition:opacity .4s}
-  .scrim.on{opacity:1}
-  .note{max-width:920px;margin:0 auto;padding:0 20px 50px;color:var(--slate-500)}
-  .note h3{color:var(--slate-900);font-size:14px;margin:20px 0 6px}
-  .note b{color:var(--slate-900)}
-  .expand{font-size:11px;color:var(--indigo);font-weight:700;cursor:pointer}
+  /* ---- presentation ---- */
+  /* card: the chat widget look */
+  .pres-card{background:#fff;border:1px solid var(--s200);border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.13)}
+  .mobile .pres-card{border-radius:16px 16px 0 0;border-bottom:none}
+  /* frosted: readable over content, but the edges dissolve */
+  .pres-frost{background:rgba(255,255,255,.74);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);border-radius:16px}
+  .mobile .pres-frost{border-radius:0}
+  /* bare: no container at all, the words sit on the page */
+  .pres-bare{background:none}
+  .desktop .pres-bare{width:380px}
+  /* editorial: one sentence at a time, set like the site's own type */
+  .pres-edit{background:none}
+  .desktop .pres-edit{width:400px;height:180px}
+  .mobile .pres-edit{height:170px}
+
+  .phead{display:flex;align-items:center;gap:9px;padding:11px 14px;flex:none}
+  .pres-card .phead,.pres-frost .phead{border-bottom:1px solid var(--s100)}
+  .pres-bare .phead,.pres-edit .phead{padding:6px 14px}
+  .pres-bare .ptitle,.pres-edit .ptitle,.pres-bare .psub,.pres-edit .psub{display:none}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--s200);flex:none}
+  .dot.live{background:var(--indigo);animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.3}}
+  .ptitle{font-weight:700;font-size:13px}
+  .psub{font-size:11px;color:var(--s400)}
+
+  .body{flex:1;overflow:hidden;position:relative;padding:10px 14px;
+        -webkit-mask-image:linear-gradient(to bottom,transparent,#000 30%);mask-image:linear-gradient(to bottom,transparent,#000 30%)}
+  .turns{position:absolute;left:14px;right:14px;bottom:10px;display:flex;flex-direction:column;gap:7px}
+  .b{animation:rise .3s ease-out}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .live-tail{opacity:.4}
+
+  /* card + frost: bubbles */
+  .pres-card .b,.pres-frost .b{max-width:86%;padding:8px 12px;border-radius:15px;font-size:12.5px;line-height:1.45}
+  .pres-card .b.agent,.pres-frost .b.agent{align-self:flex-start;border-bottom-left-radius:6px;background:var(--indigo-50);color:var(--s800)}
+  .pres-card .b.you,.pres-frost .b.you{align-self:flex-end;border-bottom-right-radius:6px;border:1px solid var(--s200);color:var(--s500);background:rgba(255,255,255,.7)}
+
+  /* bare: no bubbles, weight carries the speaker */
+  .pres-bare .b{font-size:13px;line-height:1.5;max-width:100%;text-shadow:0 1px 0 #fff,0 0 10px #fff,0 0 18px #fff}
+  .pres-bare .b.agent{color:var(--s900);font-weight:600}
+  .pres-bare .b.you{color:var(--s400);font-weight:500}
+  .pres-bare .b.you::before{content:'You  ';font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--s200)}
+
+  /* editorial: the current sentence, set large, older ones receding */
+  .pres-edit .turns{gap:10px}
+  .pres-edit .b{max-width:100%;text-shadow:0 1px 0 #fff,0 0 12px #fff,0 0 22px #fff}
+  .pres-edit .b.agent{font-size:17px;line-height:1.35;font-weight:600;color:var(--s900);letter-spacing:-.01em}
+  .pres-edit .b.you{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--indigo)}
+  .pres-edit .b:not(:last-child){opacity:.28}
+  .desktop .pres-edit .b:not(:last-child){display:none}
+
+  .pfoot{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;font-size:11px;color:var(--s400);flex:none}
+  .pres-card .pfoot,.pres-frost .pfoot{border-top:1px solid var(--s100)}
+  .pres-bare .pfoot span:first-child,.pres-edit .pfoot span:first-child{visibility:hidden}
+  .end{color:#dc2626;font-weight:700;font-size:12px;cursor:pointer;text-shadow:0 0 8px #fff}
+
+  .note{max-width:900px;margin:0 auto;padding:0 20px 60px;color:var(--s500)}
+  .note h3{color:var(--s900);font-size:14px;margin:18px 0 6px}
+  .note b{color:var(--s900)}
 </style>
 
 <header>
-  <h1>Where does the call panel live while the agent scrolls you around?</h1>
-  <p class="sub">The agent moves the page. Today the panel sits inside the hero on desktop, so it scrolls away with it, and on mobile the sheet covers the page so the scroll happens behind it. Press play and watch the panel, not the page.</p>
+  <h1>How should the words look?</h1>
+  <p class="sub">Placement is settled: a dock bottom right on desktop, a captions strip on mobile. This is about presentation. A bordered card with bubbles is the universal chat-widget signature, and this site is quieter than that, so three of these drop the container and let type carry the speaker instead.</p>
 </header>
 
 <div class="bar">
-  <div class="grp"><span class="lbl">Option</span><div class="opts">
-    <button data-opt="today" class="on">Today</button>
-    <button data-opt="a">A. Pin in place</button>
-    <button data-opt="b">B. Dock and shrink</button>
-    <button data-opt="c">C. Captions bar</button>
+  <div class="grp"><span class="lbl">Presentation</span><div class="opts">
+    <button data-p="card" class="on">Card</button>
+    <button data-p="frost">Frosted</button>
+    <button data-p="bare">Bare text</button>
+    <button data-p="edit">Editorial</button>
   </div></div>
   <div class="grp"><span class="lbl">Screen</span><div class="opts">
-    <button data-scr="desktop" class="on">Desktop</button>
-    <button data-scr="mobile">Mobile</button>
+    <button data-scr="desktop" class="on">Desktop dock</button>
+    <button data-scr="mobile">Mobile captions</button>
   </div></div>
   <div class="grp"><span class="lbl">&nbsp;</span><button id="play" class="go">Play the call</button></div>
 </div>
 
 <div class="stage">
   <div class="frame desktop" id="frame">
-    <div class="scroller">
-      <div class="page" id="page">
-        <section class="hero">
-          <div class="name">Hi, I'm<br>Vedanth</div>
-          <div class="tag">AI Product Manager. Disorder is the default state of every system.</div>
-        </section>
-        <section id="work"><div class="eyebrow">The Journey</div><h2>Work</h2><div class="row m"></div><div class="row"></div><div class="row s"></div><div class="row m"></div></section>
-        <section id="about"><div class="eyebrow">The Story</div><h2>About</h2><div class="row"></div><div class="row s"></div><div class="row m"></div></section>
-        <section id="interests"><div class="eyebrow">Off the Clock</div><h2>Beyond Product</h2><div class="row m"></div><div class="row s"></div></section>
-        <section id="contact"><div class="eyebrow">Contact</div><h2>Let's build something.</h2><div class="row s"></div></section>
-      </div>
-      <div class="scrim" id="scrim"></div>
+    <div class="page" id="page">
+      <section class="hero">
+        <div class="name">Hi, I'm<br>Vedanth</div>
+        <div class="tag">AI Product Manager. Disorder is the default state of every system.</div>
+      </section>
+      <section id="work"><div class="eyebrow">The Journey</div><h2>Work</h2><div class="row m"></div><div class="row"></div><div class="row s"></div><div class="row m"></div><div class="row"></div></section>
+      <section id="about"><div class="eyebrow">The Story</div><h2>About</h2><div class="row"></div><div class="row s"></div><div class="row m"></div></section>
+      <section id="interests"><div class="eyebrow">Off the Clock</div><h2>Beyond Product</h2><div class="row m"></div><div class="row s"></div></section>
+      <section id="contact"><div class="eyebrow">Contact</div><h2>Let's build something.</h2><div class="row s"></div></section>
     </div>
-    <div class="panel" id="panel">
+    <div class="panel pres-card" id="panel">
       <div class="phead"><span class="dot" id="dot"></span><div><div class="ptitle" id="ptitle">Talk to me</div><div class="psub" id="psub">not actually me but you get the point</div></div></div>
       <div class="body"><div class="turns" id="turns"></div></div>
-      <div class="pfoot" id="pfoot" style="display:none"><span>In a call</span><span class="expand" id="expand">Expand</span><span class="end">End call</span></div>
+      <div class="pfoot"><span id="pstate">In a call</span><span class="end">End</span></div>
     </div>
   </div>
 </div>
 
 <div class="note">
-  <h3>What you are comparing</h3>
-  <p><b>Today.</b> Desktop: the panel is inside the hero, so scrolling to Work takes it off screen and you are talking to something you cannot see. Mobile: the sheet is fixed, but at 68% of the screen the page moves behind it and the scroll is invisible.</p>
-  <p><b>A. Pin in place.</b> The same card, made fixed the moment the call connects. Desktop is solved with almost no change. Mobile is untouched, so the scroll stays hidden.</p>
-  <p><b>B. Dock and shrink.</b> The panel lifts out of the hero into a compact dock: bottom right on desktop, a slim bar on mobile. The page stays visible, so the scroll reads as the payoff it is meant to be. Press <b>Expand</b> in the footer to see the full transcript.</p>
-  <p><b>C. Captions bar.</b> A strip along the bottom, one or two lines, like live captions. Most page visible, least chrome, but the bubbles have nowhere to go.</p>
+  <h3>The four</h3>
+  <p><b>Card.</b> What ships today: white, bordered, bubbles. Reads instantly as a chat widget, which is the objection.</p>
+  <p><b>Frosted.</b> Same bubbles, but the border and shadow go and the background becomes blurred glass. Stays readable over any section, without a hard edge announcing a container.</p>
+  <p><b>Bare text.</b> No container at all. The words sit on the page, his in near-black and semibold, yours in light grey under a small YOU marker. A white glow behind the type keeps it legible over content. Furthest from a chatbot, most at risk over a busy section.</p>
+  <p><b>Editorial.</b> Only the sentence being spoken, set at 17px like a pull quote, with your question above it as a small indigo label. On desktop older lines are dropped entirely; on mobile they fade. Closest to the site's own typography, and the least like software.</p>
+  <h3>On mobile</h3>
+  <p>All four stream word by word as the agent speaks, in the same place the "not actually me but you get the point" line sits today. Editorial and Bare leave the page fully visible behind the words, so the agent scrolling to a section actually reads.</p>
 </div>
 
 <script>
 const $ = s => document.querySelector(s)
 const frame = $('#frame'), page = $('#page'), panel = $('#panel'), turns = $('#turns')
-const dot = $('#dot'), ptitle = $('#ptitle'), psub = $('#psub'), pfoot = $('#pfoot'), scrim = $('#scrim')
-let opt = 'today', scr = 'desktop', playing = false, big = false
+const dot = $('#dot'), ptitle = $('#ptitle'), psub = $('#psub'), pstate = $('#pstate')
+let pres = 'card', scr = 'desktop', playing = false
+const Y = { work: 290, about: 520, interests: 690, contact: 810 }
 
-const SECTION_Y = { work: 300, about: 470, interests: 640, contact: 770 }
-
-function place() {
-  frame.className = 'frame ' + scr
-  /* The whole point of "Today" on desktop: the panel lives INSIDE the page, so
-     the page scrolling away takes it with it. Every other option lifts it out
-     into the frame, which is what `fixed` does in the real thing. */
-  const inPage = opt === 'today' && scr === 'desktop'
-  const host = inPage ? page : frame
-  if (panel.parentElement !== host) host.appendChild(panel)
-  panel.className = 'panel ' + (
-    opt === 'today' ? (scr === 'mobile' ? 'sheet' : 'in-hero')
-    : opt === 'a' ? (scr === 'mobile' ? 'sheet' : 'pin')
-    : opt === 'b' ? 'dock' + (big ? ' big' : '')
-    : 'caps')
-  scrim.classList.toggle('on', playing && opt !== 'b' && opt !== 'c' && scr === 'mobile')
-  $('#expand').style.display = opt === 'b' ? '' : 'none'
-}
-document.querySelectorAll('[data-opt]').forEach(b => b.onclick = () => {
-  document.querySelectorAll('[data-opt]').forEach(x => x.classList.remove('on')); b.classList.add('on')
-  opt = b.dataset.opt; big = false; place()
+function place(){ frame.className = 'frame ' + scr; panel.className = 'panel pres-' + pres }
+document.querySelectorAll('[data-p]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-p]').forEach(x => x.classList.remove('on')); b.classList.add('on'); pres = b.dataset.p; place()
 })
 document.querySelectorAll('[data-scr]').forEach(b => b.onclick = () => {
-  document.querySelectorAll('[data-scr]').forEach(x => x.classList.remove('on')); b.classList.add('on')
-  scr = b.dataset.scr; place()
+  document.querySelectorAll('[data-scr]').forEach(x => x.classList.remove('on')); b.classList.add('on'); scr = b.dataset.scr; place()
 })
-$('#expand').onclick = () => { big = !big; $('#expand').textContent = big ? 'Collapse' : 'Expand'; place() }
-
 const wait = ms => new Promise(r => setTimeout(r, ms))
-function bubble(who, text) {
-  const d = document.createElement('div'); d.className = 'b ' + who; d.textContent = text
-  turns.appendChild(d); return d
+function bubble(who){ const d = document.createElement('div'); d.className='b '+who; turns.appendChild(d)
+  while (turns.children.length > 6) turns.removeChild(turns.firstChild); return d }
+async function stream(el, text){
+  const w = text.split(' ')
+  for (let i=0;i<w.length;i++){
+    el.innerHTML = w.slice(0,i).join(' ') + (i? ' ':'') + '<span class="live-tail">' + w[i] + '</span>'
+    await wait(60)
+  }
+  el.textContent = text
 }
-async function stream(el, text) {
-  const words = text.split(' ')
-  el.textContent = ''
-  for (let i = 0; i < words.length; i++) { el.textContent = words.slice(0, i + 1).join(' '); await wait(55) }
-}
-function scrollTo(y) { page.style.transform = `translateY(${-y}px)` }
+const go = y => page.style.transform = `translateY(${-y}px)`
 
 $('#play').onclick = async () => {
   if (playing) return
-  playing = true; $('#play').disabled = true; turns.innerHTML = ''; big = false; scrollTo(0); place()
-
-  dot.classList.add('live'); ptitle.textContent = 'Live'; psub.textContent = 'Speak whenever you like'
-  pfoot.style.display = 'flex'; place()
-  await wait(500)
-
-  await stream(bubble('agent', ''), "Hey, I'm Vedanth. Not actually, I'm the AI version. How can I help?")
-  await wait(500)
-  await stream(bubble('you', ''), 'Show me your work.')
+  playing = true; $('#play').disabled = true; turns.innerHTML=''; go(0)
+  dot.classList.add('live'); ptitle.textContent='Live'; psub.textContent='Speak whenever you like'; pstate.textContent='In a call'
   await wait(400)
-
-  const a = bubble('agent', '')
-  const p = stream(a, 'I was founding PM on two products at CASHe, and I ran a peer to peer lending platform to a hundred crore.')
+  await stream(bubble('agent'), "Hey, I'm Vedanth. Not actually, I'm the AI version, but you get the idea.")
+  await wait(450)
+  await stream(bubble('you'), 'Show me your work.')
   await wait(350)
-  document.getElementById('work').classList.add('flash'); scrollTo(SECTION_Y.work)
-  await p; await wait(700)
-
-  await stream(bubble('you', ''), 'And your interests?')
-  await wait(400)
-  const b2 = bubble('agent', '')
-  const p2 = stream(b2, 'Chess, snooker and climbing in the Sahyadris.')
+  const a = bubble('agent')
+  const p = stream(a, 'I was founding PM on two products at CASHe, and ran a peer to peer lending platform to a hundred crore.')
+  await wait(400); $('#work').classList.add('flash'); go(Y.work); await p
+  await wait(700)
+  await stream(bubble('you'), 'And outside work?')
   await wait(350)
-  document.getElementById('interests').classList.add('flash'); scrollTo(SECTION_Y.interests)
-  await p2
-
+  const b2 = bubble('agent')
+  const p2 = stream(b2, 'Chess, snooker, and climbing in the Sahyadris.')
+  await wait(400); $('#interests').classList.add('flash'); go(Y.interests); await p2
   await wait(900)
-  dot.classList.remove('live'); ptitle.textContent = 'Talk to me'; psub.textContent = 'not actually me but you get the point'
-  pfoot.style.display = 'none'
-  document.querySelectorAll('.flash').forEach(e => e.classList.remove('flash'))
-  playing = false; $('#play').disabled = false; place()
+  dot.classList.remove('live'); ptitle.textContent='Talk to me'; psub.textContent='not actually me but you get the point'
+  document.querySelectorAll('.flash').forEach(e=>e.classList.remove('flash'))
+  playing=false; $('#play').disabled=false
 }
 place()
 </script>
